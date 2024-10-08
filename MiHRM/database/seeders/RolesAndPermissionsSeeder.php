@@ -15,10 +15,8 @@ class RolesAndPermissionsSeeder extends Seeder
      */
     public function run()
     {
-        // Forget cached permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Generalized permissions array
         $permissions = [
             // Common Permissions
             'User can see all employee',
@@ -41,16 +39,13 @@ class RolesAndPermissionsSeeder extends Seeder
             'User can manage employee ongoing/completed projects',
         ];
 
-        // Create all permissions if they don't exist
         foreach ($permissions as $permission) {
             Permission::firstOrCreate(['name' => $permission]);
         }
 
-        // Create Admin role and assign all relevant permissions
         $adminRole = Role::firstOrCreate(['name' => 'admin']);
-        $adminRole->syncPermissions($permissions); // Admin gets all permissions
+        $adminRole->syncPermissions($permissions);
 
-        // Create HR role and assign relevant permissions
         $hrRole = Role::firstOrCreate(['name' => 'hr']);
         $hrRole->syncPermissions([
             'User can see all employee',
@@ -62,5 +57,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'User can manage employee joining date',
             'User can manage employee ongoing/completed projects',
         ]);
+
+        $employeeRole = Role::firstOrCreate(['name' => 'employee']);
     }
 }
