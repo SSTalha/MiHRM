@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\AdminService;
 use Illuminate\Http\Request;
+use App\Services\AdminService;
 use Illuminate\Http\JsonResponse;
+use App\Http\Requests\UpdateEmployeeRequest;
 
 class AdminController extends Controller
 {
@@ -37,5 +38,11 @@ class AdminController extends Controller
     {
         // Call the AdminService to delete the user and employee
         return $this->adminService->deleteUserAndEmployee($user_id);
+    }
+
+    public function updateEmployee(UpdateEmployeeRequest $request, $employee_id): JsonResponse
+    {
+        // Call the AdminService to handle the update logic and pass the validated request data
+        return $this->adminService->updateEmployee($request->validated(), $employee_id);
     }
 }
