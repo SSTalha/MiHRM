@@ -49,4 +49,15 @@ class AdminController extends Controller
     public function getAllDepartments(){
         return $this->adminService->getAllDepartments();
     }
+
+    public function handleLeaveRequest(Request $request, $leaveRequestId): JsonResponse
+    {
+        // Validate the request status input
+        $validatedData = $request->validate([
+            'status' => 'required|in:approved,rejected', // Ensure valid status ('approved' or 'rejected')
+        ]);
+
+        // Pass the data to the service
+        return $this->adminService->handleLeaveRequest($leaveRequestId, $validatedData['status']);
+    }
 }
