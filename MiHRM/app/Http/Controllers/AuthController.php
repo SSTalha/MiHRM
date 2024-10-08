@@ -23,7 +23,7 @@ class AuthController extends Controller
      * @param RegisterRequest $request
      * @return JsonResponse
      */
-    public function register(RegisterRequest $request): JsonResponse
+    public function register(RegisterRequest $request)
     {
         // Pass validated data to the service method
         return $this->authService->register($request->validated());

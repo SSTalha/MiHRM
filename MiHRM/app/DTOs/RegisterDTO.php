@@ -20,7 +20,7 @@ class RegisterDTO extends BaseDTOs
     {
         $this->name = $request['name'];
         $this->email =$request['email'];
-        $this->password=Hash::make(Str::random(8));
+        $this->password=Hash::make('password');
         $this->role = $request['role'];
     }
 }
