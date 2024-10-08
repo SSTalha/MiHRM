@@ -2,10 +2,11 @@
 
 namespace App\Services;
 
-use App\Helpers\Helpers;
-use App\Models\Attendance;
-use App\Models\Employee;
+use Log;
 use Carbon\Carbon;
+use App\Helpers\Helpers;
+use App\Models\Employee;
+use App\Models\Attendance;
 
 class AttendanceService
 {
@@ -53,4 +54,32 @@ class AttendanceService
 
         return "No check-in record found for today.";
     }
+
+    // ############# Get Attendance Report ############
+public function getAbsentEmployees()
+{
+    // Get today's date
+    $today = Carbon::today()->toDateString();
+    $absentRecords = Attendance::join('employees', 'employees.id', '=', 'attendances.employee_id')
+        ->join('users', 'users.id', '=', 'employees.user_id') 
+        ->whereDate('attendances.date', $today)
+        ->where('attendances.status', 'absent')
+        ->get(['attendances.employee_id', 'users.name as employee_name', 'attendances.date', 'attendances.status']);
+    $response = $absentRecords->map(function ($record) {
+        return [
+            'employee_id' => $record->employee_id,
+            'name' => $record->employee_name,
+            'date' => $record->date,
+            'status' => $record->status,
+        ];
+    });
+
+    return Helpers::result("Absent employees retrieved successfully", 200, $response);
 }
+
+
+}
+
+
+
+

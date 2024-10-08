@@ -17,11 +17,12 @@ Route::group(['middleware' => ['api', 'log.request']], function () {
 
     Route::group(['middleware' => ['jwt.auth']], function () {
         
-        Route::group(['middleware' => ['role:admin']], function () {
+            Route::group(['middleware' => ['role:admin']], function () {
             Route::post('/register', [AuthController::class, 'register']); // Registration route
             Route::get('/employees/department/{department_id}', [AdminController::class, 'getEmployeesByDepartment']);
             Route::delete('/employees/{user_id}', [AdminController::class, 'deleteUser']);
             Route::put('/employees/update/{employee_id}', [AdminController::class, 'updateEmployee']);
+            Route::get('/attendance-report', [AttendanceController::class, 'getAbsentEmployees']);
         }); 
 
 
