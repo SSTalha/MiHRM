@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EmployeeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AttendanceController;
@@ -14,8 +15,8 @@ Route::group(['middleware' => ['api', 'log.request']], function () {
     Route::post('/attendance/check-in', [AttendanceController::class, 'checkIn']);
     Route::post('/attendance/check-out', [AttendanceController::class, 'checkOut']);
 
-
     Route::group(['middleware' => ['jwt.auth']], function () {
+       Route::post('/submit/leave', [EmployeeController::class, 'submitLeaveRequest']);
         
         Route::group(['middleware' => ['role:admin']], function () {
             Route::post('/register', [AuthController::class, 'register']); // Registration route

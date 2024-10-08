@@ -17,17 +17,14 @@ class AdminService
      */
     public function getEmployeesByDepartment($department_id)
     {
-        // Retrieve employees by department_id and eager load related user and department
         $employees = Employee::where('department_id', $department_id)
-            ->with(['user:id,name,email', 'department:id,name']) // Load specific columns from related tables
-            ->get(['id', 'user_id', 'position', 'date_of_joining', 'department_id']); // Select employee-specific columns
+            ->with(['user:id,name,email', 'department:id,name'])
+            ->get(['id', 'user_id', 'position', 'date_of_joining', 'department_id']);
 
-        // If no employees found
         if ($employees->isEmpty()) {
             return Helpers::result("No employees found for this department", 404);
         }
 
-        // Format the data and return success response
         $formattedData = $employees->map(function ($employee) {
             return [
                 'id' => $employee->id,
@@ -53,21 +50,16 @@ class AdminService
      */
     public function deleteUserAndEmployee($user_id)
     {
-        // Find the user
         $user = User::find($user_id);
 
         if (!$user) {
-            // User does not exist, return error response
             return Helpers::result("User not found", 404);
         }
 
-        // Delete the related employee record
         Employee::where('user_id', $user_id)->delete();
 
-        // Delete the user
         $user->delete();
 
-        // Return a success response
         return Helpers::result("User and employee deleted successfully", 200);
     }
 
