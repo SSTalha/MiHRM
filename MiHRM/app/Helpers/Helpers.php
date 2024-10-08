@@ -14,10 +14,7 @@ class Helpers
 
     public static function respondWithToken($token)
     {
-        return [
-            'token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60,
-        ];
+        return  ['token'=>$token];
+            
     }
 }
