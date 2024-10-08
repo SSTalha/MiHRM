@@ -45,4 +45,16 @@ class AdminController extends Controller
         // Call the AdminService to handle the update logic and pass the validated request data
         return $this->adminService->updateEmployee($request->validated(), $employee_id);
     }
+
+
+    public function handleLeaveRequest(Request $request, $leaveRequestId): JsonResponse
+    {
+        // Validate the request status input
+        $validatedData = $request->validate([
+            'status' => 'required|in:approved,rejected', // Ensure valid status ('approved' or 'rejected')
+        ]);
+
+        // Pass the data to the service
+        return $this->adminService->handleLeaveRequest($leaveRequestId, $validatedData['status']);
+    }
 }
