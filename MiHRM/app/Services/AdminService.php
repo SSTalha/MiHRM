@@ -3,8 +3,9 @@
 namespace App\Services;
 
 use App\Models\User;
-use App\Models\Employee;
 use App\Helpers\Helpers;
+use App\Models\Employee;
+use App\DTOs\EmployeeUpdateDTO;
 
 class AdminService
 {
@@ -60,5 +61,27 @@ class AdminService
         $user->delete();
 
         return Helpers::result("User and employee deleted successfully", 200);
+    }
+
+    public function updateEmployee($data, $employee_id)
+    {
+        // Find the employee by ID
+        $employee = Employee::find($employee_id);
+
+        if (!$employee) {
+            // If the employee is not found, return a 404 response
+            return Helpers::result("Employee not found", 404);
+        }
+
+        // Create the DTO for the update
+        $dto = new EmployeeUpdateDTO($data);
+
+        // Update the employee record using the DTO data
+        $employee->update($dto->toArray());
+
+        // Return a success response
+        return Helpers::result("Employee updated successfully", 200, [
+            'employee' => $employee
+        ]);
     }
 }
