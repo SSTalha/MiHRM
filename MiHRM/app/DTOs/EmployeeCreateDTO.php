@@ -14,9 +14,9 @@ class EmployeeCreateDTO extends BaseDTOs
      */
     public function __construct(mixed $data, int $userId)
     {
-        $this->user_id = $userId;  // The newly created user's ID
-        $this->position = $data['position']; // The position field from the request
-        $this->department_id = $data['department_id']; // The department ID from the request
+        $this->user_id = $userId;
+        $this->position = $data['position']; 
+        $this->department_id = $data['department_id'];
         $this->date_of_joining = now(); // Date of joining from the request
     }
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EmployeeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 
@@ -12,5 +13,6 @@ Route::group(['middleware'=>['api', 'log.request']], function(){
 
     Route::group(['middleware' => ['jwt.auth']], function(){
         //Jwt route goes here
+        Route::post('/submit/leave', [EmployeeController::class, 'submitLeaveRequest']);
     });
 });
