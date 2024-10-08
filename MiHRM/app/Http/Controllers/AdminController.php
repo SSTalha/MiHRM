@@ -46,6 +46,9 @@ class AdminController extends Controller
         return $this->adminService->updateEmployee($request->validated(), $employee_id);
     }
 
+    public function getAllDepartments(){
+        return $this->adminService->getAllDepartments();
+    }
 
     public function handleLeaveRequest(Request $request, $leaveRequestId): JsonResponse
     {

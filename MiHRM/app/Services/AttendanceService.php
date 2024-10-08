@@ -16,7 +16,7 @@ class AttendanceService
         $today = Carbon::today();
         $attendance = Attendance::where('employee_id', $employee->id)
                                 ->whereDate('date', $today)
-                                ->first();
+                                ->get();
 
         if ($attendance) {
             $attendance->update([

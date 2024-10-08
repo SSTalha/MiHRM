@@ -3,6 +3,7 @@
 namespace App\Services;
 use App\DTOs\LeaveRequestDTO;
 
+use App\Helpers\Helpers;
 use App\Models\Employee;
 use App\Models\LeaveRequest;
 use Illuminate\Support\Facades\Auth;
@@ -19,6 +20,6 @@ class EmployeeService
         $leaveRequestDTO = new LeaveRequestDTO($request, $employee->id);
         $leaveRequest = LeaveRequest::create($leaveRequestDTO->toArray());
 
-        return $leaveRequest;
+        return Helpers::result('Leave request submitted',200,$leaveRequest);
     }
 }

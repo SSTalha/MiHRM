@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Department;
 use App\Models\User;
 use App\Helpers\Helpers;
 use App\Models\Employee;
@@ -67,26 +68,25 @@ class AdminService
 
     public function updateEmployee($data, $employee_id)
     {
-        // Find the employee by ID
         $employee = Employee::find($employee_id);
 
         if (!$employee) {
-            // If the employee is not found, return a 404 response
             return Helpers::result("Employee not found", 404);
         }
 
-        // Create the DTO for the update
         $dto = new EmployeeUpdateDTO($data);
 
-        // Update the employee record using the DTO data
         $employee->update($dto->toArray());
 
-        // Return a success response
         return Helpers::result("Employee updated successfully", 200, [
             'employee' => $employee
         ]);
     }
 
+    public function getAllDepartments(){
+        $departments = Department::all();
+        return Helpers::result('Departments retrieved successfully', 200, $departments);
+    }
 
     public function handleLeaveRequest($leaveRequestId, $status)
     {
