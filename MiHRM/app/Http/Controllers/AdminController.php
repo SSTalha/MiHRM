@@ -45,4 +45,8 @@ class AdminController extends Controller
         // Call the AdminService to handle the update logic and pass the validated request data
         return $this->adminService->updateEmployee($request->validated(), $employee_id);
     }
+
+    public function getAllDepartments(){
+        return $this->adminService->getAllDepartments();
+    }
 }
