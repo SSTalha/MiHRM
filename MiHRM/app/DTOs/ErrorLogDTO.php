@@ -13,7 +13,7 @@ class ErrorLogDTO extends BaseDTOs
         $this->request_log_id = $requestLogId;
         $this->line_number = $exception->getLine();
         $this->function_name = $functionName;
-        $this->file_name = $exception->getFile();;
+        $this->file_name = $exception->getFile();
         $this->error_message = $exception->getMessage();
     }
 
