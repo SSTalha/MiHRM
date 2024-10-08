@@ -20,12 +20,17 @@ class AuthService
 
    public function register($request)
 {
-   
+
     $dto = new RegisterDTO($request);
+
     $user = User::create($dto->toArray());
+
     $user->assignRole($dto->role);
+
     $employeeDto = new EmployeeCreateDTO($request, $user->id);
+
     $employee = Employee::create($employeeDto->toArray());
+
     return Helpers::result("User and Employee registered successfully", 200, [
         'user' => $user,
         'employee' => $employee
@@ -33,19 +38,17 @@ class AuthService
 }
 
     // ############### Login Method #################
-    
+
    public function login(array $credentials)
 {
     
     $token = auth()->attempt($credentials);
-
     if (!$token) {
         return Helpers::result("Unauthorized", 401, ['error' => 'Invalid credentials']);
     }
     $user = auth()->user();
-
     $roles = $user->getRoleNames();
-    $permissions = $user->getAllPermissions()->pluck('name'); 
+    $permissions = $user->getAllPermissions()->pluck('name');
 
     $employee = $user->employee; 
 
@@ -63,8 +66,6 @@ class AuthService
     $responseData = array_merge( $tokenData,$userData);
     return Helpers::result("User logged in successfully", 200, $responseData);
 }
-
-
 
 
     // ############### Logout Method #################
