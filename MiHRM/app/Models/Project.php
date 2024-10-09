@@ -7,15 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 class Project extends Model
 {
     protected $fillable = [
-        'employee_id',
+        
         'title',
         'description',
         'deadline',
-        'status',       // 'pending' or 'completed'
+        
     ];
 
-    public function employee()
+    public function assignments()
     {
-        return $this->belongsTo(Employee::class);
+        return $this->hasMany(ProjectAssignment::class);
     }
 }

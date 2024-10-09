@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\AdminService;
 use Illuminate\Http\JsonResponse;
+use App\Http\Requests\AssignProjectRequest;
+use App\Http\Requests\CreateProjectRequest;
 use App\Http\Requests\UpdateEmployeeRequest;
 
 class AdminController extends Controller
@@ -42,7 +44,7 @@ class AdminController extends Controller
 
     public function updateEmployee(UpdateEmployeeRequest $request, $employee_id): JsonResponse
     {
-        // Call the AdminService to handle the update logic and pass the validated request data
+       
         return $this->adminService->updateEmployee($request->validated(), $employee_id);
     }
 
@@ -52,7 +54,25 @@ class AdminController extends Controller
 
     public function handleLeaveRequest($leaveRequestId, $status)
     {
-        // Delegate to the service
+        
         return $this->adminService->handleLeaveRequest($leaveRequestId, $status);
+    }
+
+    public function createProject(CreateProjectRequest $request): JsonResponse
+    {
+        
+        return $this->adminService->createProject($request->validated());
+    }
+
+    public function assignProject(AssignProjectRequest $request): JsonResponse
+    {
+        // Pass the validated data to the service
+        return $this->adminService->assignProject($request->validated());
+    }
+
+    public function getAllAssignedProjects(): JsonResponse
+    {
+        // Delegate the task to AdminService
+        return $this->adminService->getAllAssignedProjects();
     }
 }

@@ -2,14 +2,18 @@
 
 namespace App\Services;
 
-use App\Models\Department;
 use App\Models\User;
+use App\Models\Project;
 use App\Helpers\Helpers;
 use App\Models\Employee;
-use App\DTOs\EmployeeUpdateDTO;
-use App\Models\LeaveRequest;
 use App\Models\Attendance;
-use Auth;
+use App\Models\Department;
+use App\Models\LeaveRequest;
+use App\DTOs\ProjectCreateDTO;
+use App\DTOs\EmployeeUpdateDTO;
+use App\Models\ProjectAssignment;
+use App\DTOs\ProjectAssignmentDTO;
+use Illuminate\Support\Facades\Auth;
 
 class AdminService
 {
@@ -155,5 +159,53 @@ class AdminService
         if ($attendance) {
             $attendance->update(['status' => $status]);
         }
+    }
+
+    public function createProject($data)
+    {
+        
+        $dto = new ProjectCreateDTO($data);
+
+        $project = Project::create($dto->toArray());
+
+        return Helpers::result("Project created successfully.", 201, [
+            'project' => $project
+        ]);
+    }
+
+    public function assignProject($data)
+    {
+        // Create the DTO with the validated request data
+        $dto = new ProjectAssignmentDTO($data);
+
+        // Find the employee being assigned the project
+        $employee = Employee::find($dto->employee_id);
+
+        // Check if the employee has an HR role
+        if ($employee->user->hasRole('hr')) {
+            return Helpers::result("Can't assign project. The user is an HR.", 400);
+        }
+
+        // Create the project assignment
+        $assignment = ProjectAssignment::create($dto->toArray());
+
+        // Return a success response with the project assignment
+        return Helpers::result("Project assigned successfully.", 201, [
+            'assignment' => $assignment
+        ]);
+    }
+
+    public function getAllAssignedProjects()
+    {
+        
+        $assignedProjects = ProjectAssignment::with(['project', 'employee.user']) ->get();
+
+        if ($assignedProjects->isEmpty()) {
+            return Helpers::result("No projects assigned yet.", 404);
+        }
+
+        return Helpers::result("All assigned projects fetched successfully.", 200, [
+            'assigned_projects' => $assignedProjects
+        ]);
     }
 }
