@@ -9,7 +9,7 @@ use App\Models\Employee;
 use App\DTOs\EmployeeUpdateDTO;
 use App\Models\LeaveRequest;
 use App\Models\Attendance;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 
 class AdminService
 {

@@ -11,8 +11,7 @@ use App\Models\Employee;
 
 
 use App\DTOs\RegisterDTO;
-use DB;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use App\DTOs\EmployeeCreateDTO;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;

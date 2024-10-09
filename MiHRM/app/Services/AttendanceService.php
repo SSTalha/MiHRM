@@ -16,7 +16,7 @@ class AttendanceService
         $today = Carbon::today();
         $attendance = Attendance::where('employee_id', $employee->id)
                                 ->whereDate('date', $today)
-                                ->get();
+                                ->first();
 
         if ($attendance) {
             $attendance->update([
@@ -55,24 +55,24 @@ class AttendanceService
     }
 
         // ############# Get Attendance Report ############
-        public function getAbsentEmployees()
-        {
-        // Get today's date
-        $today = Carbon::today()->toDateString();
-        $absentRecords = Attendance::join('employees', 'employees.id', '=', 'attendances.employee_id')
-            ->join('users', 'users.id', '=', 'employees.user_id') 
-            ->whereDate('attendances.date', $today)
-            ->where('attendances.status', 'absent')
-            ->get(['attendances.employee_id', 'users.name as employee_name', 'attendances.date', 'attendances.status']);
-        $response = $absentRecords->map(function ($record) {
+    public function getEmployeesAttendence($date = null, $status)
+    {
+        $targetDate = $date ? Carbon::parse($date)->toDateString() : Carbon::today()->toDateString;
+
+        $absentRecords = Attendance::with(['employee.user'])
+            ->whereDate('date', $targetDate)
+            ->where('status', $status)
+            ->get();  
+        $response = $absentRecords->map(function($record){
+            $employee = $record->employee;
+            $user = $employee ? $employee->user : null;
             return [
                 'employee_id' => $record->employee_id,
-                'name' => $record->employee_name,
+                'name' => $record ? $user->name : null,
                 'date' => $record->date,
                 'status' => $record->status,
             ];
         });
-
         return Helpers::result("Absent employees retrieved successfully", 200, $response);
     }
 }
