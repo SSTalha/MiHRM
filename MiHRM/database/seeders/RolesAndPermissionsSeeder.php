@@ -23,7 +23,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'User can manage employee leaves (accept/reject)',
             'User can manage employee attendance',
             'User can manage employee department (add/remove)',
-            'User can manage employee check-in/check-out',
+            // 'User can manage employee check-in/check-out',
 
             // Admin-Specific Permissions
             'User can add employee',
@@ -31,12 +31,16 @@ class RolesAndPermissionsSeeder extends Seeder
             'User can add/remove job position',
             'User can add hr and assign department',
             'User can see all hr',
-            'User can see hr check-in/check-out',
+            // 'User can see hr check-in/check-out',
 
             // HR-Specific Permissions
             'User can manage employee payroll',
             'User can manage employee joining date',
             'User can manage employee ongoing/completed projects',
+
+            //employee specific
+            'Users can Check-in',
+            'Users can Check-out',
         ];
 
         foreach ($permissions as $permission) {
@@ -51,13 +55,23 @@ class RolesAndPermissionsSeeder extends Seeder
             'User can see all employee',
             'User can manage employee leaves (accept/reject)',
             'User can manage employee attendance',
-            'User can manage employee department (add/remove)',
-            'User can manage employee check-in/check-out',
+            // 'User can manage employee department (add/remove)',
+            // 'User can manage employee check-in/check-out',
             'User can manage employee payroll',
             'User can manage employee joining date',
             'User can manage employee ongoing/completed projects',
         ]);
 
         $employeeRole = Role::firstOrCreate(['name' => 'employee']);
+        $employeeRole->syncPermissions([
+            'Users can Check-in',
+            'Users can Check-out',
+            'Users can submit leave applications',
+            'Users can see Attendance Records',
+            'Users can see Working Hours',
+            'Users can see Assigned Projects',
+            'Users can see Completed Projects',
+            'User can view salary history',
+        ]);
     }
 }

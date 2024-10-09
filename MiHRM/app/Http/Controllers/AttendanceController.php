@@ -31,4 +31,11 @@ class AttendanceController extends Controller
         return $this->attendanceService->checkOut($employee);
 
     }
+
+        // ######## Get Attendance Record ########
+        public function getAbsentEmployees()
+    {
+        return $this->attendanceService->getAbsentEmployees();
+
+    }
 }

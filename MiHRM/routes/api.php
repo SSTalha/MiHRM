@@ -23,6 +23,7 @@ Route::group(['middleware' => ['api', 'log.request']], function () {
             Route::put('/employees/update/{employee_id}', [AdminController::class, 'updateEmployee']);
             Route::get('/get/departments', [AdminController::class , 'getAllDepartments']);
             Route::put('/leave-requests/{leaveRequestId}/handle', [AdminController::class, 'handleLeaveRequest']);
+            Route::get('/attendance-report', [AttendanceController::class, 'getAbsentEmployees']);
         });
 
 
