@@ -175,21 +175,16 @@ class AdminService
 
     public function assignProject($data)
     {
-        // Create the DTO with the validated request data
         $dto = new ProjectAssignmentDTO($data);
 
-        // Find the employee being assigned the project
         $employee = Employee::find($dto->employee_id);
 
-        // Check if the employee has an HR role
         if ($employee->user->hasRole('hr')) {
             return Helpers::result("Can't assign project. The user is an HR.", 400);
         }
 
-        // Create the project assignment
         $assignment = ProjectAssignment::create($dto->toArray());
 
-        // Return a success response with the project assignment
         return Helpers::result("Project assigned successfully.", 201, [
             'assignment' => $assignment
         ]);
