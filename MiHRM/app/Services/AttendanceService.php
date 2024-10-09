@@ -19,7 +19,6 @@ class AttendanceService
     $attendance = Attendance::where('employee_id', $employee->id)
                             ->whereDate('date', $today)
                             ->first();
-
     if ($attendance) {
         // Use DTO for the update case
         $attendanceDTO = new AttendanceDTO($employee->id, $today, Carbon::now(), 'present');
@@ -61,8 +60,28 @@ class AttendanceService
         return Helpers::result("Check-out recorded successfully", 200);
     }
 
+        // ############# Get Attendance Report ############
+    public function getEmployeesAttendence($date = null, $status)
+    {
+        $targetDate = $date ? Carbon::parse($date)->toDateString() : Carbon::today()->toDateString;
+
+        $absentRecords = Attendance::with(['employee.user'])
+            ->whereDate('date', $targetDate)
+            ->where('status', $status)
+            ->get();  
+        $response = $absentRecords->map(function($record){
+            $employee = $record->employee;
+            $user = $employee ? $employee->user : null;
+            return [
+                'employee_id' => $record->employee_id,
+                'name' => $record ? $user->name : null,
+                'date' => $record->date,
+                'status' => $record->status,
+            ];
+        });
+        return Helpers::result("Absent employees retrieved successfully", 200, $response);
+    }
     return "No check-in record found for today.";
 }
-
 
 }
