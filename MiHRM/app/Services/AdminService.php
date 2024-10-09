@@ -2,14 +2,14 @@
 
 namespace App\Services;
 
-use App\Models\Department;
 use App\Models\User;
 use App\Helpers\Helpers;
 use App\Models\Employee;
-use App\DTOs\EmployeeUpdateDTO;
-use App\Models\LeaveRequest;
 use App\Models\Attendance;
-use Auth;
+use App\Models\Department;
+use App\Models\LeaveRequest;
+use App\DTOs\EmployeeUpdateDTO;
+use Illuminate\Support\Facades\Auth;
 
 class AdminService
 {

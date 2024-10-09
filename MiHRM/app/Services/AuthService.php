@@ -2,18 +2,18 @@
 
 namespace App\Services;
 
-use App\DTOs\SalaryCreateDTO;
-use App\Models\Salary;
 use App\Models\User;
+use App\Models\Salary;
 use App\Helpers\Helpers;
-
 use App\Models\Employee;
 
-
 use App\DTOs\RegisterDTO;
-use DB;
+
+
 use Illuminate\Support\Str;
+use App\DTOs\SalaryCreateDTO;
 use App\DTOs\EmployeeCreateDTO;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\RegisterRequest;

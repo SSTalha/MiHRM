@@ -53,8 +53,6 @@ class RolesAndPermissionsSeeder extends Seeder
             'User can Check-in/Check-out',
             'User can submit Leave Applications',
             
-            
-
         ];
 
         foreach ($permissions as $permission) {
