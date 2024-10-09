@@ -58,11 +58,10 @@ class AttendanceService
         ]);
 
         return Helpers::result("Check-out recorded successfully", 200);
-    }
+    } }
 
         // ############# Get Attendance Report ############
-    public function getEmployeesAttendence($date = null, $status)
-    {
+        public function getEmployeesAttendence($date = null, $status){
         $targetDate = $date ? Carbon::parse($date)->toDateString() : Carbon::today()->toDateString;
 
         $absentRecords = Attendance::with(['employee.user'])
@@ -81,7 +80,5 @@ class AttendanceService
         });
         return Helpers::result("Absent employees retrieved successfully", 200, $response);
     }
-    return "No check-in record found for today.";
-}
 
 }
