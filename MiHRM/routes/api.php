@@ -22,10 +22,10 @@ Route::group(['middleware' => ['api', 'log.request']], function () {
             Route::delete('/employees/{user_id}', [AdminController::class, 'deleteUser']);
             Route::put('/employees/update/{employee_id}', [AdminController::class, 'updateEmployee']);
             Route::get('/get/departments', [AdminController::class , 'getAllDepartments']);
-            Route::put('/leave-requests/{leaveRequestId}/handle', [AdminController::class, 'handleLeaveRequest']);
-            Route::get('/attendance-report', [AttendanceController::class, 'getAbsentEmployees']);
         });
 
+        Route::post('/leave-requests/{leaveRequestId}/{status}', [AdminController::class, 'handleLeaveRequest']);
+        Route::get('/attendance-report', [AttendanceController::class, 'getAbsentEmployees']);
 
         Route::group(['middleware' => ['role:hr|employee']], function () {
             Route::post('/submit/leave', [EmployeeController::class, 'submitLeaveRequest']);

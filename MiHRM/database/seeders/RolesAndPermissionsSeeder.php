@@ -18,29 +18,43 @@ class RolesAndPermissionsSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         $permissions = [
-            // Common Permissions
+            //admin specific
+            'User can see all users',
+            'User can manage  leaves (accept/reject)',
+            'User can manage  attendance',
+            'User can manage all users department and position (update)',
+            'User can add users (employee,hr)',
+            'User can manage payroll',
+            'User can see Department Details',
+            'User can see all users Working Hours',
+            
+            
+            
+            //hr specific
             'User can see all employee',
             'User can manage employee leaves (accept/reject)',
             'User can manage employee attendance',
-            'User can manage employee department (add/remove)',
-            // 'User can manage employee check-in/check-out',
+            'User can manage employee department and position (update)',
+            'Users can see its and employee Working Hours',
+            
+            // Admin-hr common Permissions
+            'User can view employee projects status',
+            'User can see Attendance Record of all users',
+            
+            
+            // employee specific Permissions
+            'User can manage  ongoing/completed projects',
+            'User can see Assigned Projects',
+            'User can see its Working Hours',
+            'User can see Attendance Record of itself',
 
-            // Admin-Specific Permissions
-            'User can add employee',
-            'User can track attendance',
-            'User can add/remove job position',
-            'User can add hr and assign department',
-            'User can see all hr',
-            // 'User can see hr check-in/check-out',
 
-            // HR-Specific Permissions
-            'User can manage employee payroll',
-            'User can manage employee joining date',
-            'User can manage employee ongoing/completed projects',
+            //employee and hr common
+            'User can Check-in/Check-out',
+            'User can submit Leave Applications',
+            
+            
 
-            //employee specific
-            'Users can Check-in',
-            'Users can Check-out',
         ];
 
         foreach ($permissions as $permission) {
@@ -48,30 +62,41 @@ class RolesAndPermissionsSeeder extends Seeder
         }
 
         $adminRole = Role::firstOrCreate(['name' => 'admin']);
-        $adminRole->syncPermissions($permissions);
+        $adminRole->syncPermissions([
+            'User can see all users',
+            'User can manage  leaves (accept/reject)',
+            'User can manage  attendance',
+            'User can manage all users department and position (update)',
+            'User can add users (employee,hr)',
+            'User can manage payroll',
+            'User can see Department Details',
+            'User can see all users Working Hours',
+            'User can view employee projects status',
+            'User can see Attendance Record of all users',
+
+        ]);
 
         $hrRole = Role::firstOrCreate(['name' => 'hr']);
         $hrRole->syncPermissions([
             'User can see all employee',
             'User can manage employee leaves (accept/reject)',
             'User can manage employee attendance',
-            // 'User can manage employee department (add/remove)',
-            // 'User can manage employee check-in/check-out',
-            'User can manage employee payroll',
-            'User can manage employee joining date',
-            'User can manage employee ongoing/completed projects',
+            'User can manage employee department and position (update)',
+            'Users can see its and employee Working Hours',
+            'User can view employee projects status',
+            'User can Check-in/Check-out',
+            'User can submit Leave Applications',
+            'User can see Attendance Record of all users',
         ]);
 
         $employeeRole = Role::firstOrCreate(['name' => 'employee']);
         $employeeRole->syncPermissions([
-            'Users can Check-in',
-            'Users can Check-out',
-            'Users can submit leave applications',
-            'Users can see Attendance Records',
-            'Users can see Working Hours',
-            'Users can see Assigned Projects',
-            'Users can see Completed Projects',
-            'User can view salary history',
+            'User can Check-in/Check-out',
+            'User can submit Leave Applications',
+            'User can see Attendance Record of itself',
+            'User can manage  ongoing/completed projects',
+            'User can see Assigned Projects',
+            'User can see its Working Hours',
         ]);
     }
 }

@@ -27,12 +27,15 @@ class RegisterRequest extends BaseRequest
             // User validation rules
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'role' => 'required|string|exists:roles,name', // Ensure the role exists in the roles table
+            'role' => 'required|string|exists:roles,name', 
 
             // Employee validation rules
             'position' => 'required|string|max:255',
-            'department_id' => 'required|integer|exists:departments,id', // Ensure department exists
-            
+            'department_id' => 'required|integer|exists:departments,id', 
+
+            'pay' => 'required|integer|min:1', 
+
+            'date_of_joining' => 'sometimes|date|before_or_equal:today', 
         ];
     }
 
@@ -56,10 +59,15 @@ class RegisterRequest extends BaseRequest
             'position.required' => 'The position field is required.',
             'department_id.required' => 'The department field is required.',
             'department_id.exists' => 'The selected department does not exist.',
-            'date_of_joining.required' => 'The date of joining is required.',
+
+            // Salary validation messages
+            'pay.required' => 'The pay field is required.',
+            'pay.integer' => 'The pay must be an integer value.',
+            'pay.min' => 'The pay must be a positive number.',
+
+            // Date of Joining validation messages
             'date_of_joining.date' => 'The date of joining must be a valid date.',
             'date_of_joining.before_or_equal' => 'The date of joining cannot be in the future.',
         ];
     }
-
 }

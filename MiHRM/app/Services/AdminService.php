@@ -9,6 +9,7 @@ use App\Models\Employee;
 use App\DTOs\EmployeeUpdateDTO;
 use App\Models\LeaveRequest;
 use App\Models\Attendance;
+use Auth;
 
 class AdminService
 {
@@ -90,36 +91,67 @@ class AdminService
 
     public function handleLeaveRequest($leaveRequestId, $status)
     {
-        // Find the leave request
+        $currentUser = Auth::user();
+
         $leaveRequest = LeaveRequest::find($leaveRequestId);
 
         if (!$leaveRequest) {
-            // Leave request not found
-            return Helpers::result("Leave request not found.", 404);
+            return response()->json([
+                'message' => "Leave request not found.",
+            ], 404);
         }
 
-        // Update the leave request status (approved or rejected)
+        // Get the employee who submitted the leave request
+        $requestingEmployee = Employee::find($leaveRequest->employee_id);
+
+        if (!$requestingEmployee) {
+            return response()->json([
+                'message' => "Employee record not found.",
+            ], 404);
+        }
+
+        $requestingUser = $requestingEmployee->user;
+
+        if ($currentUser->id === $requestingUser->id) {
+            return response()->json([
+                'message' => 'You cannot approve/reject your own leave request.',
+            ], 403);
+        }
+
+        if ($requestingUser->hasRole('hr')) {
+            if (!$currentUser->hasRole('admin')) {
+                return response()->json([
+                    'message' => 'Only Admin can approve/reject leave requests from HR.',
+                ], 403);
+            }
+        } elseif ($requestingUser->hasRole('employee')) {
+            if (!$currentUser->hasRole('admin') && !$currentUser->hasRole('hr')) {
+                return response()->json([
+                    'message' => 'Only Admin or HR can approve/reject leave requests from Employees.',
+                ], 403);
+            }
+        }
+
         $leaveRequest->update(['status' => $status]);
 
-        // If the leave request is approved, update the attendance status to 'onleave'
         if ($status === 'approved') {
             $this->updateAttendanceStatus($leaveRequest->employee_id, 'onleave');
         }
 
-        // Return success response
-        return Helpers::result("Leave request has been {$status}.", 200, [
+        return response()->json([
+            'message' => "Leave request has been {$status}.",
             'leave_request' => $leaveRequest
-        ]);
+        ], 200);
     }
+
+    // Update the attendance status
     protected function updateAttendanceStatus($employeeId, $status)
     {
-        // Find today's attendance record for the employee
-        $today = now()->toDateString(); // Assuming attendance is daily
+        $today = now()->toDateString();
         $attendance = Attendance::where('employee_id', $employeeId)
             ->whereDate('created_at', $today)
             ->first();
 
-        // If attendance record exists, update the status
         if ($attendance) {
             $attendance->update(['status' => $status]);
         }

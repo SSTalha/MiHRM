@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\DTOs\SalaryCreateDTO;
+use App\Models\Salary;
 use App\Models\User;
 use App\Helpers\Helpers;
 
@@ -9,6 +11,7 @@ use App\Models\Employee;
 
 
 use App\DTOs\RegisterDTO;
+use DB;
 use Illuminate\Support\Str;
 use App\DTOs\EmployeeCreateDTO;
 use Illuminate\Support\Facades\Auth;
@@ -19,24 +22,38 @@ use App\Http\Requests\RegisterUserRequest;
 class AuthService
 {
 
-   public function register($request)
-{
+    public function register($request)
+    {
+        DB::beginTransaction();
 
-    $dto = new RegisterDTO($request);
+        try {
+            $dto = new RegisterDTO($request);
+            $user = User::create($dto->toArray());
 
-    $user = User::create($dto->toArray());
+            $user->assignRole($dto->role);
 
-    $user->assignRole($dto->role);
+            $employeeDto = new EmployeeCreateDTO($request, $user->id);
+            $employee = Employee::create($employeeDto->toArray());
 
-    $employeeDto = new EmployeeCreateDTO($request, $user->id);
+            $salaryDto = new SalaryCreateDTO($request, $employee->id);  
+            Salary::create($salaryDto->toArray());
 
-    $employee = Employee::create($employeeDto->toArray());
+            DB::commit();
 
-    return Helpers::result("User and Employee registered successfully", 200, [
-        'user' => $user,
-        'employee' => $employee
-    ]);
-}
+            return Helpers::result("User, Employee, and Salary registered successfully", 200, [
+                'user' => $user,
+                'employee' => $employee
+            ]);
+
+        } 
+        catch (\Exception $e) 
+        {
+            DB::rollBack();
+
+            // Return an error response
+            return Helpers::result("Registration failed: " . $e->getMessage(), 500);
+        }
+    }
 
     // ############### Login Method #################
 
