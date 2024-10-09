@@ -24,10 +24,9 @@ Route::group(['middleware' => ['api', 'log.request']], function () {
             Route::get('/get/departments', [AdminController::class , 'getAllDepartments']);
         });
 
-        Route::post('/leave-requests/{leaveRequestId}/{status}', [AdminController::class, 'handleLeaveRequest']);
-        Route::get('/attendance-report', [AttendanceController::class, 'getAbsentEmployees']);
+            Route::post('/leave-requests/{leaveRequestId}/{status}', [AdminController::class, 'handleLeaveRequest']);
 
-        Route::group(['middleware' => ['role:hr|employee']], function () {
+            Route::group(['middleware' => ['role:hr|employee']], function () {
             Route::post('/submit/leave', [EmployeeController::class, 'submitLeaveRequest']);
             Route::post('/attendance/check-in', [AttendanceController::class, 'checkIn']);
             Route::post('/attendance/check-out', [AttendanceController::class, 'checkOut']);
