@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Jobs\RecordAttendanceJob;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -21,9 +22,11 @@ class Kernel extends ConsoleKernel
      * @return void
      */
     protected function schedule(Schedule $schedule)
-    {
-        // $schedule->command('inspire')->hourly();
-    }
+{
+    // Temporarily run the job every minute for testing purposes
+    $schedule->job(new \App\Jobs\RecordAttendanceJob())->daily();
+}
+
 
     /**
      * Register the commands for the application.

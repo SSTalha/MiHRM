@@ -15,10 +15,8 @@ return new class extends Migration
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');
             $table->string('title');
             $table->string('description');
-            $table->enum('status', ['in_progress', 'pending', 'completed']);
             $table->date('deadline');
             $table->timestamps();
         });

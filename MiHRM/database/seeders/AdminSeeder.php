@@ -18,26 +18,20 @@ class AdminSeeder extends Seeder
      */
     public function run()
     {
-        // Create the admin role if it doesn't exist
-        $adminRole = Role::firstOrCreate(['name' => 'Admin']);
+        $adminRole = Role::where("name","admin")->first();
 
-        // Create the necessary permissions (if not already created)
-        $permissions = ['manage users', 'manage roles', 'manage permissions', 'manage employees', 'manage leaves'];
-        foreach ($permissions as $permission) {
-            Permission::firstOrCreate(['name' => $permission]);
+        if(!$adminRole) {
+            $this->call(RolesAndPermissionsSeeder::class);
+            $adminRole = Role::where("name","admin")->first();
         }
 
-        // Assign all permissions to the Admin role
-        $adminRole->syncPermissions($permissions);
-
-        // Create the admin user
-        $adminUser = User::create([
-            'name' => 'Admin User',
-            'email' => 'admin@example.com',
-            'password' => Hash::make('password'), // You can replace this with a stronger password
-        ]);
-
-        // Assign the admin role to the admin user
-        $adminUser->assignRole($adminRole);
+        $adminuser = User::updateOrCreate(
+            ['email' => 'admin@gmail.com'],
+            [
+                'name' => 'Admin',
+                'password' => bcrypt('password@123'),
+            ]
+        );  
+        $adminuser->assignRole('admin');
     }
 }

@@ -13,12 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('salaries', function (Blueprint $table) {
+        Schema::create('error_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');
-            $table->integer('pay');
-            $table->enum('status', ['unpaid', 'paid'])->default('unpaid');
-            $table->date('paid_date')->nullable();
+            $table->foreignId('request_log_id')->constrained()->onDelete('cascade');
+            $table->string('line_number');
+            $table->string('function_name');
+            $table->string('file_name');
+            $table->text('error_message');
             $table->timestamps();
         });
     }
@@ -30,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('salaries');
+        Schema::dropIfExists('error_logs');
     }
 };

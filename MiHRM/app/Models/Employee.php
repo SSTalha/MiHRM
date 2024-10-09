@@ -32,6 +32,10 @@ class Employee extends Model
     {
         return $this->hasMany(Project::class);
     }
+    public function projectAssignments()
+    {
+        return $this->hasMany(ProjectAssignment::class);
+    }
 
     public function leaveRequests()
     {

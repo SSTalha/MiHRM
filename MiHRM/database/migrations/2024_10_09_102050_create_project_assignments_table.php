@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateProjectAssignmentsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('salaries', function (Blueprint $table) {
+        Schema::create('project_assignments', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('project_id')->constrained('projects')->onDelete('cascade');
             $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');
-            $table->integer('pay');
-            $table->enum('status', ['unpaid', 'paid'])->default('unpaid');
-            $table->date('paid_date')->nullable();
+            $table->enum('status', ['in_progress', 'pending', 'completed'])->default('pending');
             $table->timestamps();
         });
     }
@@ -30,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('salaries');
+        Schema::dropIfExists('project_assignments');
     }
-};
+}
