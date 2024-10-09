@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Admin;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\BaseRequest;
 
-class AssignProjectRequest extends FormRequest
+class AssignProjectRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.

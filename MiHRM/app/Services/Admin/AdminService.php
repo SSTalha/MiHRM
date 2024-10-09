@@ -1,24 +1,26 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Admin;
+
+use App\Helpers\Helpers;
 
 use App\Models\User;
 use App\Models\Project;
-use App\Helpers\Helpers;
 use App\Models\Employee;
 use App\Models\Attendance;
 use App\Models\Department;
 use App\Models\LeaveRequest;
-use App\DTOs\ProjectCreateDTO;
-use App\DTOs\EmployeeUpdateDTO;
 use App\Models\ProjectAssignment;
-use App\DTOs\ProjectAssignmentDTO;
+
+use App\DTOs\ProjectDTOs\ProjectCreateDTO;
+use App\DTOs\EmployeeDTOs\EmployeeUpdateDTO;
+use App\DTOs\ProjectDTOs\ProjectAssignmentDTO;
 use Illuminate\Support\Facades\Auth;
 
 class AdminService
 {
     /**
-     * Fetch employees by department ID along with user and department information
+     * Fetch employees by department ID
      *
      * @param int $department_id
      * @return \Illuminate\Http\JsonResponse
@@ -63,14 +65,18 @@ class AdminService
         if (!$user) {
             return Helpers::result("User not found", 404);
         }
-
         Employee::where('user_id', $user_id)->delete();
 
         $user->delete();
-
         return Helpers::result("User and employee deleted successfully", 200);
     }
 
+    /**
+     * Summary of updateEmployee
+     * @param mixed $data
+     * @param mixed $employee_id
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function updateEmployee($data, $employee_id)
     {
         $employee = Employee::find($employee_id);
@@ -88,67 +94,65 @@ class AdminService
         ]);
     }
 
+    /**
+     * Summary of getAllDepartments
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function getAllDepartments(){
         $departments = Department::all();
         return Helpers::result('Departments retrieved successfully', 200, $departments);
     }
 
+    /**
+     * Summary of handleLeaveRequest
+     * @param mixed $leaveRequestId
+     * @param mixed $status
+     * @return void
+     */
     public function handleLeaveRequest($leaveRequestId, $status)
     {
         $currentUser = Auth::user();
-
         $leaveRequest = LeaveRequest::find($leaveRequestId);
 
         if (!$leaveRequest) {
-            return response()->json([
-                'message' => "Leave request not found.",
-            ], 404);
+            Helpers::result('Leave request not found', 404);
         }
 
-        // Get the employee who submitted the leave request
         $requestingEmployee = Employee::find($leaveRequest->employee_id);
 
         if (!$requestingEmployee) {
-            return response()->json([
-                'message' => "Employee record not found.",
-            ], 404);
+            Helpers::result('Employee record not found', 404);
         }
 
         $requestingUser = $requestingEmployee->user;
 
         if ($currentUser->id === $requestingUser->id) {
-            return response()->json([
-                'message' => 'You cannot approve/reject your own leave request.',
-            ], 403);
+            Helpers::result('You cannot approve/reject your own leave request.', 403);
         }
 
         if ($requestingUser->hasRole('hr')) {
             if (!$currentUser->hasRole('admin')) {
-                return response()->json([
-                    'message' => 'Only Admin can approve/reject leave requests from HR.',
-                ], 403);
+                Helpers::result('Only Admin can approve/reject leave requests from HR.', 403);
             }
         } elseif ($requestingUser->hasRole('employee')) {
             if (!$currentUser->hasRole('admin') && !$currentUser->hasRole('hr')) {
-                return response()->json([
-                    'message' => 'Only Admin or HR can approve/reject leave requests from Employees.',
-                ], 403);
+                Helpers::result('Only Admin or HR can approve/reject leave requests from Employees.', 403);
             }
         }
-
         $leaveRequest->update(['status' => $status]);
-
         if ($status === 'approved') {
             $this->updateAttendanceStatus($leaveRequest->employee_id, 'onleave');
+            Helpers::result('Leave request has been approved', 200);
         }
 
-        return response()->json([
-            'message' => "Leave request has been {$status}.",
-            'leave_request' => $leaveRequest
-        ], 200);
     }
 
-    // Update the attendance status
+    /**
+     * Summary of updateAttendanceStatus
+     * @param mixed $employeeId
+     * @param mixed $status
+     * @return void
+     */
     protected function updateAttendanceStatus($employeeId, $status)
     {
         $today = now()->toDateString();
@@ -161,6 +165,11 @@ class AdminService
         }
     }
 
+    /**
+     * Summary of createProject
+     * @param mixed $data
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function createProject($data)
     {
         
@@ -168,15 +177,17 @@ class AdminService
 
         $project = Project::create($dto->toArray());
 
-        return Helpers::result("Project created successfully.", 201, [
-            'project' => $project
-        ]);
+        return Helpers::result("Project created successfully.", 201, $project);
     }
 
-    public function assignProject($data)
-    {
+    /**
+     * Summary of assignProject
+     * @param mixed $data
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function assignProject($data){
+        
         $dto = new ProjectAssignmentDTO($data);
-
         $employee = Employee::find($dto->employee_id);
 
         if ($employee->user->hasRole('hr')) {
@@ -185,22 +196,20 @@ class AdminService
 
         $assignment = ProjectAssignment::create($dto->toArray());
 
-        return Helpers::result("Project assigned successfully.", 201, [
-            'assignment' => $assignment
-        ]);
+        return Helpers::result("Project assigned successfully.", 201, $assignment);
     }
 
-    public function getAllAssignedProjects()
-    {
-        
+    /**
+     * Summary of getAllAssignedProjects
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function getAllAssignedProjects(){
         $assignedProjects = ProjectAssignment::with(['project', 'employee.user']) ->get();
 
         if ($assignedProjects->isEmpty()) {
             return Helpers::result("No projects assigned yet.", 404);
         }
 
-        return Helpers::result("All assigned projects fetched successfully.", 200, [
-            'assigned_projects' => $assignedProjects
-        ]);
+        return Helpers::result("All assigned projects fetched successfully.", 200, $assignedProjects);
     }
 }

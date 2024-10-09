@@ -2,7 +2,7 @@
 
 namespace App\Exceptions;
 
-use App\DTOs\ErrorLogDTO;
+use App\DTOs\LogsDTOs\ErrorLogDTO;
 use App\Models\ErrorLogs;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;

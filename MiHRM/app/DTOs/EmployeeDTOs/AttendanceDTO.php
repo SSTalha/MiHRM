@@ -1,7 +1,8 @@
 <?php
 
-namespace App\DTOs;
+namespace App\DTOs\EmployeeDTOs;
 
+use App\DTOs\BaseDTOs;
 use Carbon\Carbon;
 
 class AttendanceDTO extends BaseDTOs

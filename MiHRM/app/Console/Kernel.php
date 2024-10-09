@@ -24,7 +24,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
 {
     // Temporarily run the job every minute for testing purposes
-    $schedule->job(new \App\Jobs\RecordAttendanceJob())->everyMinute();
+    $schedule->job(new \App\Jobs\CronJobs\RecordAttendanceJob())->everyMinute();
 }
 
 

@@ -10,9 +10,8 @@ use App\Http\Controllers\AdminController;
 
 Route::group(['middleware' => ['api', 'log.request']], function () {
 
-    Route::post('/login', [AuthController::class, 'login']); // Login route
-    Route::post('/logout', [AuthController::class, 'logout']); // Logout route
-
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::group(['middleware' => ['jwt.auth']], function () {
 
@@ -25,27 +24,25 @@ Route::group(['middleware' => ['api', 'log.request']], function () {
             Route::post('/create-project', [AdminController::class, 'createProject']);
         });
 
-        Route::post('/leave-requests/{leaveRequestId}/{status}', [AdminController::class, 'handleLeaveRequest']);
-        Route::get('/employees-attendence', [AttendanceController::class, 'getEmployeesAttendence']);
-
             Route::group(['middleware' => ['role:hr|employee']], function () {
             Route::post('/submit/leave', [EmployeeController::class, 'submitLeaveRequest']);
             Route::post('/attendance/check-in', [AttendanceController::class, 'checkIn']);
             Route::post('/attendance/check-out', [AttendanceController::class, 'checkOut']);
         });
+        
         Route::group(['middleware' => ['role:hr']], function () {
             Route::post('/project-assignments', [AdminController::class, 'assignProject']);
         });
 
         Route::group(['middleware' => ['role:admin|hr']], function () {
             Route::get('/admin/assigned-projects', [AdminController::class, 'getAllAssignedProjects']);
+            Route::post('/leave-requests/{leaveRequestId}/{status}', [AdminController::class, 'handleLeaveRequest']);
+            Route::get('/employees-attendence', [AttendanceController::class, 'getEmployeesAttendence']);
         });
-
 
         Route::group(['middleware' => ['role:employee']], function () {
             Route::get('/employee/assigned-projects', [EmployeeController::class, 'getAssignedProjects']);
         });
-
 
     });
 });

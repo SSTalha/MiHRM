@@ -1,16 +1,22 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Employee;
 use App\Helpers\Helpers;
 
 use App\Models\Employee;
 use App\Models\LeaveRequest;
-use App\DTOs\LeaveRequestDTO;
+use App\DTOs\EmployeeDTOs\LeaveRequestDTO;
 use App\Models\ProjectAssignment;
 use Illuminate\Support\Facades\Auth;
 
 class EmployeeService
 {
+    /**
+     * submitLeaveRequest
+     * @param mixed $request
+     * @throws \Exception
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function submitLeaveRequest($request){
         $user = Auth::user();
         $employee = Employee::where('user_id', $user->id)->first();
@@ -24,6 +30,10 @@ class EmployeeService
         return Helpers::result('Leave request submitted',200,$leaveRequest);
     }
 
+    /**
+     * getAssignedProjects
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function getAssignedProjects()
     {
         
@@ -36,8 +46,6 @@ class EmployeeService
             return Helpers::result("No projects assigned to this employee.", 404);
         }
 
-        return Helpers::result("Assigned projects fetched successfully.", 200, [
-            'assigned_projects' => $assignedProjects
-        ]);
+        return Helpers::result("Assigned projects fetched successfully.", 200, $assignedProjects);
     }
 }
