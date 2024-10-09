@@ -2,13 +2,17 @@
 
 namespace App\Services;
 
-use App\Models\Department;
 use App\Models\User;
+use App\Models\Project;
 use App\Helpers\Helpers;
 use App\Models\Employee;
-use App\DTOs\EmployeeUpdateDTO;
-use App\Models\LeaveRequest;
 use App\Models\Attendance;
+use App\Models\Department;
+use App\Models\LeaveRequest;
+use App\DTOs\ProjectCreateDTO;
+use App\DTOs\EmployeeUpdateDTO;
+use App\Models\ProjectAssignment;
+use App\DTOs\ProjectAssignmentDTO;
 use Illuminate\Support\Facades\Auth;
 
 class AdminService
@@ -155,5 +159,48 @@ class AdminService
         if ($attendance) {
             $attendance->update(['status' => $status]);
         }
+    }
+
+    public function createProject($data)
+    {
+        
+        $dto = new ProjectCreateDTO($data);
+
+        $project = Project::create($dto->toArray());
+
+        return Helpers::result("Project created successfully.", 201, [
+            'project' => $project
+        ]);
+    }
+
+    public function assignProject($data)
+    {
+        $dto = new ProjectAssignmentDTO($data);
+
+        $employee = Employee::find($dto->employee_id);
+
+        if ($employee->user->hasRole('hr')) {
+            return Helpers::result("Can't assign project. The user is an HR.", 400);
+        }
+
+        $assignment = ProjectAssignment::create($dto->toArray());
+
+        return Helpers::result("Project assigned successfully.", 201, [
+            'assignment' => $assignment
+        ]);
+    }
+
+    public function getAllAssignedProjects()
+    {
+        
+        $assignedProjects = ProjectAssignment::with(['project', 'employee.user']) ->get();
+
+        if ($assignedProjects->isEmpty()) {
+            return Helpers::result("No projects assigned yet.", 404);
+        }
+
+        return Helpers::result("All assigned projects fetched successfully.", 200, [
+            'assigned_projects' => $assignedProjects
+        ]);
     }
 }

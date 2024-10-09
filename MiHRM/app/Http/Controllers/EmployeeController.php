@@ -23,4 +23,10 @@ class EmployeeController extends Controller
         return response()->json(['message' => 'Leave request submitted successfully.', 'data' => $leaveRequest], 201);
     }
 
+    public function getAssignedProjects()
+    {
+        // Delegate the task to EmployeeService
+        return $this->employeeService->getAssignedProjects();
+    }
+
 }

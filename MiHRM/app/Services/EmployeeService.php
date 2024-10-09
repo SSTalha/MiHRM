@@ -1,11 +1,12 @@
 <?php
 
 namespace App\Services;
-use App\DTOs\LeaveRequestDTO;
-
 use App\Helpers\Helpers;
+
 use App\Models\Employee;
 use App\Models\LeaveRequest;
+use App\DTOs\LeaveRequestDTO;
+use App\Models\ProjectAssignment;
 use Illuminate\Support\Facades\Auth;
 
 class EmployeeService
@@ -21,5 +22,22 @@ class EmployeeService
         $leaveRequest = LeaveRequest::create($leaveRequestDTO->toArray());
 
         return Helpers::result('Leave request submitted',200,$leaveRequest);
+    }
+
+    public function getAssignedProjects()
+    {
+        
+        $employeeId = Auth::user()->employee->id;
+        $assignedProjects = ProjectAssignment::where('employee_id', $employeeId)
+                                             ->with('project') 
+                                             ->get();
+
+        if ($assignedProjects->isEmpty()) {
+            return Helpers::result("No projects assigned to this employee.", 404);
+        }
+
+        return Helpers::result("Assigned projects fetched successfully.", 200, [
+            'assigned_projects' => $assignedProjects
+        ]);
     }
 }
