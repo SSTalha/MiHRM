@@ -17,6 +17,6 @@ class ProjectAssignmentDTO extends BaseDTOs
     {
         $this->project_id = $data['project_id'];
         $this->employee_id = $data['employee_id'];
-        $this->status = $data['status'];
+        // $this->status = $data['status'];
     }
 }
