@@ -2,20 +2,19 @@
 
 namespace App\Services\Admin;
 
-use App\Helpers\Helpers;
-
 use App\Models\User;
 use App\Models\Project;
+use App\Helpers\Helpers;
 use App\Models\Employee;
 use App\Models\Attendance;
 use App\Models\Department;
 use App\Models\LeaveRequest;
 use App\Models\ProjectAssignment;
-
+use Illuminate\Support\Facades\Auth;
 use App\DTOs\ProjectDTOs\ProjectCreateDTO;
 use App\DTOs\EmployeeDTOs\EmployeeUpdateDTO;
 use App\DTOs\ProjectDTOs\ProjectAssignmentDTO;
-use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class AdminService
 {
@@ -32,7 +31,7 @@ class AdminService
             ->get(['id', 'user_id', 'position', 'date_of_joining', 'department_id']);
 
         if ($employees->isEmpty()) {
-            return Helpers::result("No employees found for this department", 404);
+            return Helpers::result("No employees found for this department", Response::HTTP_NOT_FOUND);
         }
 
         $formattedData = $employees->map(function ($employee) {
@@ -46,7 +45,7 @@ class AdminService
             ];
         });
 
-        return Helpers::result("Employees fetched successfully", 200, [
+        return Helpers::result("Employees fetched successfully", Response::HTTP_OK, [
             'department_id' => $department_id,
             'employees' => $formattedData
         ]);
@@ -63,12 +62,12 @@ class AdminService
         $user = User::find($user_id);
 
         if (!$user) {
-            return Helpers::result("User not found", 404);
+            return Helpers::result("User not found", Response::HTTP_NOT_FOUND);
         }
         Employee::where('user_id', $user_id)->delete();
 
         $user->delete();
-        return Helpers::result("User and employee deleted successfully", 200);
+        return Helpers::result("User and employee deleted successfully", Response::HTTP_OK);
     }
 
     /**
@@ -82,14 +81,14 @@ class AdminService
         $employee = Employee::find($employee_id);
 
         if (!$employee) {
-            return Helpers::result("Employee not found", 404);
+            return Helpers::result("Employee not found", Response::HTTP_NOT_FOUND);
         }
 
         $dto = new EmployeeUpdateDTO($data);
 
         $employee->update($dto->toArray());
 
-        return Helpers::result("Employee updated successfully", 200, [
+        return Helpers::result("Employee updated successfully", Response::HTTP_OK, [
             'employee' => $employee
         ]);
     }
@@ -98,9 +97,10 @@ class AdminService
      * Summary of getAllDepartments
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function getAllDepartments(){
+    public function getAllDepartments()
+    {
         $departments = Department::all();
-        return Helpers::result('Departments retrieved successfully', 200, $departments);
+        return Helpers::result('Departments retrieved successfully', Response::HTTP_OK, $departments);
     }
 
     /**
@@ -115,36 +115,35 @@ class AdminService
         $leaveRequest = LeaveRequest::find($leaveRequestId);
 
         if (!$leaveRequest) {
-            Helpers::result('Leave request not found', 404);
+            Helpers::result('Leave request not found', Response::HTTP_NOT_FOUND);
         }
 
         $requestingEmployee = Employee::find($leaveRequest->employee_id);
 
         if (!$requestingEmployee) {
-            Helpers::result('Employee record not found', 404);
+            Helpers::result('Employee record not found', Response::HTTP_NOT_FOUND);
         }
 
         $requestingUser = $requestingEmployee->user;
 
         if ($currentUser->id === $requestingUser->id) {
-            Helpers::result('You cannot approve/reject your own leave request.', 403);
+            Helpers::result('You cannot approve/reject your own leave request.', Response::HTTP_FORBIDDEN);
         }
 
         if ($requestingUser->hasRole('hr')) {
             if (!$currentUser->hasRole('admin')) {
-                Helpers::result('Only Admin can approve/reject leave requests from HR.', 403);
+                Helpers::result('Only Admin can approve/reject leave requests from HR.', Response::HTTP_FORBIDDEN);
             }
         } elseif ($requestingUser->hasRole('employee')) {
             if (!$currentUser->hasRole('admin') && !$currentUser->hasRole('hr')) {
-                Helpers::result('Only Admin or HR can approve/reject leave requests from Employees.', 403);
+                Helpers::result('Only Admin or HR can approve/reject leave requests from Employees.', Response::HTTP_FORBIDDEN);
             }
         }
         $leaveRequest->update(['status' => $status]);
         if ($status === 'approved') {
             $this->updateAttendanceStatus($leaveRequest->employee_id, 'onleave');
-            Helpers::result('Leave request has been approved', 200);
+            Helpers::result('Leave request has been approved', Response::HTTP_OK);
         }
-
     }
 
     /**
@@ -172,12 +171,12 @@ class AdminService
      */
     public function createProject($data)
     {
-        
+
         $dto = new ProjectCreateDTO($data);
 
         $project = Project::create($dto->toArray());
 
-        return Helpers::result("Project created successfully.", 201, $project);
+        return Helpers::result("Project created successfully.", Response::HTTP_CREATED, $project);
     }
 
     /**
@@ -185,31 +184,33 @@ class AdminService
      * @param mixed $data
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function assignProject($data){
-        
+    public function assignProject($data)
+    {
+
         $dto = new ProjectAssignmentDTO($data);
         $employee = Employee::find($dto->employee_id);
 
         if ($employee->user->hasRole('hr')) {
-            return Helpers::result("Can't assign project. The user is an HR.", 400);
+            return Helpers::result("Can't assign project. The user is an HR.", Response::HTTP_BAD_REQUEST);
         }
 
         $assignment = ProjectAssignment::create($dto->toArray());
 
-        return Helpers::result("Project assigned successfully.", 201, $assignment);
+        return Helpers::result("Project assigned successfully.", Response::HTTP_CREATED, $assignment);
     }
 
     /**
      * Summary of getAllAssignedProjects
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function getAllAssignedProjects(){
-        $assignedProjects = ProjectAssignment::with(['project', 'employee.user']) ->get();
+    public function getAllAssignedProjects()
+    {
+        $assignedProjects = ProjectAssignment::with(['project', 'employee.user'])->get();
 
         if ($assignedProjects->isEmpty()) {
-            return Helpers::result("No projects assigned yet.", 404);
+            return Helpers::result("No projects assigned yet.", Response::HTTP_NOT_FOUND);
         }
 
-        return Helpers::result("All assigned projects fetched successfully.", 200, $assignedProjects);
+        return Helpers::result("All assigned projects fetched successfully.", Response::HTTP_OK, $assignedProjects);
     }
 }

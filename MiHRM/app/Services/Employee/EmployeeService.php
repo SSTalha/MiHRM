@@ -2,12 +2,12 @@
 
 namespace App\Services\Employee;
 use App\Helpers\Helpers;
-
 use App\Models\Employee;
 use App\Models\LeaveRequest;
 use App\DTOs\EmployeeDTOs\LeaveRequestDTO;
 use App\Models\ProjectAssignment;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class EmployeeService
 {
@@ -17,9 +17,11 @@ class EmployeeService
      * @throws \Exception
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function submitLeaveRequest($request){
+    public function submitLeaveRequest($request)
+    {
         $user = Auth::user();
         $employee = Employee::where('user_id', $user->id)->first();
+
         if (!$employee) {
             throw new \Exception('Employee record not found for this user.');
         }
@@ -27,7 +29,7 @@ class EmployeeService
         $leaveRequestDTO = new LeaveRequestDTO($request, $employee->id);
         $leaveRequest = LeaveRequest::create($leaveRequestDTO->toArray());
 
-        return Helpers::result('Leave request submitted',200,$leaveRequest);
+        return Helpers::result('Leave request submitted', Response::HTTP_OK, $leaveRequest);
     }
 
     /**
@@ -36,16 +38,15 @@ class EmployeeService
      */
     public function getAssignedProjects()
     {
-        
         $employeeId = Auth::user()->employee->id;
         $assignedProjects = ProjectAssignment::where('employee_id', $employeeId)
-                                             ->with('project') 
+                                             ->with('project')
                                              ->get();
 
         if ($assignedProjects->isEmpty()) {
-            return Helpers::result("No projects assigned to this employee.", 404);
+            return Helpers::result("No projects assigned to this employee.", Response::HTTP_NOT_FOUND);
         }
 
-        return Helpers::result("Assigned projects fetched successfully.", 200, $assignedProjects);
+        return Helpers::result("Assigned projects fetched successfully.", Response::HTTP_OK, $assignedProjects);
     }
 }

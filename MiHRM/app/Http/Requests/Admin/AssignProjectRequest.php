@@ -27,7 +27,6 @@ class AssignProjectRequest extends BaseRequest
         return [
             'project_id' => 'required|exists:projects,id',
             'employee_id' => 'required|exists:employees,id',
-            'status' => 'in:in_progress,pending,completed',
         ];
     }
 

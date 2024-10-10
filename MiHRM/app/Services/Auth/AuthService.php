@@ -6,12 +6,11 @@ use App\Models\User;
 use App\Models\Salary;
 use App\Helpers\Helpers;
 use App\Models\Employee;
-
 use App\DTOs\AuthDTOs\RegisterDTO;
+use Illuminate\Support\Facades\DB;
 use App\DTOs\EmployeeDTOs\SalaryCreateDTO;
 use App\DTOs\EmployeeDTOs\EmployeeCreateDTO;
-
-use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthService
 {
@@ -39,7 +38,7 @@ class AuthService
 
             DB::commit();
 
-            return Helpers::result("User, Employee, and Salary registered successfully", 200, [
+            return Helpers::result("User, Employee, and Salary registered successfully", Response::HTTP_OK, [
                 'user' => $user,
                 'employee' => $employee
             ]);
@@ -47,7 +46,7 @@ class AuthService
         catch (\Exception $e) 
         {
             DB::rollBack();
-            return Helpers::result("Registration failed: " . $e->getMessage(), 500);
+            return Helpers::result("Registration failed: " . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -58,11 +57,12 @@ class AuthService
      */
     public function login(array $credentials)
     {
-        
         $token = auth()->attempt($credentials);
+
         if (!$token) {
-            return Helpers::result("Unauthorized", 401, ['error' => 'Invalid credentials']);
+            return Helpers::result("Unauthorized", Response::HTTP_BAD_REQUEST, ['error' => 'Invalid credentials']);
         }
+
         $user = auth()->user();
         $roles = $user->getRoleNames();
         $permissions = $user->getAllPermissions()->pluck('name');
@@ -79,10 +79,10 @@ class AuthService
         ];
 
         $tokenData = Helpers::respondWithToken($token);
-        $responseData = array_merge( $tokenData,$userData);
-        return Helpers::result("User logged in successfully", 200, $responseData);
-    }
+        $responseData = array_merge($tokenData, $userData);
 
+        return Helpers::result("User logged in successfully", Response::HTTP_OK, $responseData);
+    }
 
     /**
      * Summary of logout
@@ -91,7 +91,7 @@ class AuthService
     public function logout()
     {
         auth()->logout();
-        return Helpers::result('User successfully logged out', 200);
+        return Helpers::result('User successfully logged out', Response::HTTP_OK);
     }
 
 }
