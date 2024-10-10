@@ -21,13 +21,13 @@ class EmployeeService
         $user = Auth::user();
         $employee = Employee::where('user_id', $user->id)->first();
         if (!$employee) {
-            throw new \Exception('Employee record not found for this user.');
+            return Helpers::result('Employee record not found for this user.', 404);
         }
 
         $leaveRequestDTO = new LeaveRequestDTO($request, $employee->id);
         $leaveRequest = LeaveRequest::create($leaveRequestDTO->toArray());
 
-        return Helpers::result('Leave request submitted',200,$leaveRequest);
+        return Helpers::result('Leave request submitted',200,$leaveRequestDTO);
     }
 
     /**
