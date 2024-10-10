@@ -1,6 +1,8 @@
 <?php
 
-namespace App\DTOs;
+namespace App\DTOs\LogsDTOs;
+
+use App\DTOs\BaseDTOs;
 
 class ErrorLogDTO extends BaseDTOs
 {

@@ -1,6 +1,8 @@
 <?php
 
-namespace App\DTOs;
+namespace App\DTOs\EmployeeDTOs;
+
+use App\DTOs\BaseDTOs;
 
 class LeaveRequestDTO extends BaseDTOs
 {

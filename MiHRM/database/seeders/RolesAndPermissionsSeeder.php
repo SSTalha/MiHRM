@@ -27,36 +27,28 @@ class RolesAndPermissionsSeeder extends Seeder
             'User can see Department Details',
             'User can see all users Working Hours',
             'User can create Projects',
-            
-            
-            
+
             //hr specific
             'User can see all employee',
             'User can manage employee leaves (accept/reject)',
             'User can manage employee department and position (update)',
             'Users can see its and employee Working Hours',
             'User can assign Projects to employees',
-            
+
             // Admin-hr common Permissions
             'User can view employee projects status',
             'User can see Attendance Record of all users',
             'User can view attendance records',
-            
-            
-            
+
             // employee specific Permissions
             'User can manage  ongoing/completed projects',
             'User can see Assigned Projects',
             'User can see its Working Hours',
             'User can see Attendance Record of itself',
 
-
             //employee and hr common
             'User can Check-in/Check-out',
             'User can submit Leave Applications',
-            
-            
-
         ];
 
         foreach ($permissions as $permission) {

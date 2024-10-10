@@ -1,6 +1,8 @@
 <?php
 
-namespace App\DTOs;
+namespace App\DTOs\ProjectDTOs;
+
+use App\DTOs\BaseDTOs;
 
 class ProjectAssignmentDTO extends BaseDTOs
 {

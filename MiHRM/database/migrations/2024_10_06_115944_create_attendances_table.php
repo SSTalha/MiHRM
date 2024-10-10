@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,10 +15,11 @@ return new class extends Migration
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
             $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');
-            $table->date('date');  // Date of attendance
-            $table->time('check_in_time');  // Check-in time
-            $table->time('check_out_time')->nullable();  // Check-out time (nullable)
-            $table->enum('status', ['present', 'absent', 'onleave'])->default('absent');  // Status (e.g., Present, Absent)
+            $table->date('date');  
+            $table->time('check_in_time');  
+            $table->time('check_out_time')->nullable();  
+            $table->enum('status', ['present', 'absent', 'onleave'])->default('absent');  
+            $table->string('working_hours')->default('00:00');  
             $table->timestamps();
         });
     }
