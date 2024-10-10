@@ -1,10 +1,11 @@
 <?php
 
-use App\Http\Controllers\EmployeeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\WorkingHourController;
 
 
 
@@ -42,6 +43,7 @@ Route::group(['middleware' => ['api', 'log.request']], function () {
 
         Route::group(['middleware' => ['role:employee']], function () {
             Route::get('/employee/assigned-projects', [EmployeeController::class, 'getAssignedProjects']);
+            Route::get('attendance/working-hours', [WorkingHourController::class, 'getWorkingHours']);
         });
 
     });
