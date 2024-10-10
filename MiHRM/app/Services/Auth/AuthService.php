@@ -57,31 +57,35 @@ class AuthService
      */
     public function login(array $credentials)
     {
-        $token = auth()->attempt($credentials);
+        try{
+            $token = auth()->attempt($credentials);
 
-        if (!$token) {
-            return Helpers::result("Unauthorized", Response::HTTP_BAD_REQUEST, ['error' => 'Invalid credentials']);
+            if (!$token) {
+                return Helpers::result("Unauthorized", Response::HTTP_BAD_REQUEST, ['error' => 'Invalid credentials']);
+            }
+
+            $user = auth()->user();
+            $roles = $user->getRoleNames();
+            $permissions = $user->getAllPermissions()->pluck('name');
+
+            $employee = $user->employee; 
+
+            $userData = [
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $roles->first(), 
+                'position' => $employee->position ?? null,
+                'department' => $employee->department->name ?? null, 
+                'permissions' => $permissions,
+            ];
+
+            $tokenData = Helpers::respondWithToken($token);
+            $responseData = array_merge($tokenData, $userData);
+
+            return Helpers::result("User logged in successfully", Response::HTTP_OK, $responseData);
+        }catch(\Exception $e){
+            return Helpers::result("Login failed: " . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
-        $user = auth()->user();
-        $roles = $user->getRoleNames();
-        $permissions = $user->getAllPermissions()->pluck('name');
-
-        $employee = $user->employee; 
-
-        $userData = [
-            'name' => $user->name,
-            'email' => $user->email,
-            'role' => $roles->first(), 
-            'position' => $employee->position ?? null,
-            'department' => $employee->department->name ?? null, 
-            'permissions' => $permissions,
-        ];
-
-        $tokenData = Helpers::respondWithToken($token);
-        $responseData = array_merge($tokenData, $userData);
-
-        return Helpers::result("User logged in successfully", Response::HTTP_OK, $responseData);
     }
 
     /**

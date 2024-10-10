@@ -38,7 +38,7 @@ class AttendanceController extends Controller
     {
         $date = $request->input('date');
         $status = $request->input('status');
-        return $this->attendanceService->getEmployeesAttendence($date, $status);
+        return $this->attendanceService->getEmployeesAttendance($date, $status);
 
     }
 }

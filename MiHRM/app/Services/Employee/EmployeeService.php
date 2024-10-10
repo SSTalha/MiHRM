@@ -19,18 +19,22 @@ class EmployeeService
      */
     public function submitLeaveRequest($request)
     {
-        $user = Auth::user();
-        $employee = Employee::where('user_id', $user->id)->first();
+        try{
+            $user = Auth::user();
+            $employee = Employee::where('user_id', $user->id)->first();
 
-        if (!$employee) {
-            return Helpers::result('Employee record not found for this user.', 404);
+            if (!$employee) {
+                return Helpers::result('Employee record not found for this user.', Response::HTTP_NOT_FOUND);
+            }
+
+            $leaveRequestDTO = new LeaveRequestDTO($request, $employee->id);
+            $leaveRequest = LeaveRequest::create($leaveRequestDTO->toArray());
+
+            return Helpers::result('Leave request submitted', Response::HTTP_OK, $leaveRequest);
+
+        }catch(\Exception $e){
+            return Helpers::result("Error submitting leave request: " . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
-        $leaveRequestDTO = new LeaveRequestDTO($request, $employee->id);
-        $leaveRequest = LeaveRequest::create($leaveRequestDTO->toArray());
-
-        return Helpers::result('Leave request submitted', Response::HTTP_OK, $leaveRequest);
-
     }
 
     /**
@@ -39,15 +43,18 @@ class EmployeeService
      */
     public function getAssignedProjects()
     {
-        $employeeId = Auth::user()->employee->id;
-        $assignedProjects = ProjectAssignment::where('employee_id', $employeeId)
-                                             ->with('project')
-                                             ->get();
-
-        if ($assignedProjects->isEmpty()) {
-            return Helpers::result("No projects assigned to this employee.", Response::HTTP_NOT_FOUND);
+        try{
+            $employeeId = Auth::user()->employee->id;
+            $assignedProjects = ProjectAssignment::where('employee_id', $employeeId)
+                                                ->with('project')
+                                                ->get();
+            if ($assignedProjects->isEmpty()) {
+                return Helpers::result("No projects assigned to this employee.", Response::HTTP_NOT_FOUND);
+            }
+            return Helpers::result("Assigned projects fetched successfully.", Response::HTTP_OK, $assignedProjects);
+        
+        }catch(\Exception $e){
+            return Helpers::result("Error getting assigned projects: " . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
-        return Helpers::result("Assigned projects fetched successfully.", Response::HTTP_OK, $assignedProjects);
     }
 }
