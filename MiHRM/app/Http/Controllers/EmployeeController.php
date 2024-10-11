@@ -17,9 +17,7 @@ class EmployeeController extends Controller
     public function submitLeaveRequest(LeaveRequest $request)
     {
         $data = $request->all();
-        $leaveRequest = $this->employeeService->submitLeaveRequest($data);
-
-        return response()->json(['message' => 'Leave request submitted successfully.', 'data' => $leaveRequest], 201);
+        return $this->employeeService->submitLeaveRequest($data);
     }
 
     public function getAssignedProjects()

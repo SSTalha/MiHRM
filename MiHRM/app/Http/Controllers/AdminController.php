@@ -53,7 +53,8 @@ class AdminController extends Controller
 
     public function assignProject(AssignProjectRequest $request): JsonResponse
     {
-        return $this->adminService->assignProject($request->validated());
+        $data = $request->all();
+        return $this->adminService->assignProject($data);
     }
 
     public function getAllAssignedProjects(): JsonResponse

@@ -24,8 +24,8 @@ class LoginRequest extends BaseRequest
     public function rules()
     {
         return [
-            'email' => 'required|email|exists:users,email', // Check if email exists in the users table
-            'password' => 'required|string|min:6', // Password should be a minimum of 6 characters
+            'email' => 'required|email|exists:users,email',
+            'password' => 'required|string|min:6',
         ];
     }
 

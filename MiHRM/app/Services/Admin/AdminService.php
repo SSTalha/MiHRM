@@ -218,19 +218,28 @@ class AdminService
     {
         try {
             $dto = new ProjectAssignmentDTO($data);
-            $employee = Employee::find($dto->employee_id);
-
-            if ($employee->user->hasRole('hr')) {
-                return Helpers::result("Can't assign project. The user is an HR.", Response::HTTP_BAD_REQUEST);
+    
+            foreach ($dto->employee_ids as $employee_id) {
+                $employee = Employee::find($employee_id);
+    
+                if (!$employee) {
+                    continue;
+                }
+                if ($employee->user->hasRole('hr')) {
+                    return Helpers::result("Can't assign project. The user is an HR.", Response::HTTP_BAD_REQUEST);
+                }
+                $assignment = ProjectAssignment::create([
+                    'employee_id' => $employee_id,
+                    'project_id' => $dto->project_id
+                ]);
             }
-
-            $assignment = ProjectAssignment::create($dto->toArray());
-
-            return Helpers::result("Project assigned successfully.", Response::HTTP_CREATED, $assignment);
+    
+            return Helpers::result("Project assigned successfully to all employees.", Response::HTTP_CREATED);
         } catch (\Exception $e) {
             return Helpers::result("An error occurred while assigning the project: " . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+    
 
     /**
      * Summary of getAllAssignedProjects
