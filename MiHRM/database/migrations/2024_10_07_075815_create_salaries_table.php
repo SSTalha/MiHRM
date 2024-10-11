@@ -16,9 +16,8 @@ return new class extends Migration
         Schema::create('salaries', function (Blueprint $table) {
             $table->id();
             $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');
-            $table->integer('pay');
             $table->enum('status', ['unpaid', 'paid'])->default('unpaid');
-            $table->date('paid_date')->nullable();
+            $table->date('paid_date')->nullable();  
             $table->timestamps();
         });
     }

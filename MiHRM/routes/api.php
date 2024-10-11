@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\SalaryController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\WorkingHourController;
@@ -15,8 +16,9 @@ Route::group(['middleware' => ['api', 'log.request','log.activity']], function (
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::group(['middleware' => ['jwt.auth']], function () {
-
-        Route::group(['middleware' => ['role:admin']], function () {
+    Route::get('/salary/{employeeId}', [SalaryController::class, 'getSalaryDetails']);
+    
+    Route::group(['middleware' => ['role:admin']], function () {
             Route::post('/register', [AuthController::class, 'register']);
             Route::get('/get-employees/department/{department_id}', [AdminController::class, 'getEmployeesByDepartment']);
             Route::delete('/delete-employees/{user_id}', [AdminController::class, 'deleteUser']);
@@ -35,11 +37,12 @@ Route::group(['middleware' => ['api', 'log.request','log.activity']], function (
             Route::post('/project-assignments', [AdminController::class, 'assignProject']);
             Route::get('/projects-all', [AdminController::class, 'showProjects']);
         });
-
+        
         Route::group(['middleware' => ['role:admin|hr']], function () {
             Route::get('/get-assigned-projects', [AdminController::class, 'getAllAssignedProjects']);
             Route::post('/leave-requests/{leaveRequestId}/{status}', [AdminController::class, 'handleLeaveRequest']);
             Route::get('/get-employees-attendence', [AttendanceController::class, 'getEmployeesAttendence']);
+            Route::get('/salaries', [SalaryController::class, 'getAllSalaries']);
         });
 
         Route::group(['middleware' => ['role:employee']], function () {

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Salary;
 use Illuminate\Database\Eloquent\Model;
 
 class Employee extends Model
@@ -10,6 +11,7 @@ class Employee extends Model
         'user_id',
         'position',
         'department_id',  // Foreign key to the Department table
+        'pay', 
         'date_of_joining',
     ];
 

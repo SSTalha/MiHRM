@@ -25,9 +25,9 @@ class WorkingHourRequest extends BaseRequest
     public function rules()
     {
         return [
-            'employee_id' => 'required|integer|exists:employees,id',
-            'date' => 'required|date',  // Start date
-            'frequency' => 'required|in:weekly,monthly',  // 'weekly' or 'monthly'
+            'employee_id' => 'integer|exists:employees,id',
+            'date' => 'required|date',  
+            'frequency' => 'required|in:weekly,monthly',  
         ];
     }
 
@@ -39,7 +39,6 @@ class WorkingHourRequest extends BaseRequest
     public function messages()
     {
         return [
-            'employee_id.required' => 'The employee ID is required.',
             'employee_id.exists' => 'The employee does not exist.',
             'date.required' => 'The start date is required.',
             'frequency.required' => 'The frequency (weekly or monthly) is required.',

@@ -26,7 +26,8 @@ class AssignProjectRequest extends BaseRequest
     {
         return [
             'project_id' => 'required|exists:projects,id',
-            'employee_id' => 'required|exists:employees,id',
+            'employee_ids' => 'required|array',
+            'employee_ids.*' => 'exists:employees,id',
         ];
     }
 
@@ -40,8 +41,8 @@ class AssignProjectRequest extends BaseRequest
         return [
             'project_id.required' => 'The project ID is required.',
             'project_id.exists' => 'The selected project does not exist.',
-            'employee_id.required' => 'The employee ID is required.',
-            'employee_id.exists' => 'The selected employee does not exist.',
+            'employee_ids.required' => 'The employee IDs are required.',
+            'employee_ids.exists' => 'The selected employee does not exist.',
            
         ];
     }

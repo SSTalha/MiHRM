@@ -5,70 +5,66 @@ namespace App\Services\Employee;
 use Carbon\Carbon;
 use App\Helpers\Helpers;
 use App\Models\Attendance;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Auth; // Import Auth facade
 
 class WorkingHourService
 {
     /**
      * Get total working hours for an employee based on the date and frequency.
      *
-     * @param int $employeeId
+     * @param int|null $employeeId
      * @param string|null $date
      * @param string|null $frequency
      * @return array
      */
-    public function calculateWorkingHours(int $employeeId, string $date = null, string $frequency = null)
+    public function calculateWorkingHours(?int $employeeId = null, string $date = null, string $frequency = null)
     {
-        try {
-            if (!$employeeId) {
-                $employeeId = auth()->user()->employee_id ?? auth()->user()->employee->id; 
-            }
-            $startDate = $this->getStartDate($date, $frequency);
-            $endDate = $this->getEndDate($date, $frequency);
+        // Check if the employeeId is provided. If not, use the logged-in user's employee_id.
+        if (!$employeeId) {
+            $employeeId = Auth::user()->employee_id ?? Auth::user()->employee->id; 
+        }
 
-            if (!$startDate || !$endDate) {
-                return Helpers::result("Invalid date or frequency provided.", Response::HTTP_BAD_REQUEST);
-            }
+        $startDate = $this->getStartDate($date, $frequency);
+        $endDate = $this->getEndDate($date, $frequency);
 
-            $attendances = Attendance::where('employee_id', $employeeId)
-                ->whereBetween('date', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')])
-                ->get();
+        if (!$startDate || !$endDate) {
+            return ['error' => "Invalid date or frequency provided."];
+        }
 
-            $dailyWorkingHours = [];
-            $totalSeconds = 0;
-            $currentDate = $startDate->copy();
+        $attendances = Attendance::where('employee_id', $employeeId)
+            ->whereBetween('date', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')])
+            ->get();
 
-            while ($currentDate->lte($endDate)) {
-                $dateKey = $currentDate->format('Y-m-d');
-                $dailyWorkingHours[$dateKey] = [
-                    'date' => $dateKey,
-                    'working_hours' => $this->calculateDailyHours($attendances, $dateKey, $totalSeconds),
-                ];
-
-                $currentDate->addDay();
-            }
-
-            $formattedTotalHours = gmdate('H:i:s', $totalSeconds);
-            $data = [
-                'employee_id' => $employeeId,
-                'start_date' => $startDate->format('Y-m-d'),
-                'end_date' => $endDate->format('Y-m-d'),
-                'total_working_hours' => $formattedTotalHours,
-                'daily_working_hours' => array_values($dailyWorkingHours)
+        $dailyWorkingHours = [];
+        $totalSeconds = 0;
+        
+        $currentDate = $startDate->copy();
+        while ($currentDate->lte($endDate)) {
+            $dateKey = $currentDate->format('Y-m-d');
+            $dailyWorkingHours[$dateKey] = [
+                'date' => $dateKey,
+                'working_hours' => $this->calculateDailyHours($attendances, $dateKey, $totalSeconds),
             ];
 
-            return Helpers::result("Working hours retrieved successfully", Response::HTTP_OK, $data);
-        } catch (\Exception $e) {
-            return Helpers::result("An error occurred while calculating working hours: " . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+            $currentDate->addDay();
         }
+
+        $formattedTotalHours = gmdate('H:i:s', $totalSeconds);
+
+        // Prepare the response data
+        $data = [
+            'employee_id' => $employeeId,
+            'start_date' => $startDate->format('Y-m-d'),
+            'end_date' => $endDate->format('Y-m-d'),
+            'total_working_hours' => $formattedTotalHours,
+            'daily_working_hours' => array_values($dailyWorkingHours),
+        ];
+
+        return Helpers::result("Working hours retrieved successfully", 200, $data);
     }
-   
-    /**
-     * Summary of getStartDate
-     * @param mixed $date
-     * @param mixed $frequency
-     * @return Carbon|null
-     */
+
+    // ######################## Private methods #################
+
     private function getStartDate(?string $date, ?string $frequency)
     {
         if ($frequency === 'weekly') {
@@ -81,13 +77,6 @@ class WorkingHourService
         return null;
     }
 
-
-    /**
-     * Summary of getEndDate
-     * @param mixed $date
-     * @param mixed $frequency
-     * @return Carbon|null
-     */
     private function getEndDate(?string $date, ?string $frequency)
     {
         if ($frequency === 'weekly') {
@@ -100,13 +89,6 @@ class WorkingHourService
         return null;
     }
 
-    /**
-     * Summary of calculateDailyHours
-     * @param mixed $attendances
-     * @param string $dateKey
-     * @param mixed $totalSeconds
-     * @return string
-     */
     private function calculateDailyHours($attendances, string $dateKey, &$totalSeconds)
     {
         foreach ($attendances as $attendance) {
