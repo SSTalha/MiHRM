@@ -1,8 +1,6 @@
 <?php
 
-namespace App\DTOs\ProjectDTOs;
-
-use App\DTOs\BaseDTOs;
+namespace App\DTOs;
 
 class ProjectAssignmentDTO extends BaseDTOs
 {
@@ -17,6 +15,6 @@ class ProjectAssignmentDTO extends BaseDTOs
     {
         $this->project_id = $data['project_id'];
         $this->employee_id = $data['employee_id'];
-        // $this->status = $data['status'];
+        $this->status = $data['status'];
     }
 }

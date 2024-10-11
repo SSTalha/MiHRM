@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Services\Employee\AttendanceService;
+use App\Services\AttendanceService;
 
 class AttendanceController extends Controller
 {
@@ -34,11 +33,9 @@ class AttendanceController extends Controller
     }
 
         // ######## Get Attendance Record ########
-        public function getEmployeesAttendence(Request $request)
+        public function getAbsentEmployees()
     {
-        $date = $request->input('date');
-        $status = $request->input('status');
-        return $this->attendanceService->getEmployeesAttendance($date, $status);
+        return $this->attendanceService->getAbsentEmployees();
 
     }
 }

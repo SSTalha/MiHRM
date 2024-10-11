@@ -1,8 +1,8 @@
 <?php
 
-namespace App\DTOs\AuthDTOs;
+namespace App\DTOs;
 
-use App\DTOs\BaseDTOs;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Mockery\Generator\StringManipulation\Pass\Pass;
 

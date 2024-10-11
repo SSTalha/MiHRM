@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Auth\RegisterRequest;
-use App\Http\Requests\Auth\LoginRequest;
-use App\Services\Auth\AuthService;
+use App\Http\Requests\RegisterRequest; // Import your RegisterRequest
+use App\Http\Requests\LoginRequest; // Import a LoginRequest if you have one
+use App\Services\AuthService; // Import your AuthService
 use Illuminate\Http\JsonResponse;
 
 class AuthController extends Controller
 {
-    protected $authService;
+    protected $authService; // Service for handling authentication
 
+    // Constructor to inject AuthService
     public function __construct(AuthService $authService)
     {
-        $this->authService = $authService;
+        $this->authService = $authService; // Assigning the injected service
     }
 
     /**
@@ -24,6 +25,7 @@ class AuthController extends Controller
      */
     public function register(RegisterRequest $request): JsonResponse
     {
+        // Pass validated data to the service method
         return $this->authService->register($request->validated());
     }
 
