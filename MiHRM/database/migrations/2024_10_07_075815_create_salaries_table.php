@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');
             $table->integer('pay');
             $table->enum('status', ['unpaid', 'paid'])->default('unpaid');
-            $table->date('paid_date')->nullable();
+            $table->date('paid_date');
             $table->timestamps();
         });
     }
