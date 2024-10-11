@@ -94,7 +94,6 @@ class AdminService
             if (!$employee) {
                 return Helpers::result("Employee not found", Response::HTTP_NOT_FOUND);
             }
-
             $dto = new EmployeeUpdateDTO($data);
             $employee->update($dto->toArray());
 
