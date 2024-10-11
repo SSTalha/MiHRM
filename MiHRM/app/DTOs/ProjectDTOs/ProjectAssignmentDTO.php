@@ -7,8 +7,7 @@ use App\DTOs\BaseDTOs;
 class ProjectAssignmentDTO extends BaseDTOs
 {
     public int $project_id;
-    public int $employee_id;
-    public string $status;
+    public mixed $employee_ids;
 
     /**
      * Construct the DTO with the input request.
@@ -16,7 +15,6 @@ class ProjectAssignmentDTO extends BaseDTOs
     public function __construct(mixed $data)
     {
         $this->project_id = $data['project_id'];
-        $this->employee_id = $data['employee_id'];
-        // $this->status = $data['status'];
+        $this->employee_ids = is_array($data['employee_ids']) ? $data['employee_ids'] : [$data['employee_ids']];
     }
 }
