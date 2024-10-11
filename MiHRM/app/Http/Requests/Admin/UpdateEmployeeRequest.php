@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Admin;
 
-use Illuminate\Foundation\Http\FormRequest;
-
+use App\Http\Requests\BaseRequest;
 class UpdateEmployeeRequest extends BaseRequest
 {
     /**
@@ -13,7 +12,7 @@ class UpdateEmployeeRequest extends BaseRequest
      */
     public function authorize()
     {
-        return true; // Authorize the request for admin users
+        return true;
     }
 
     /**
@@ -24,8 +23,8 @@ class UpdateEmployeeRequest extends BaseRequest
     public function rules()
     {
         return [
-            'department_id' => 'required|exists:departments,id', // Check if department_id exists in the departments table
-            'position' => 'required|string|max:255', // Position is a required string field with max 255 characters
+            'department_id' => 'required|exists:departments,id',
+            'position' => 'required|string|max:255',
         ];
     }
 

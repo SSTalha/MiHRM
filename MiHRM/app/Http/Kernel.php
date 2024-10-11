@@ -44,6 +44,7 @@ class Kernel extends HttpKernel
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\LogRequest::class,
+            \App\Http\Middleware\LogActivity::class,
         ],
     ];
 
@@ -67,6 +68,7 @@ class Kernel extends HttpKernel
         'jwt.auth' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class,
         'jwt.refresh' => \Tymon\JWTAuth\Http\Middleware\RefreshToken::class,
         'log.request' => \App\Http\Middleware\LogRequest::class,
+        'log.activity' => \App\Http\Middleware\LogActivity::class,
         'role' => \App\Http\Middleware\RoleMiddleware::class,
     ];
 }

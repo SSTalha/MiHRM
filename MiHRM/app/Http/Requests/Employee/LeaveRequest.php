@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Employee;
 
-use Illuminate\Foundation\Http\FormRequest;
-
+use App\Http\Requests\BaseRequest;
 class LeaveRequest extends BaseRequest
 {
     /**

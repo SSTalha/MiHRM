@@ -1,7 +1,8 @@
 <?php
 
-namespace App\DTOs;
+namespace App\DTOs\EmployeeDTOs;
 
+use App\DTOs\BaseDTOs;
 class EmployeeUpdateDTO extends BaseDTOs
 {
     public int $department_id;
