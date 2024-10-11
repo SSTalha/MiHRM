@@ -25,9 +25,9 @@ class WorkingHourRequest extends BaseRequest
     public function rules()
     {
         return [
-            'employee_id' => 'required|integer|exists:employees,id',
-            'date' => 'required|date',  // Start date
-            'frequency' => 'required|in:weekly,monthly',  // 'weekly' or 'monthly'
+            'employee_id' => 'integer|exists:employees,id',
+            'date' => 'required|date',  
+            'frequency' => 'required|in:weekly,monthly',  
         ];
     }
 

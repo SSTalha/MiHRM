@@ -16,39 +16,38 @@ class AuthService
 {
 
     /**
-     * Summary of register
-     * @param mixed $request
-     * @return mixed|\Illuminate\Http\JsonResponse
-     */
-    public function register($request)
+ * Summary of register
+ * @param mixed $request
+ * @return mixed|\Illuminate\Http\JsonResponse
+ */
+public function register($request)
+{
+    
+    try {
+        // Create user from DTO
+        $dto = new RegisterDTO($request);
+        $user = User::create($dto->toArray());
+
+        // Assign the role to the user
+        $user->assignRole($dto->role);
+
+        // Create employee record
+        $employeeDto = new EmployeeCreateDTO($request, $user->id);
+        $employee = Employee::create($employeeDto->toArray());
+
+
+        return Helpers::result("User, Employee registered successfully", Response::HTTP_OK, [
+            'user' => $user,
+            'employee' => $employee
+        ]);
+    } 
+    catch (\Exception $e) 
     {
-        DB::beginTransaction();
-
-        try {
-            $dto = new RegisterDTO($request);
-            $user = User::create($dto->toArray());
-
-            $user->assignRole($dto->role);
-
-            $employeeDto = new EmployeeCreateDTO($request, $user->id);
-            $employee = Employee::create($employeeDto->toArray());
-
-            $salaryDto = new SalaryCreateDTO($request, $employee->id);  
-            Salary::create($salaryDto->toArray());
-
-            DB::commit();
-
-            return Helpers::result("User, Employee, and Salary registered successfully", Response::HTTP_OK, [
-                'user' => $user,
-                'employee' => $employee
-            ]);
-        } 
-        catch (\Exception $e) 
-        {
-            DB::rollBack();
-            return Helpers::result("Registration failed: " . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        DB::rollBack();
+        return Helpers::result("Registration failed: " . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
     }
+}
+
 
     /**
      * Summary of login
