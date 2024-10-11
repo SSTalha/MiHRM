@@ -259,4 +259,15 @@ class AdminService
             return Helpers::result("An error occurred while fetching assigned projects: " . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    public function getAllProjects()
+    {
+        
+        $projects = Project::all();
+
+        if ($projects->isEmpty()) {
+            return Helpers::result("No projects available.", Response::HTTP_NOT_FOUND);
+        }
+        return Helpers::result("All projects fetched successfully.", Response::HTTP_OK, $projects);
+    }
 }
