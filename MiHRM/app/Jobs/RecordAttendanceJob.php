@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Jobs\CronJobs;
+namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

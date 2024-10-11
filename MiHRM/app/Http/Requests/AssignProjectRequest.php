@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Admin;
+namespace App\Http\Requests;
 
-use App\Http\Requests\BaseRequest;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
-class AssignProjectRequest extends BaseRequest
+class AssignProjectRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,6 +28,7 @@ class AssignProjectRequest extends BaseRequest
         return [
             'project_id' => 'required|exists:projects,id',
             'employee_id' => 'required|exists:employees,id',
+            'status' => 'in:in_progress,pending,completed',
         ];
     }
 

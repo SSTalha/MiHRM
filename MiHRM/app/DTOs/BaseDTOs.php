@@ -6,8 +6,12 @@ class BaseDTOs
 
 {
 
-    public function toArray(){
+    public function toArray()
+
+    {
+
         return (array) $this;
+
     }
 
 }

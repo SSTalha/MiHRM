@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Admin;
+namespace App\Http\Requests;
 
-use App\Http\Requests\BaseRequest;
-class CreateProjectRequest extends BaseRequest
+use Illuminate\Foundation\Http\FormRequest;
+
+class CreateProjectRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -12,6 +13,7 @@ class CreateProjectRequest extends BaseRequest
      */
     public function authorize()
     {
+        // Only admins are authorized to create projects
         return true;
     }
 

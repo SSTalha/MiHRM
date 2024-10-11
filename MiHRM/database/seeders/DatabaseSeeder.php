@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use Database\Seeders\AttendanceSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -19,7 +18,6 @@ class DatabaseSeeder extends Seeder
            AdminSeeder::class,
            RolesAndPermissionsSeeder::class,
            DepartmentSeeder::class,
-           AttendanceSeeder::class,
         ]);
     }
 }

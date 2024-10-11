@@ -2,7 +2,7 @@
 
 namespace App\Console;
 
-use App\Jobs\CronJobs\HandleLeave;
+use App\Jobs\RecordAttendanceJob;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -23,9 +23,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
 {
-    $schedule->job(new \App\Jobs\CronJobs\RecordAttendanceJob())->everyMinute();
-    $schedule->job(new HandleLeave())->everyMinute();
-    
+    // Temporarily run the job every minute for testing purposes
+    $schedule->job(new \App\Jobs\RecordAttendanceJob())->daily();
 }
 
 
