@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('position');
             $table->foreignId('department_id')->constrained('departments')->onDelete('cascade');
+            $table->integer('pay');
             $table->date('date_of_joining');
             $table->timestamps();
         });
