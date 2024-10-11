@@ -20,6 +20,9 @@ class WorkingHourService
     public function calculateWorkingHours(int $employeeId, string $date = null, string $frequency = null)
     {
         try {
+            if (!$employeeId) {
+                $employeeId = auth()->user()->employee_id ?? auth()->user()->employee->id; 
+            }
             $startDate = $this->getStartDate($date, $frequency);
             $endDate = $this->getEndDate($date, $frequency);
 
