@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Employee;
 
+use App\Http\Controllers\Controller;
 use App\Services\Employee\EmployeeService;
 use App\Http\Requests\Employee\LeaveRequest;
-use App\Http\Requests\UpdateProjectStatusRequest;
+use App\Http\Requests\Employee\UpdateProjectStatusRequest;
 use Illuminate\Http\JsonResponse;
 
 

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Employee;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use App\Services\Employee\WorkingHourService;
 use App\Http\Requests\Employee\WorkingHourRequest;

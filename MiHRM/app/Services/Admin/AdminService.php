@@ -262,7 +262,6 @@ class AdminService
 
     public function getAllProjects()
     {
-        
         $projects = Project::all();
 
         if ($projects->isEmpty()) {

@@ -1,12 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\SalaryController;
-use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\AttendanceController;
-use App\Http\Controllers\WorkingHourController;
+use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Employee\SalaryController;
+use App\Http\Controllers\Employee\EmployeeController;
+use App\Http\Controllers\Employee\AttendanceController;
+use App\Http\Controllers\Employee\WorkingHourController;
 
 
 
@@ -35,7 +35,7 @@ Route::group(['middleware' => ['api', 'log.request','log.activity']], function (
         
         Route::group(['middleware' => ['role:hr']], function () {
             Route::post('/project-assignments', [AdminController::class, 'assignProject']);
-            Route::get('/projects-all', [AdminController::class, 'showProjects']);
+            Route::get('/projects-all', [AdminController::class, 'getAllProjects']);
         });
         
         Route::group(['middleware' => ['role:admin|hr']], function () {

@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Services\Admin\AdminService;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\Admin\AssignProjectRequest;
 use App\Http\Requests\Admin\CreateProjectRequest;
 use App\Http\Requests\Admin\UpdateEmployeeRequest;
-use Illuminate\Http\Response;
 
 class AdminController extends Controller
 {
@@ -61,7 +61,7 @@ class AdminController extends Controller
     {
         return $this->adminService->getAllAssignedProjects();
     }
-    public function showProjects()
+    public function getAllProjects()
     {
         return $this->adminService->getAllProjects();
     }

@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
            AdminSeeder::class,
            RolesAndPermissionsSeeder::class,
            DepartmentSeeder::class,
-           AttendanceSeeder::class,
+        //    AttendanceSeeder::class,
         ]);
     }
 }
