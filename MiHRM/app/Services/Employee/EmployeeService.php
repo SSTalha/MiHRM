@@ -57,4 +57,23 @@ class EmployeeService
             return Helpers::result("Error getting assigned projects: " . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    public function updateProjectStatus(array $validatedData)
+    {
+        
+        $employeeId = Auth::user()->employee->id;
+
+        $projectAssignment = ProjectAssignment::where('project_id', $validatedData['project_id'])
+                            ->where('employee_id', $employeeId)
+                            ->first();
+
+        if (!$projectAssignment) {
+            return Helpers::result("Project assignment not found.", Response::HTTP_NOT_FOUND);
+        }
+
+        $projectAssignment->status = $validatedData['status'];
+        $projectAssignment->save();
+
+        return Helpers::result("Project status updated successfully.", Response::HTTP_OK, $projectAssignment);
+    }
 }

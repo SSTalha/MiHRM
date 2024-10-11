@@ -33,6 +33,7 @@ Route::group(['middleware' => ['api', 'log.request','log.activity']], function (
         
         Route::group(['middleware' => ['role:hr']], function () {
             Route::post('/project-assignments', [AdminController::class, 'assignProject']);
+            Route::get('/projects-all', [AdminController::class, 'showProjects']);
         });
 
         Route::group(['middleware' => ['role:admin|hr']], function () {
@@ -43,7 +44,8 @@ Route::group(['middleware' => ['api', 'log.request','log.activity']], function (
 
         Route::group(['middleware' => ['role:employee']], function () {
             Route::get('/get-employee/assigned-projects', [EmployeeController::class, 'getAssignedProjects']);
-            Route::get('/get-employee/working-hours', [WorkingHourController::class, 'getWorkingHours']);
+            Route::get('/get-employee/working-hours', [WorkingHourController::class, 'getWorkingHours']); 
+            Route::post('/projects/update-status', [EmployeeController::class, 'updateProjectStatus']);
         });
 
     });

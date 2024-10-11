@@ -60,4 +60,8 @@ class AdminController extends Controller
     {
         return $this->adminService->getAllAssignedProjects();
     }
+    public function showProjects()
+    {
+        return $this->adminService->getAllProjects();
+    }
 }
