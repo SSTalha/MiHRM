@@ -39,7 +39,6 @@ class WorkingHourRequest extends BaseRequest
     public function messages()
     {
         return [
-            'employee_id.required' => 'The employee ID is required.',
             'employee_id.exists' => 'The employee does not exist.',
             'date.required' => 'The start date is required.',
             'frequency.required' => 'The frequency (weekly or monthly) is required.',
