@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\LeaveRequest;
-use App\Services\EmployeeService;
-use Illuminate\Http\Request;
+use App\Services\Employee\EmployeeService;
+use App\Http\Requests\Employee\LeaveRequest;
+use App\Http\Requests\UpdateProjectStatusRequest;
+use Illuminate\Http\JsonResponse;
+
 
 class EmployeeController extends Controller
 {
@@ -25,8 +27,12 @@ class EmployeeController extends Controller
 
     public function getAssignedProjects()
     {
-        // Delegate the task to EmployeeService
         return $this->employeeService->getAssignedProjects();
+    }
+    public function updateProjectStatus(UpdateProjectStatusRequest $request): JsonResponse
+    {
+       
+        return $this->employeeService->updateProjectStatus($request->validated());
     }
 
 }

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\DTOs;
+namespace App\DTOs\ProjectDTOs;
 
+use App\DTOs\BaseDTOs;
 class ProjectCreateDTO extends BaseDTOs
 {
     public string $title;
