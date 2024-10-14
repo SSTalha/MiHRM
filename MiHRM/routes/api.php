@@ -8,34 +8,41 @@ use App\Http\Controllers\Employee\EmployeeController;
 use App\Http\Controllers\Employee\AttendanceController;
 use App\Http\Controllers\Employee\WorkingHourController;
 use App\Http\Controllers\Auth\PasswordResetController;
+use App\Http\Controllers\Employee\LeaveRequestController;
+
 
 
 
 Route::group(['middleware' => ['api', 'log.request','log.activity']], function () {
-
+    
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/get-leave-requests', [LeaveRequestController::class, 'getLeaveRequest']);
+    Route::get('/get-employee/working-hours', [WorkingHourController::class, 'getWorkingHours']); 
 
     Route::post('/password-setup', [EmployeeController::class , 'passwordSetup']);
     Route::post('/password-reset', [PasswordResetController::class, 'passwordReset']);
     Route::post('/password-reset-link', [PasswordResetController::class, 'sendPasswordResetLink']);
 
     Route::group(['middleware' => ['jwt.auth']], function () {
-    Route::get('/salary/{employeeId}', [SalaryController::class, 'getSalaryDetails']);
-    
-    Route::group(['middleware' => ['role:admin']], function () {
+        
+        Route::group(['middleware' => ['role:admin']], function () {
             Route::post('/register', [AuthController::class, 'register']);
             Route::get('/get-employees/department/{department_id}', [AdminController::class, 'getEmployeesByDepartment']);
             Route::delete('/delete-employees/{user_id}', [AdminController::class, 'deleteUser']);
             Route::put('/update-employees/update/{employee_id}', [AdminController::class, 'updateEmployee']);
             Route::get('/get/departments', [AdminController::class, 'getAllDepartments']);
             Route::post('/create-project', [AdminController::class, 'createProject']);
+            Route::put('/update-project/{id}', [AdminController::class, 'updateProject']);
+            Route::delete('/delete-project/{id}', [AdminController::class, 'deleteProject']);
+            Route::post('/add-department', [AdminController::class, 'addDepartment']);
         });
-
-            Route::group(['middleware' => ['role:hr|employee']], function () {
+        
+        Route::group(['middleware' => ['role:hr|employee']], function () {
             Route::post('/submit/leave', [EmployeeController::class, 'submitLeaveRequest']);
             Route::post('/attendance/check-in', [AttendanceController::class, 'checkIn']);
             Route::post('/attendance/check-out', [AttendanceController::class, 'checkOut']);
+            Route::get('/salary-invoice', [SalaryController::class, 'getSalaryDetails']);
         });
         
         Route::group(['middleware' => ['role:hr']], function () {
@@ -53,10 +60,8 @@ Route::group(['middleware' => ['api', 'log.request','log.activity']], function (
             Route::get('/get-employees-attendence', [AttendanceController::class, 'getEmployeesAttendence']);
         });
 
-
         Route::group(['middleware' => ['role:employee']], function () {
             Route::get('/get-employee/assigned-projects', [EmployeeController::class, 'getAssignedProjects']);
-            Route::get('/get-employee/working-hours', [WorkingHourController::class, 'getWorkingHours']); 
             Route::post('/projects/update-status', [EmployeeController::class, 'updateProjectStatus']);
         });
 

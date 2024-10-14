@@ -228,6 +228,34 @@ class AdminService
     }
 
     /**
+     * Summary of updateProject
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function updateProject($request,$id){
+        try {
+             $project = Project::findOrFail($id);
+        $project->update($request->only(['title', 'description']));
+        return Helpers::result("Project Updated Successfully",Response::HTTP_CREATED,$project);
+        } catch (\Exception $e) {
+            return Helpers::result("Failed to update project".$e->getMessage(),Response::HTTP_BAD_REQUEST);
+        }
+    }
+    /**
+     * Summary of deleteProject
+     * @return mixed|\Illuminate\Http\JsonResponse
+     *
+
+     */
+    public function deleteProject($id){
+        try {
+             $project=Project::findorFail($id);
+             $project->delete();
+             return Helpers::result("Project deleted successfully",Response::HTTP_OK);
+        } catch (\Exception $e) {
+           return Helpers::result("Project deleted failed",Response::HTTP_BAD_REQUEST);
+        }
+    }
+    /**
      * Summary of assignProject
      * @param mixed $data
      * @return mixed|\Illuminate\Http\JsonResponse
@@ -278,10 +306,6 @@ class AdminService
         }
     }
 
-    /**
-     * Summary of getAllProjects
-     * @return mixed|\Illuminate\Http\JsonResponse
-     */
     public function getAllProjects()
     {
         $projects = Project::all();
@@ -290,5 +314,21 @@ class AdminService
             return Helpers::result("No projects available.", Response::HTTP_NOT_FOUND);
         }
         return Helpers::result("All projects fetched successfully.", Response::HTTP_OK, $projects);
+    }
+
+    /*
+    * Summary of addDepartment
+    * @return mixed
+    */
+    public function addDepartment($request){
+        try {
+            $department= Department::create([
+        'name' => $request->get('name'),
+        ]);
+
+        return Helpers::result("Department added successfully.", Response::HTTP_OK, $department);
+        } catch (\Exception $e) {
+           return Helpers::result("Department added failed.".$e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }
