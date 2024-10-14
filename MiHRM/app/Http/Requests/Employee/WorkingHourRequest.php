@@ -27,7 +27,7 @@ class WorkingHourRequest extends BaseRequest
         return [
             'employee_id' => 'integer|exists:employees,id',
             'date' => 'required|date',  
-            'frequency' => 'required|in:weekly,monthly',  
+            'frequency' => 'required|in:weekly,monthly,daily',  
         ];
     }
 

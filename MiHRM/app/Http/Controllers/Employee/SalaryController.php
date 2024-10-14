@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Employee;
 
+use App\Http\Controllers\Controller;
 use App\Services\Employee\SalaryService;
-use Illuminate\Http\Request;
 
 class SalaryController extends Controller
 {
@@ -14,9 +14,9 @@ class SalaryController extends Controller
         $this->salaryService = $salaryService;
     }
 
-    public function getSalaryDetails($employeeId)
+    public function getSalaryDetails()
     {
-        return $this->salaryService->getSalaryDetails($employeeId);
+        return $this->salaryService->getSalaryDetails();
     }
 
     public function getAllSalaries()

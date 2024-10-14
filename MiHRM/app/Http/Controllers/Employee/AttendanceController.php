@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Employee;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\Employee\AttendanceService;
 
@@ -14,7 +15,6 @@ class AttendanceController extends Controller
         $this->attendanceService = $attendanceService;
     }
 
-    // ######## Check-in ########
     public function checkIn()
     {
         $employee = auth()->user()->employee; 
@@ -22,8 +22,6 @@ class AttendanceController extends Controller
         return $this->attendanceService->checkIn($employee);
 
     }
-
-        // ######## Check-out ########
 
     public function checkOut()
     {
@@ -33,7 +31,6 @@ class AttendanceController extends Controller
 
     }
 
-        // ######## Get Attendance Record ########
         public function getEmployeesAttendence(Request $request)
     {
         $date = $request->input('date');

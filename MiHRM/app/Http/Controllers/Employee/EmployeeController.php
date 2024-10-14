@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Employee;
 
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\PasswordRequest;
 use App\Services\Employee\EmployeeService;
 use App\Http\Requests\Employee\LeaveRequest;
-use App\Http\Requests\UpdateProjectStatusRequest;
+use App\Http\Requests\Employee\UpdateProjectStatusRequest;
 use Illuminate\Http\JsonResponse;
 
 
@@ -15,6 +17,11 @@ class EmployeeController extends Controller
     public function __construct(EmployeeService $employeeService)
     {
         $this->employeeService = $employeeService;
+    }
+
+    public function passwordSetup(PasswordRequest $request){
+        $data = $request->only(['email', 'token', 'password']);
+        return $this->employeeService->passwordSetup($data);
     }
 
     public function submitLeaveRequest(LeaveRequest $request)

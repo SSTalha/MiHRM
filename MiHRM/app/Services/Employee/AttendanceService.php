@@ -80,16 +80,36 @@ class AttendanceService
      * @param mixed $status
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function getEmployeesAttendance($date = null, $status)
+    public function getEmployeesAttendance($date = null, $status = null)
     {
         try{
+            $user = auth()->user();
             $targetDate = $date ? Carbon::parse($date)->toDateString() : Carbon::today()->toDateString();
 
-            $attendanceRecords = Attendance::with(['employee.user'])
-                ->whereDate('date', $targetDate)
-                ->where('status', $status)
-                ->get();  
-        
+            if($user->hasRole('employee')){
+                $employeeId = $user->employee->id;
+
+                $attendanceRecords = Attendance::with(['employee.user'])
+                ->where('employee_id', $employeeId)
+                ->when($targetDate, function ($query, $targetDate) {
+                    return $query->whereDate('date', $targetDate);
+                })
+                ->when($status, function ($query, $status) {
+                    return $query->where('status', $status);
+                })
+                ->get();
+
+            }else{
+                $attendanceRecords = Attendance::with(['employee.user'])
+                ->when($targetDate, function ($query, $targetDate) {
+                    return $query->whereDate('date', $targetDate);
+                })
+                ->when($status, function ($query, $status) {
+                    return $query->where('status', $status);
+                })
+                ->get();
+            }
+
             $response = $attendanceRecords->map(function ($record) {
                 $employee = $record->employee;
                 $user = $employee ? $employee->user : null;
@@ -100,7 +120,6 @@ class AttendanceService
                     'status' => $record->status,
                 ];
             });
-
             return Helpers::result("Attendance records retrieved successfully", Response::HTTP_OK, $response);
         
         }catch(\Exception $e){

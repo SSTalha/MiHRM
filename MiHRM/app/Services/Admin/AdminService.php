@@ -2,6 +2,8 @@
 
 namespace App\Services\Admin;
 
+use App\Jobs\QueueJobs\LeaveStatus\AcceptLeaveRequestJob;
+use App\Jobs\QueueJobs\LeaveStatus\RejectLeaveRequestJob;
 use App\Models\User;
 use App\Models\Project;
 use App\Helpers\Helpers;
@@ -18,6 +20,68 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AdminService
 {
+
+    private function isSelfApproval($authUser, $requestingUser){
+    return $authUser->id === $requestingUser->id;
+    }
+
+    private function isAuthorizedToHandle($authUser, $requestingUser){
+    return !(
+        ($requestingUser->hasRole('hr') && !$authUser->hasRole('admin')) ||
+        ($requestingUser->hasRole('employee') && !$authUser->hasAnyRole(['admin', 'hr']))
+    );
+    }
+
+    private function handleStatusActions($status, $leaveRequest, $requestingUser){
+    if ($status === 'approved') {
+        $this->updateAttendanceStatus($leaveRequest->employee_id, 'onleave');
+        AcceptLeaveRequestJob::dispatch($requestingUser);
+        return Helpers::result('Leave request has been approved', Response::HTTP_OK);
+    
+    } elseif ($status === 'rejected') {
+        RejectLeaveRequestJob::dispatch($requestingUser);
+        return Helpers::result('Leave request has been rejected', Response::HTTP_OK);
+    }
+
+    return Helpers::result('Invalid leave request status', Response::HTTP_BAD_REQUEST);
+    }
+
+    /**
+     * Summary of handleLeaveRequest
+     * @param mixed $leaveRequestId
+     * @param mixed $status
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function handleLeaveRequest($leaveRequestId, $status){
+    try {
+        // dd($status);
+        $authUser = Auth::user();
+        $leaveRequest = LeaveRequest::findOrFail($leaveRequestId);
+        $requestingEmployee = $leaveRequest->employee;
+
+        if (!$requestingEmployee || !$requestingEmployee->user) {
+            return Helpers::result('Employee record or associated user not found', Response::HTTP_NOT_FOUND);
+        }
+
+        $requestingUser = $requestingEmployee->user;
+
+        if ($this->isSelfApproval($authUser, $requestingUser)) {
+            return Helpers::result('You cannot approve/reject your own leave request.', Response::HTTP_FORBIDDEN);
+        }
+
+        if (!$this->isAuthorizedToHandle($authUser, $requestingUser)) {
+            return Helpers::result('Unauthorized action.', Response::HTTP_FORBIDDEN);
+        }
+
+        $leaveRequest->update(['status' => $status]);
+
+        return $this->handleStatusActions($status, $leaveRequest, $requestingUser);
+        
+    } catch (\Exception $e) {
+        return Helpers::result("An error occurred while handling the leave request: " . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+    }
+
     /**
      * Fetch employees by department ID
      *
@@ -103,7 +167,7 @@ class AdminService
         }
     }
 
-    
+
     /**
      * Summary of getAllDepartments
      * @return mixed|\Illuminate\Http\JsonResponse
@@ -118,52 +182,6 @@ class AdminService
         }    
     }
 
-
-    /**
-     * Summary of handleLeaveRequest
-     * @param mixed $leaveRequestId
-     * @param mixed $status
-     * @return void
-     */
-    public function handleLeaveRequest($leaveRequestId, $status)
-    {
-        try {
-            $currentUser = Auth::user();
-            $leaveRequest = LeaveRequest::find($leaveRequestId);
-
-            if (!$leaveRequest) {
-                return Helpers::result('Leave request not found', Response::HTTP_NOT_FOUND);
-            }
-
-            $requestingEmployee = $leaveRequest->employee;
-            if (!$requestingEmployee || !$requestingEmployee->user) {
-                return Helpers::result('Employee record or associated user not found', Response::HTTP_NOT_FOUND);
-            }
-
-            $requestingUser = $requestingEmployee->user;
-
-            if ($currentUser->id === $requestingUser->id) {
-                return Helpers::result('You cannot approve/reject your own leave request.', Response::HTTP_FORBIDDEN);
-            }
-
-            if (($requestingUser->hasRole('hr') && !$currentUser->hasRole('admin')) ||
-                ($requestingUser->hasRole('employee') && !$currentUser->hasAnyRole(['admin', 'hr']))) {
-                return Helpers::result('Unauthorized action.', Response::HTTP_FORBIDDEN);
-            }
-
-            $leaveRequest->update(['status' => $status]);
-
-            if ($status === 'approved') {
-                $this->updateAttendanceStatus($leaveRequest->employee_id, 'onleave');
-                return Helpers::result('Leave request has been approved', Response::HTTP_OK);
-            }
-
-            return Helpers::result("Leave request has been {$status}", Response::HTTP_OK);
-        } catch (\Exception $e) {
-            return Helpers::result("An error occurred while handling the leave request: " . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
-        }    
-    }
-    
 
     /**
      * Summary of updateAttendanceStatus
@@ -208,6 +226,34 @@ class AdminService
         }
     }
 
+    /**
+     * Summary of updateProject
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function updateProject($request,$id){
+        try {
+             $project = Project::findOrFail($id);
+        $project->update($request->only(['title', 'description']));
+        return Helpers::result("Project Updated Successfully",Response::HTTP_CREATED,$project);
+        } catch (\Exception $e) {
+            return Helpers::result("Failed to update project".$e->getMessage(),Response::HTTP_BAD_REQUEST);
+        }
+    }
+    /**
+     * Summary of deleteProject
+     * @return mixed|\Illuminate\Http\JsonResponse
+     *
+
+     */
+    public function deleteProject($id){
+        try {
+             $project=Project::findorFail($id);
+             $project->delete();
+             return Helpers::result("Project deleted successfully",Response::HTTP_OK);
+        } catch (\Exception $e) {
+           return Helpers::result("Project deleted failed",Response::HTTP_BAD_REQUEST);
+        }
+    }
     /**
      * Summary of assignProject
      * @param mixed $data
@@ -261,12 +307,27 @@ class AdminService
 
     public function getAllProjects()
     {
-        
         $projects = Project::all();
 
         if ($projects->isEmpty()) {
             return Helpers::result("No projects available.", Response::HTTP_NOT_FOUND);
         }
         return Helpers::result("All projects fetched successfully.", Response::HTTP_OK, $projects);
+    }
+
+    /*
+    * Summary of addDepartment
+    * @return mixed
+    */
+    public function addDepartment($request){
+        try {
+            $department= Department::create([
+        'name' => $request->get('name'),
+        ]);
+
+        return Helpers::result("Department added successfully.", Response::HTTP_OK, $department);
+        } catch (\Exception $e) {
+           return Helpers::result("Department added failed.".$e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }

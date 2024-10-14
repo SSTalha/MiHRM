@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Employee;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use App\Services\Employee\WorkingHourService;
 use App\Http\Requests\Employee\WorkingHourRequest;
@@ -27,7 +28,6 @@ class WorkingHourController extends Controller
         $date = $request->input('date');
         $frequency = $request->input('frequency');
 
-        // Call the service to calculate working hours
         return $this->workingHourService->calculateWorkingHours($employeeId, $date, $frequency);
 
        

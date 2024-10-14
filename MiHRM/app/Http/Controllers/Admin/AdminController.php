@@ -1,13 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
-use App\Services\Admin\AdminService;
 use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Controller;
+use App\Services\Admin\AdminService;
+use App\Http\Requests\Admin\DepartmentRequest;
 use App\Http\Requests\Admin\AssignProjectRequest;
 use App\Http\Requests\Admin\CreateProjectRequest;
+use App\Http\Requests\Admin\UpdateProjectRequest;
 use App\Http\Requests\Admin\UpdateEmployeeRequest;
-use Illuminate\Http\Response;
 
 class AdminController extends Controller
 {
@@ -50,6 +52,14 @@ class AdminController extends Controller
         
         return $this->adminService->createProject($request->validated());
     }
+    public function updateProject(UpdateProjectRequest $request,$id): JsonResponse
+    {
+        return $this->adminService->updateProject($request,$id);
+    }
+    public function deleteProject($id): JsonResponse
+    {
+        return $this->adminService->deleteProject($id);
+    }
 
     public function assignProject(AssignProjectRequest $request): JsonResponse
     {
@@ -61,8 +71,11 @@ class AdminController extends Controller
     {
         return $this->adminService->getAllAssignedProjects();
     }
-    public function showProjects()
+    public function getAllProjects()
     {
         return $this->adminService->getAllProjects();
+    }
+    public function addDepartment(DepartmentRequest $request){
+        return $this->adminService->addDepartment($request);
     }
 }

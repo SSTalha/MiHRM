@@ -20,7 +20,8 @@ return new class extends Migration
             $table->string('method');
             $table->ipAddress('ip_address');
             $table->text('user_agent');
-            $table->string('action')->nullable();
+            $table->string('activity')->nullable();
+            $table->boolean('activity_status')->default(false);
             $table->integer('status_code');
             $table->timestamps();
         });

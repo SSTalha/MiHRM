@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
-use Salary;
+use App\Models\Salary;
+use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Model;
 
 class Employee extends Model
 {
+    use HasRoles;
     protected $fillable = [
         'user_id',
         'position',

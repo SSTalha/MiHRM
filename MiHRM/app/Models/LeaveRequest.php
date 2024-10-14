@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Permission\Traits\HasRoles;
 
 class LeaveRequest extends Model
 {
-    use HasFactory;
+    use HasFactory,HasRoles;
     protected $fillable = [
         'employee_id',
         'start_date',
@@ -18,6 +19,12 @@ class LeaveRequest extends Model
 
     public function employee()
     {
-        return $this->belongsTo(Employee::class);
+        return $this->belongsTo(Employee::class, 'employee_id');
     }
+    // LeaveRequest.php
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'employee_id'); // Assuming 'employee_id' refers to the user ID
+    }
+
 }

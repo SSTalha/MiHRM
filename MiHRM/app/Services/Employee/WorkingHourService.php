@@ -5,7 +5,8 @@ namespace App\Services\Employee;
 use Carbon\Carbon;
 use App\Helpers\Helpers;
 use App\Models\Attendance;
-use Illuminate\Support\Facades\Auth; // Import Auth facade
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 class WorkingHourService
 {
@@ -19,9 +20,8 @@ class WorkingHourService
      */
     public function calculateWorkingHours(?int $employeeId = null, string $date = null, string $frequency = null)
     {
-        // Check if the employeeId is provided. If not, use the logged-in user's employee_id.
         if (!$employeeId) {
-            $employeeId = Auth::user()->employee_id ?? Auth::user()->employee->id; 
+            $employeeId = Auth::user()->employee_id ?? Auth::user()->employee->id;
         }
 
         $startDate = $this->getStartDate($date, $frequency);
@@ -41,9 +41,22 @@ class WorkingHourService
         $currentDate = $startDate->copy();
         while ($currentDate->lte($endDate)) {
             $dateKey = $currentDate->format('Y-m-d');
+            $weekdayName = $currentDate->format('l'); 
+            // Find the attendance record for the current date
+            $attendanceRecord = $attendances->where('date', $dateKey)->first();
+            $checkIn = $attendanceRecord->check_in_time ?? null;
+            $checkOut = $attendanceRecord->check_out_time ?? null;
+
+            // Determine status
+            $status = $this->getStatus($attendanceRecord);
+
             $dailyWorkingHours[$dateKey] = [
                 'date' => $dateKey,
-                'working_hours' => $this->calculateDailyHours($attendances, $dateKey, $totalSeconds),
+                'weekday' => $weekdayName,        // Add weekday name
+                'check_in' => $checkIn,           // Add check-in time
+                'check_out' => $checkOut,         // Add check-out time
+                'working_hours' => $this->calculateDailyHours($attendances, $dateKey, $totalSeconds), // Existing working hours calculation
+                'status' => $status,              // Add status
             ];
 
             $currentDate->addDay();
@@ -51,7 +64,6 @@ class WorkingHourService
 
         $formattedTotalHours = gmdate('H:i:s', $totalSeconds);
 
-        // Prepare the response data
         $data = [
             'employee_id' => $employeeId,
             'start_date' => $startDate->format('Y-m-d'),
@@ -60,7 +72,7 @@ class WorkingHourService
             'daily_working_hours' => array_values($dailyWorkingHours),
         ];
 
-        return Helpers::result("Working hours retrieved successfully", 200, $data);
+        return Helpers::result("Working hours retrieved successfully", Response::HTTP_OK, $data);
     }
 
     // ######################## Private methods #################
@@ -100,6 +112,22 @@ class WorkingHourService
                 return gmdate('H:i:s', $dailyWorkingSeconds);
             }
         }
-        return '00:00:00'; // Return zero hours if no valid check-in/check-out
+        return '00:00:00';
+    }
+
+    /**
+     * Get the status of the employee for the day (present/absent/onleave).
+     */
+    private function getStatus($attendanceRecord)
+    {
+        if (!$attendanceRecord) {
+            return 'absent';
+        }
+
+        if ($attendanceRecord->is_on_leave) {
+            return 'onleave';
+        }
+
+        return ($attendanceRecord->check_in_time && $attendanceRecord->check_out_time) ? 'present' : 'absent';
     }
 }
