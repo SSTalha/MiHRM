@@ -78,4 +78,12 @@ class AdminController extends Controller
     public function addDepartment(DepartmentRequest $request){
         return $this->adminService->addDepartment($request);
     }
+    public function getAllEmployees(): JsonResponse
+    {
+        return $this->adminService->getAllEmployees();
+    }
+    public function getEmployeeRoleCounts(): JsonResponse
+    {
+        return $this->adminService->getEmployeeRoleCounts();
+    }
 }
