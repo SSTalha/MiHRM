@@ -330,4 +330,55 @@ class AdminService
            return Helpers::result("Department added failed.".$e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+    public function getAllEmployees()
+    {
+        try {
+            
+            $employees = Employee::with(['user.roles'])->get();
+            if ($employees->isEmpty()) {
+                return Helpers::result("No employees found.", Response::HTTP_NOT_FOUND);
+            }
+
+            $data = $employees->map(function ($employee) {
+                return [
+                    'id' => $employee->id,
+                    'user_id' => $employee->user_id,
+                    'position' => $employee->position,
+                    'department_id' => $employee->department_id,
+                    'pay' => $employee->pay,
+                    'date_of_joining' => $employee->date_of_joining,
+                    'created_at' => $employee->created_at,
+                    'updated_at' => $employee->updated_at,
+                    'user_id' => $employee->user->id,
+                    'role' => $employee->user->roles->first()->name ?? 'N/A', // Fetch the first role (if available)
+                ];
+            });
+
+            return Helpers::result("All employees fetched successfully.", Response::HTTP_OK, $data);
+        } catch (\Exception $e) {
+            return Helpers::result("An error occurred while fetching employees: " . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function getEmployeeRoleCounts()
+    {
+        try {
+            $hrCount = Employee::whereHas('user.roles', function($query) {
+                $query->where('name', 'hr');
+            })->count();
+
+            $employeeCount = Employee::whereHas('user.roles', function($query) {
+                $query->where('name', 'employee');
+            })->count();
+
+            $data = [
+                'hr_count' => $hrCount,
+                'employee_count' => $employeeCount
+            ];
+
+            return Helpers::result("Employee role counts fetched successfully.", Response::HTTP_OK, $data);
+        } catch (\Exception $e) {
+            return Helpers::result("An error occurred while fetching employee role counts: " . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }
