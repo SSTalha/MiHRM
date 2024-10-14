@@ -20,11 +20,12 @@ class LogActivity
     public function handle(Request $request, Closure $next)
     {
         $response = $next($request);
+        $activityStatus = false;
 
         if(Auth::check()){
             $user = Auth::user();
 
-            $activityLogDto = new ActivityLogDTO($request, $user->id, $response->getStatusCode());
+            $activityLogDto = new ActivityLogDTO($request, $user->id, $activityStatus, $response->getStatusCode());
             
             ActivityLog::create($activityLogDto->toArray());
         }

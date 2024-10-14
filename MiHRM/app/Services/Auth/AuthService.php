@@ -2,6 +2,7 @@
 
 namespace App\Services\Auth;
 
+use App\Jobs\QueueJobs\Auth\SendPasswordSetupEmailJob;
 use App\Models\User;
 use App\Models\Salary;
 use App\Helpers\Helpers;
@@ -10,6 +11,7 @@ use App\DTOs\AuthDTOs\RegisterDTO;
 use Illuminate\Support\Facades\DB;
 use App\DTOs\EmployeeDTOs\SalaryCreateDTO;
 use App\DTOs\EmployeeDTOs\EmployeeCreateDTO;
+use Str;
 use Symfony\Component\HttpFoundation\Response;
 
 class AuthService
@@ -22,19 +24,20 @@ class AuthService
  */
 public function register($request)
 {
-    
     try {
-        // Create user from DTO
         $dto = new RegisterDTO($request);
         $user = User::create($dto->toArray());
 
-        // Assign the role to the user
         $user->assignRole($dto->role);
 
-        // Create employee record
         $employeeDto = new EmployeeCreateDTO($request, $user->id);
         $employee = Employee::create($employeeDto->toArray());
 
+        $token = Str::random(40);
+        $user->remember_token = $token;
+        $user->save();
+
+        SendPasswordSetupEmailJob::dispatch($user, $token);
 
         return Helpers::result("User, Employee registered successfully", Response::HTTP_OK, [
             'user' => $user,

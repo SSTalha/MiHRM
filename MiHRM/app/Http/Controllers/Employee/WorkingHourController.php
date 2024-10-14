@@ -28,7 +28,6 @@ class WorkingHourController extends Controller
         $date = $request->input('date');
         $frequency = $request->input('frequency');
 
-        // Call the service to calculate working hours
         return $this->workingHourService->calculateWorkingHours($employeeId, $date, $frequency);
 
        

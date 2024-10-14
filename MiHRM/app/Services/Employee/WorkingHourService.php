@@ -5,7 +5,8 @@ namespace App\Services\Employee;
 use Carbon\Carbon;
 use App\Helpers\Helpers;
 use App\Models\Attendance;
-use Illuminate\Support\Facades\Auth; // Import Auth facade
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 class WorkingHourService
 {
@@ -19,7 +20,6 @@ class WorkingHourService
      */
     public function calculateWorkingHours(?int $employeeId = null, string $date = null, string $frequency = null)
     {
-        // Check if the employeeId is provided. If not, use the logged-in user's employee_id.
         if (!$employeeId) {
             $employeeId = Auth::user()->employee_id ?? Auth::user()->employee->id; 
         }
@@ -51,7 +51,6 @@ class WorkingHourService
 
         $formattedTotalHours = gmdate('H:i:s', $totalSeconds);
 
-        // Prepare the response data
         $data = [
             'employee_id' => $employeeId,
             'start_date' => $startDate->format('Y-m-d'),
@@ -60,9 +59,10 @@ class WorkingHourService
             'daily_working_hours' => array_values($dailyWorkingHours),
         ];
 
-        return Helpers::result("Working hours retrieved successfully", 200, $data);
+        return Helpers::result("Working hours retrieved successfully", Response::HTTP_OK, $data);
     }
 
+   
     // ######################## Private methods #################
 
     private function getStartDate(?string $date, ?string $frequency)
@@ -100,6 +100,6 @@ class WorkingHourService
                 return gmdate('H:i:s', $dailyWorkingSeconds);
             }
         }
-        return '00:00:00'; // Return zero hours if no valid check-in/check-out
+        return '00:00:00';
     }
 }

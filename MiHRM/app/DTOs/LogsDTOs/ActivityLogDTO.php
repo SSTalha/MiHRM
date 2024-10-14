@@ -28,7 +28,7 @@ class ActivityLogDTO extends BaseDTOs
         $this->method = $request->method();
         $this->ip_address = $request->ip();
         $this->user_agent = $request->header('User-Agent');
-        $this->action = $request->route() ? $request->route()->getActionName() : null;
+        $this->activity = $request->route() ? $request->route()->getActionName() : null;
         $this->activity_status = $activityStatus;
         $this->status_code = $statusCode;
     }

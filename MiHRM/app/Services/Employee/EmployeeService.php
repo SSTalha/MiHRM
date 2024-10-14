@@ -1,16 +1,45 @@
 <?php
 
 namespace App\Services\Employee;
+use App\DTOs\AuthDTOs\PasswordDTO;
 use App\Helpers\Helpers;
 use App\Models\Employee;
 use App\Models\LeaveRequest;
 use App\DTOs\EmployeeDTOs\LeaveRequestDTO;
 use App\Models\ProjectAssignment;
+use App\Models\User;
+use Hash;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class EmployeeService
 {
+    /**
+     * Summary of passwordSetup
+     * @param mixed $request
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function passwordSetup($request){
+        try{
+            $dto = new PasswordDTO($request);
+
+            $user = User::where('email', $dto->email)->first();
+
+            if (!$user || $user->remember_token !== $dto->token) {
+                return Helpers::result('Invalid token or email.',Response::HTTP_BAD_REQUEST, []);
+            }
+
+            $user->password = Hash::make($dto->password);
+            $user->remember_token = null;
+            $user->save();
+
+            return Helpers::result('Password setup successfull.', Response::HTTP_OK, []);
+        }catch(\Exception $e){
+            return Helpers::result('Error during password setup', Response::HTTP_INTERNAL_SERVER_ERROR, $e->getMessage());
+        }
+    }
+
+
     /**
      * submitLeaveRequest
      * @param mixed $request
@@ -58,6 +87,11 @@ class EmployeeService
         }
     }
 
+    /**
+     * Summary of updateProjectStatus
+     * @param array $validatedData
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function updateProjectStatus(array $validatedData)
     {
         

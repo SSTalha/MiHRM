@@ -7,6 +7,7 @@ use App\Http\Controllers\Employee\SalaryController;
 use App\Http\Controllers\Employee\EmployeeController;
 use App\Http\Controllers\Employee\AttendanceController;
 use App\Http\Controllers\Employee\WorkingHourController;
+use App\Http\Controllers\Auth\PasswordResetController;
 
 
 
@@ -14,6 +15,10 @@ Route::group(['middleware' => ['api', 'log.request','log.activity']], function (
 
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/logout', [AuthController::class, 'logout']);
+
+    Route::post('/password-setup', [EmployeeController::class , 'passwordSetup']);
+    Route::post('/password-reset', [PasswordResetController::class, 'passwordReset']);
+    Route::post('/password-reset-link', [PasswordResetController::class, 'sendPasswordResetLink']);
 
     Route::group(['middleware' => ['jwt.auth']], function () {
     Route::get('/salary/{employeeId}', [SalaryController::class, 'getSalaryDetails']);
@@ -41,9 +46,13 @@ Route::group(['middleware' => ['api', 'log.request','log.activity']], function (
         Route::group(['middleware' => ['role:admin|hr']], function () {
             Route::get('/get-assigned-projects', [AdminController::class, 'getAllAssignedProjects']);
             Route::post('/leave-requests/{leaveRequestId}/{status}', [AdminController::class, 'handleLeaveRequest']);
-            Route::get('/get-employees-attendence', [AttendanceController::class, 'getEmployeesAttendence']);
             Route::get('/salaries', [SalaryController::class, 'getAllSalaries']);
         });
+
+        Route::group(['middleware' => ['role:admin|hr|employee']], function () {
+            Route::get('/get-employees-attendence', [AttendanceController::class, 'getEmployeesAttendence']);
+        });
+
 
         Route::group(['middleware' => ['role:employee']], function () {
             Route::get('/get-employee/assigned-projects', [EmployeeController::class, 'getAssignedProjects']);
