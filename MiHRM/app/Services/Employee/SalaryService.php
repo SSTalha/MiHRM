@@ -17,24 +17,44 @@ class SalaryService
      * @param mixed $employeeId
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-public function getSalaryDetails()
+public function getSalaryDetails($request)
 {
     try {
-        // Retrieve the employee ID from the logged-in user
-        $employeeId = Auth::user()->employee_id ?? Auth::user()->employee->id;
+        // Check if the user is admin, and allow employee_id and month input
+        if (Auth::user()->hasRole('admin')) {
+            $employeeId = $request->input('employee_id');
+            $month = $request->input('month') ?? Carbon::now()->format('Y-m'); // Use current month if not provided
+        } else {
+            // For HR and employees, use the logged-in user's employee ID
+            $employeeId = Auth::user()->employee_id ?? Auth::user()->employee->id;
+            $month = $request->input('month') ?? Carbon::now()->format('Y-m'); // Allow month input, default to current month
+        }
+
+        // Validate that month is provided
+        if (!$month) {
+            return Helpers::result('Month is required', Response::HTTP_BAD_REQUEST);
+        }
 
         // Find the employee
         $employee = Employee::findOrFail($employeeId);
-        
-        // Get the latest salary record
-        $salary = Salary::where('employee_id', $employeeId)->latest()->first();
-        
-        // Get attendance records for the current month
-        $currentMonthStart = Carbon::now()->startOfMonth();
-        $currentMonthEnd = Carbon::now()->endOfMonth();
-        
+
+        // Parse the month and generate start and end dates for the month
+        $monthStart = Carbon::parse($month)->startOfMonth();
+        $monthEnd = Carbon::parse($month)->endOfMonth();
+
+        // Get the salary record for the provided employee and month
+        $salary = Salary::where('employee_id', $employeeId)
+                        ->whereMonth('paid_date', $monthStart->format('m'))
+                        ->whereYear('paid_date', $monthStart->format('Y'))
+                        ->first();
+
+        if (!$salary) {
+            return Helpers::result('No salary record found for the specified employee and month', Response::HTTP_NOT_FOUND);
+        }
+
+        // Get attendance records for the specified month
         $attendances = Attendance::where('employee_id', $employeeId)
-            ->whereBetween('date', [$currentMonthStart->format('Y-m-d'), $currentMonthEnd->format('Y-m-d')])
+            ->whereBetween('date', [$monthStart->format('Y-m-d'), $monthEnd->format('Y-m-d')])
             ->get();
 
         // Initialize counters
@@ -62,13 +82,15 @@ public function getSalaryDetails()
         // Prepare the response data
         $responseData = [
             'employee_id' => $salary->employee_id,
-            'salary' => $employee->pay,              
-            'status' => $salary ? $salary->status : 'unpaid', 
-            'paid_date' => $salary->paid_date ?? null, 
+            'employee_name' => $employee->user->name, // Assuming employee's name is stored in the user table
+            'salary' => $employee->pay,
+            'status' => $salary->status,
+            'paid_date' => $salary->paid_date,
+            'salary_month' => $monthStart->format('F Y'), // Format the month of the salary
             'employee_position' => $employee->position,
-            'employee_department' => $department ? $department->name : null, // Show department name instead of ID
-            'total_working_days' => $totalWorkingDays,          // Total working days in the month
-            'total_working_hours' => $totalWorkingHours         // Total working hours in the month
+            'employee_department' => $department ? $department->name : null,
+            'total_working_days' => $totalWorkingDays,
+            'total_working_hours' => $totalWorkingHours
         ];
 
         return Helpers::result('Salary details retrieved successfully', Response::HTTP_OK, $responseData);
@@ -76,32 +98,4 @@ public function getSalaryDetails()
         return Helpers::result('Failed to retrieve salary details: ' . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 }
-
-
-
-    /**
-     * Summary of getAllSalaries
-     * @return mixed|\Illuminate\Http\JsonResponse
-     */
-    public function getAllSalaries()
-    {
-        try {
-            $salaries = Salary::with('employee')->get();
-
-            $salaryData = $salaries->map(function ($salary) {
-                return [
-                    'employee_id' => $salary->employee_id,
-                    'employee_name' => $salary->employee->name,
-                    'salary' => $salary->pay,
-                    'status' => $salary->status,
-                    'paid_date' => $salary->paid_date,
-                    'created_at' => $salary->created_at,
-                ];
-            });
-
-            return Helpers::result('All salaries retrieved successfully', Response::HTTP_OK, $salaryData);
-        } catch (\Exception $e) {
-            return Helpers::result('Failed to retrieve salaries: ' . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR, []);
-        }
-    }
 }

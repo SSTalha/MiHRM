@@ -3,7 +3,7 @@
 namespace App\Services\Auth;
 use App\DTOs\AuthDTOs\PasswordDTO;
 use App\Helpers\Helpers;
-use App\Jobs\QueueJobs\Auth\SendPasswordResetLinkJob;
+use App\Jobs\SendPasswordResetLinkJob;
 use App\Models\User;
 use \App\Models\PasswordReset;
 use Illuminate\Http\Response;

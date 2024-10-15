@@ -12,7 +12,7 @@ use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Employee\LeaveRequestController;
 
 
-//Route::get(PermissionVariables::$getAllSalaries['path'], [SalaryController::class, 'getAllSalaries']);
+
 
 
 Route::group(['middleware' => ['api', 'log.request', 'log.activity']], function () {

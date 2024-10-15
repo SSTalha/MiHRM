@@ -2,8 +2,8 @@
 
 namespace App\Services\Admin;
 
-use App\Jobs\QueueJobs\LeaveStatus\AcceptLeaveRequestJob;
-use App\Jobs\QueueJobs\LeaveStatus\RejectLeaveRequestJob;
+use App\Jobs\AcceptLeaveRequestJob;
+use App\Jobs\RejectLeaveRequestJob;
 use App\Models\User;
 use App\Models\Project;
 use App\Helpers\Helpers;
