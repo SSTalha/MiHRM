@@ -47,34 +47,7 @@ class AdminController extends Controller
         return $this->adminService->handleLeaveRequest($leaveRequestId, $status);
     }
 
-    public function createProject(CreateProjectRequest $request): JsonResponse
-    {
-        
-        return $this->adminService->createProject($request->validated());
-    }
-    public function updateProject(UpdateProjectRequest $request,$id): JsonResponse
-    {
-        return $this->adminService->updateProject($request,$id);
-    }
-    public function deleteProject($id): JsonResponse
-    {
-        return $this->adminService->deleteProject($id);
-    }
-
-    public function assignProject(AssignProjectRequest $request): JsonResponse
-    {
-        $data = $request->all();
-        return $this->adminService->assignProject($data);
-    }
-
-    public function getAllAssignedProjects(): JsonResponse
-    {
-        return $this->adminService->getAllAssignedProjects();
-    }
-    public function getAllProjects()
-    {
-        return $this->adminService->getAllProjects();
-    }
+    
     public function addDepartment(DepartmentRequest $request){
         return $this->adminService->addDepartment($request);
     }
