@@ -1,39 +1,36 @@
 <?php
 
-namespace App\Jobs\CronJobs;
+namespace App\Console\Commands;
 
-use App\Models\Attendance;
-use App\Models\Employee;
-use App\Models\LeaveRequest;
 use Carbon\Carbon;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use App\Models\Employee;
+use App\Models\Attendance;
+use App\Models\LeaveRequest;
+use Illuminate\Console\Command;
 
-class HandleLeave implements ShouldQueue
+class HandleLeave extends Command
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
     /**
-     * Create a new job instance.
+     * The name and signature of the console command.
      *
-     * @return void
+     * @var string
      */
-    public function __construct()
-    {
-        //
-    }
+    protected $signature = 'command:handle-leave';
 
     /**
-     * Execute the job.
+     * The console command description.
      *
-     * @return void
+     * @var string
+     */
+    protected $description = 'Command description';
+
+    /**
+     * Execute the console command.
+     *
+     * @return int
      */
     public function handle()
-{
+    {
     $employees = Employee::all();
     $today = Carbon::today()->toDateString();
     // $today = '2024-10-11';
@@ -54,5 +51,5 @@ class HandleLeave implements ShouldQueue
             $attendance->update(['status' => 'onleave']);
         }
     }
-}
+    }
 }

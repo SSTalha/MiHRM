@@ -2,11 +2,7 @@
 
 namespace App\Console;
 
-use App\Jobs\CronJobs\HandleLeave;
-use App\Jobs\CronJobs\PaySalaryJob;
 use Illuminate\Console\Scheduling\Schedule;
-use App\Jobs\CronJobs\Salary\PaySalariesJob;
-use App\Jobs\CronJobs\Salary\AddUnpaidSalariesJob;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
@@ -16,6 +12,10 @@ class Kernel extends ConsoleKernel
         Commands\MakeService::class,
         Commands\MakeHelper::class,
         Commands\MakeDTO::class,
+        Commands\UpdateAttendenceRecord::class,
+        Commands\HandleLeave::class,
+        Commands\AddUnpaidSalary::class,
+        Commands\PaySalaries::class,
      ];
      
     /**
@@ -26,10 +26,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
 {
-    $schedule->job(new \App\Jobs\CronJobs\RecordAttendanceJob())->everyMinute();
-    $schedule->job(new HandleLeave())->everyMinute();
-    $schedule->job(new AddUnpaidSalariesJob())->everyMinute();
-    $schedule->job(new PaySalariesJob())->everyTwoMinutes();
+
+    $schedule->command( "command:attendence-record")->everyMinute();
+    $schedule->command( "command:handle-leave")->everyMinute();
+    $schedule->command( "command:add-unpaid-salary")->everyMinute();
+    $schedule->command( "command:pay-salaries")->everyTwoMinutes();
+    
 
     
 }

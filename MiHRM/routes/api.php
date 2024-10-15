@@ -1,5 +1,6 @@
 <?php
 
+use App\GlobalVariables\PermissionVariables;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Admin\AdminController;
@@ -11,63 +12,68 @@ use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Employee\LeaveRequestController;
 
 
+//Route::get(PermissionVariables::$getAllSalaries['path'], [SalaryController::class, 'getAllSalaries']);
 
 
-Route::group(['middleware' => ['api', 'log.request','log.activity']], function () {
-    
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/logout', [AuthController::class, 'logout']);
-     
+Route::group(['middleware' => ['api', 'log.request', 'log.activity']], function () {
 
-    Route::post('/password-setup', [EmployeeController::class , 'passwordSetup']);
-    Route::post('/password-reset', [PasswordResetController::class, 'passwordReset']);
-    Route::post('/password-reset-link', [PasswordResetController::class, 'sendPasswordResetLink']);
+    Route::post(PermissionVariables::$login['path'], [AuthController::class, 'login']);
+    Route::post(PermissionVariables::$logout['path'], [AuthController::class, 'logout']);
+    Route::post(PermissionVariables::$passwordSetup['path'], [EmployeeController::class, 'passwordSetup']);
+    Route::post(PermissionVariables::$passwordReset['path'], [PasswordResetController::class, 'passwordReset']);
+    Route::post(PermissionVariables::$passwordResetLink['path'], [PasswordResetController::class, 'sendPasswordResetLink']);
 
-    Route::group(['middleware' => ['jwt.auth']], function () {
-        
-        Route::get('/get-employee/working-hours', [WorkingHourController::class, 'getWorkingHours']);
-        
+    // Routes with JWT authentication and permission check middleware
+    Route::group(['middleware' => ['jwt.auth', 'routes.permission']], function () {
+
+        // Admin-specific routes
         Route::group(['middleware' => ['role:admin']], function () {
-            Route::post('/register', [AuthController::class, 'register']);
-            Route::get('/get-employees/department/{department_id}', [AdminController::class, 'getEmployeesByDepartment']);
-            Route::delete('/delete-employees/{user_id}', [AdminController::class, 'deleteUser']);
-            Route::put('/update-employees/update/{employee_id}', [AdminController::class, 'updateEmployee']);
-            Route::get('/get/departments', [AdminController::class, 'getAllDepartments']);
-            Route::post('/create-project', [AdminController::class, 'createProject']);
-            Route::put('/update-project/{id}', [AdminController::class, 'updateProject']);
-            Route::delete('/delete-project/{id}', [AdminController::class, 'deleteProject']);
-            Route::post('/add-department', [AdminController::class, 'addDepartment']);
+            Route::post(PermissionVariables::$register['path'], [AuthController::class, 'register']);
+            Route::delete(PermissionVariables::$deleteUser['path'], [AdminController::class, 'deleteUser']);
+            Route::post(PermissionVariables::$createProject['path'], [AdminController::class, 'createProject']);
+            Route::delete(PermissionVariables::$deleteProject['path'], [AdminController::class, 'deleteProject']);
+            Route::post(PermissionVariables::$addDepartment['path'], [AdminController::class, 'addDepartment']);
+            Route::put(PermissionVariables::$updateEmployee['path'], [AdminController::class, 'updateEmployee']); //change func
+
         });
-        
-        Route::group(['middleware' => ['role:hr|employee']], function () {
-            Route::post('/submit/leave', [EmployeeController::class, 'submitLeaveRequest']);
-            Route::post('/attendance/check-in', [AttendanceController::class, 'checkIn']);
-            Route::post('/attendance/check-out', [AttendanceController::class, 'checkOut']);
-            Route::get('/salary-invoice', [SalaryController::class, 'getSalaryDetails']);
-        });
-        
+
+        // HR-specific routes
         Route::group(['middleware' => ['role:hr']], function () {
-            Route::post('/project-assignments', [AdminController::class, 'assignProject']);
-            Route::get('/projects-all', [AdminController::class, 'getAllProjects']);
+            Route::post(PermissionVariables::$assignProject['path'], [AdminController::class, 'assignProject']);
         });
-        
+
+        // Admin and HR common routes
         Route::group(['middleware' => ['role:admin|hr']], function () {
-            Route::get('/get-assigned-projects', [AdminController::class, 'getAllAssignedProjects']);
-            Route::post('/leave-requests/{leaveRequestId}/{status}', [AdminController::class, 'handleLeaveRequest']);
-            Route::get('/salaries', [SalaryController::class, 'getAllSalaries']);
-            Route::get('/get-leave-requests', [LeaveRequestController::class, 'getLeaveRequest']);
-            Route::get('/get-all-employees', [AdminController::class, 'getAllEmployees']);
-            Route::get('/employee-role-counts', [AdminController::class, 'getEmployeeRoleCounts']);
+            Route::get(PermissionVariables::$getEmployeesByDepartment['path'], [AdminController::class, 'getEmployeesByDepartment']);
+            Route::get(PermissionVariables::$getAllDepartments['path'], [AdminController::class, 'getAllDepartments']);
+            Route::put(PermissionVariables::$updateProject['path'], [AdminController::class, 'updateProject']);
+            Route::get(PermissionVariables::$getAllAssignedProjects['path'], [AdminController::class, 'getAllAssignedProjects']);
+            Route::post(PermissionVariables::$handleLeaveRequest['path'], [AdminController::class, 'handleLeaveRequest']);
+            Route::get(PermissionVariables::$getAllEmployees['path'], [AdminController::class, 'getAllEmployees']);
+            Route::get(PermissionVariables::$getEmployeeRoleCounts['path'], [AdminController::class, 'getEmployeeRoleCounts']); //change func
+            Route::get(PermissionVariables::$getAllProjects['path'], [AdminController::class, 'getAllProjects']);
+
         });
 
+        // HR and Employee common routes
+        Route::group(['middleware' => ['role:hr|employee']], function () {
+            Route::post(PermissionVariables::$submitLeaveRequest['path'], [EmployeeController::class, 'submitLeaveRequest']);
+            Route::post(PermissionVariables::$checkIn['path'], [AttendanceController::class, 'checkIn']);
+            Route::post(PermissionVariables::$checkOut['path'], [AttendanceController::class, 'checkOut']);
+        });
+
+        // Admin, HR, and Employee common routes
         Route::group(['middleware' => ['role:admin|hr|employee']], function () {
-            Route::get('/get-employees-attendence', [AttendanceController::class, 'getEmployeesAttendence']);
+            Route::get(PermissionVariables::$getEmployeeWorkingHours['path'], [WorkingHourController::class, 'getWorkingHours']);
+            Route::get(PermissionVariables::$getLeaveRequest['path'], [LeaveRequestController::class, 'getLeaveRequest']);
+            Route::get(PermissionVariables::$getEmployeesAttendence['path'], [AttendanceController::class, 'getEmployeesAttendence']);
+            Route::get(PermissionVariables::$getSalaryDetails['path'], [SalaryController::class, 'getSalaryDetails']);
         });
 
+        // Employee-specific routes
         Route::group(['middleware' => ['role:employee']], function () {
-            Route::get('/get-employee/assigned-projects', [EmployeeController::class, 'getAssignedProjects']);
-            Route::post('/projects/update-status', [EmployeeController::class, 'updateProjectStatus']);
+            Route::get(PermissionVariables::$getAssignedProjects['path'], [EmployeeController::class, 'getAssignedProjects']);
+            Route::post(PermissionVariables::$updateProjectStatus['path'], [EmployeeController::class, 'updateProjectStatus']);
         });
-
     });
 });

@@ -4,12 +4,10 @@ namespace App\Services\Auth;
 
 use App\Jobs\QueueJobs\Auth\SendPasswordSetupEmailJob;
 use App\Models\User;
-use App\Models\Salary;
 use App\Helpers\Helpers;
 use App\Models\Employee;
 use App\DTOs\AuthDTOs\RegisterDTO;
 use Illuminate\Support\Facades\DB;
-use App\DTOs\EmployeeDTOs\SalaryCreateDTO;
 use App\DTOs\EmployeeDTOs\EmployeeCreateDTO;
 use Str;
 use Symfony\Component\HttpFoundation\Response;

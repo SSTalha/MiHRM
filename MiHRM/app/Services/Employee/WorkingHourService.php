@@ -42,21 +42,19 @@ class WorkingHourService
         while ($currentDate->lte($endDate)) {
             $dateKey = $currentDate->format('Y-m-d');
             $weekdayName = $currentDate->format('l'); 
-            // Find the attendance record for the current date
             $attendanceRecord = $attendances->where('date', $dateKey)->first();
             $checkIn = $attendanceRecord->check_in_time ?? null;
             $checkOut = $attendanceRecord->check_out_time ?? null;
 
-            // Determine status
             $status = $this->getStatus($attendanceRecord);
 
             $dailyWorkingHours[$dateKey] = [
                 'date' => $dateKey,
-                'weekday' => $weekdayName,        // Add weekday name
-                'check_in' => $checkIn,           // Add check-in time
-                'check_out' => $checkOut,         // Add check-out time
-                'working_hours' => $this->calculateDailyHours($attendances, $dateKey, $totalSeconds), // Existing working hours calculation
-                'status' => $status,              // Add status
+                'weekday' => $weekdayName,
+                'check_in' => $checkIn,
+                'check_out' => $checkOut,
+                'working_hours' => $this->calculateDailyHours($attendances, $dateKey, $totalSeconds),
+                'status' => $status,
             ];
 
             $currentDate->addDay();

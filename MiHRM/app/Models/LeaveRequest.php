@@ -24,7 +24,7 @@ class LeaveRequest extends Model
     // LeaveRequest.php
     public function user()
     {
-        return $this->belongsTo(User::class, 'employee_id'); // Assuming 'employee_id' refers to the user ID
+        return $this->employee->user();
     }
 
 }

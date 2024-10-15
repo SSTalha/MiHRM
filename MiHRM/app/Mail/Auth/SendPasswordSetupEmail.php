@@ -26,7 +26,8 @@ class SendPasswordSetupEmail extends Mailable implements ShouldQueue
     {
         $this->user = $user;
         $this->token = $token;
-        $this->setupUrl = url('/password-setup?email=' . urlencode($user->email) . '&token=' . $token);
+        //$this->setupUrl = url('/password-setup?email=' . urlencode($user->email) . '&token=' . $token);
+        $this->setupUrl = env('FRONTEND_URL').'/password-setup?email=' . urlencode($user->email) . '&token=' . $token;
     }
 
     public function build()

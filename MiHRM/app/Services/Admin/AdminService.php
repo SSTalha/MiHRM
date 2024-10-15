@@ -343,13 +343,13 @@ class AdminService
                 return [
                     'id' => $employee->id,
                     'user_id' => $employee->user_id,
+                    'name' => $employee->user->name,
                     'position' => $employee->position,
                     'department_id' => $employee->department_id,
                     'pay' => $employee->pay,
                     'date_of_joining' => $employee->date_of_joining,
                     'created_at' => $employee->created_at,
                     'updated_at' => $employee->updated_at,
-                    'user_id' => $employee->user->id,
                     'role' => $employee->user->roles->first()->name ?? 'N/A', // Fetch the first role (if available)
                 ];
             });

@@ -43,7 +43,7 @@ class Employee extends Model
 
     public function leaveRequests()
     {
-        return $this->hasMany(LeaveRequest::class);
+        return $this->hasMany(LeaveRequest::class, 'employee_id');
     }
 
     public function attendance()

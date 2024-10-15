@@ -70,5 +70,6 @@ class Kernel extends HttpKernel
         'log.request' => \App\Http\Middleware\LogRequest::class,
         'log.activity' => \App\Http\Middleware\LogActivity::class,
         'role' => \App\Http\Middleware\RoleMiddleware::class,
+        'routes.permission' => \App\Http\Middleware\PermissionsMiddleware::class,
     ];
 }

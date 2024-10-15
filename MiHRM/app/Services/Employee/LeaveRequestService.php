@@ -16,47 +16,45 @@ class LeaveRequestService
     public function getLeaveRequests()
     {
         try {
-            // Get the authenticated user's role
-            $user = Auth::user();
 
+            $user = Auth::user();
             if ($user->hasRole('admin')) {
-                // Admin can get all leave requests but not their own
-                $leaveRequests = LeaveRequest::with('user')
-                    ->where('employee_id', '!=', $user->employee_id)
-                    ->get();
-            } elseif ($user->hasRole('HR')) {
-                // HR can only get leave requests from employees (not HRs)
+                $leaveRequests = LeaveRequest::with('employee.user')->get();
+            } elseif ($user->hasRole('hr')) {
                 $employeeRole = Role::where('name', 'employee')->first();
-                $leaveRequests = LeaveRequest::whereHas('user.roles', function ($query) use ($employeeRole) {
-                    $query->where('role_id', $employeeRole->id);
-                })->with('user')
-                  ->get();
+ 
+                $leaveRequests = LeaveRequest::whereHas('employee.user.roles', function ($query) use ($employeeRole) {
+                    $query->where('role_id', $employeeRole->id); // Only include employees
+                })->with('employee.user')->get();
             } else {
-                // Other employees can only get their own leave requests
-                $leaveRequests = LeaveRequest::where('employee_id', $user->employee_id)
-                    ->with('user')
+
+                if (!$user->employee) {
+                    return Helpers::result('No employee record found for the user.', 403);
+                }
+    
+                $leaveRequests = LeaveRequest::where('employee_id', $user->employee->id)
+                    ->with('employee.user')
                     ->get();
             }
-
+    
             if ($leaveRequests->isEmpty()) {
                 return Helpers::result('No leave requests found.', 200, []);
             }
 
-            // Prepare the response data
             $leaveRequestsData = $leaveRequests->map(function ($leaveRequest) {
                 return [
                     'id' => $leaveRequest->id,
                     'employee_id' => $leaveRequest->employee_id,
-                    'employee_name' => $leaveRequest->user->name, // Assuming 'name' is in the users table
+                    'employee_name' => $leaveRequest->employee->user->name ?? 'N/A', // Employee's user name
                     'start_date' => $leaveRequest->start_date,
                     'end_date' => $leaveRequest->end_date,
                     'reason' => $leaveRequest->reason,
                     'status' => $leaveRequest->status,
                 ];
             });
-
+    
             return Helpers::result('Leave requests retrieved successfully', 200, $leaveRequestsData);
-
+    
         } catch (\Exception $e) {
             return Helpers::result('Failed to retrieve leave requests: ' . $e->getMessage(), 500);
         }
