@@ -2,7 +2,7 @@
 
 namespace App\Services\Auth;
 
-use App\Jobs\QueueJobs\Auth\SendPasswordSetupEmailJob;
+use App\Jobs\SendPasswordSetupEmailJob;
 use App\Models\User;
 use App\Helpers\Helpers;
 use App\Models\Employee;

@@ -66,8 +66,12 @@ class AttendanceService
                     'check_out_time' => $checkOutTime,
                     'working_hours' => $workingHoursFormatted, 
                 ]);
+
             }
-            return Helpers::result("Check-out recorded successfully", Response::HTTP_OK);
+            $workingHour=[
+                'working hours'=>$attendance->working_hours
+            ];
+            return Helpers::result("Check-out recorded successfully", Response::HTTP_OK, $workingHour);
         }catch(\Exception $e){
             return Helpers::result("Error checking out: " . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         

@@ -1,17 +1,16 @@
 <?php
 
-namespace App\Jobs\QueueJobs\LeaveStatus;
+namespace App\Jobs;
 
-use App\Mail\Admin\RejectLeaveRequestMail;
+use App\Mail\Auth\SendPasswordResetMail;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
 
-class RejectLeaveRequestJob implements ShouldQueue
+class SendPasswordResetLinkJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -20,10 +19,13 @@ class RejectLeaveRequestJob implements ShouldQueue
      *
      * @return void
      */
-    protected $user;
-    public function __construct($user)
+
+     protected $user;
+     protected $resetUrl;
+    public function __construct($user, $resetUrl)
     {
         $this->user = $user;
+        $this->resetUrl = $resetUrl;
     }
 
     /**
@@ -33,6 +35,6 @@ class RejectLeaveRequestJob implements ShouldQueue
      */
     public function handle()
     {
-        Mail::to($this->user->email)->queue(new RejectLeaveRequestMail($this->user));
+        Mail::to($this->user->email)->queue(new SendPasswordResetMail($this->user, $this->resetUrl));
     }
 }
