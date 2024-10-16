@@ -101,10 +101,11 @@ class PermissionVariables
         'permission' => 'User can manage leaves (accept/reject)'
     ];
 
-    // public static array $getAllSalaries = [
-    //     'path' => '/salaries',
-    //     'permission' => 'User can manage payroll'
-    // ];
+    public static $getAllAttendance=[
+        'path' => '/get-all-attendance',
+        'permission' => 'User can see Working Hours'
+    ];
+    
 
     //admin hr employee
     public static array $getLeaveRequest = [
