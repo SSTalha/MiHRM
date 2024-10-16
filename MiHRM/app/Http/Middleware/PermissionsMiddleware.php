@@ -29,6 +29,7 @@ class PermissionsMiddleware
         $path = str_replace('api', '', $request->path());
 
         $allPermissionVariables = [
+            PermissionVariables::$getAllAttendance,
             PermissionVariables::$updateUser,
             PermissionVariables::$login,
             PermissionVariables::$logout,
@@ -48,7 +49,6 @@ class PermissionsMiddleware
             PermissionVariables::$assignProject,
             PermissionVariables::$getAllAssignedProjects,
             PermissionVariables::$handleLeaveRequest,
-            // PermissionVariables::$getAllSalaries,
             PermissionVariables::$getLeaveRequest,
             PermissionVariables::$getAllEmployees,
             PermissionVariables::$getEmployeeRoleCounts,

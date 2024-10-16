@@ -32,4 +32,8 @@ class WorkingHourController extends Controller
 
        
     }
+
+    public function getAllAttendanceRecords(){
+        return $this->workingHourService->getAllAttendanceRecords();
+    }
 }

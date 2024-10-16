@@ -4,6 +4,7 @@ namespace App\Services\Employee;
 
 use Carbon\Carbon;
 use App\Helpers\Helpers;
+use App\Models\Employee;
 use App\Models\Attendance;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -19,59 +20,71 @@ class WorkingHourService
      * @return array
      */
     public function calculateWorkingHours(?int $employeeId = null, string $date = null, string $frequency = null)
-    {
-        if (!$employeeId) {
-            $employeeId = Auth::user()->employee_id ?? Auth::user()->employee->id;
+{
+    if (!$employeeId) {
+        $employeeId = Auth::user()->employee_id ?? Auth::user()->employee->id;
+    }
+
+    // Find the employee by the employee_id
+    $employee = Employee::find($employeeId);
+    if (!$employee) {
+    return ['error' => "Employee with ID {$employeeId} not found."];
         }
 
-        $startDate = $this->getStartDate($date, $frequency);
-        $endDate = $this->getEndDate($date, $frequency);
 
-        if (!$startDate || !$endDate) {
-            return ['error' => "Invalid date or frequency provided."];
-        }
+    // Get the employee's name from the associated user
+    $employeeName = $employee->user->name;  // Assuming employee has a 'user' relation and 'name' is in 'user' table.
 
-        $attendances = Attendance::where('employee_id', $employeeId)
-            ->whereBetween('date', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')])
-            ->get();
+    $startDate = $this->getStartDate($date, $frequency);
+    $endDate = $this->getEndDate($date, $frequency);
 
-        $dailyWorkingHours = [];
-        $totalSeconds = 0;
-        
-        $currentDate = $startDate->copy();
-        while ($currentDate->lte($endDate)) {
-            $dateKey = $currentDate->format('Y-m-d');
-            $weekdayName = $currentDate->format('l'); 
-            $attendanceRecord = $attendances->where('date', $dateKey)->first();
-            $checkIn = $attendanceRecord->check_in_time ?? null;
-            $checkOut = $attendanceRecord->check_out_time ?? null;
+    if (!$startDate || !$endDate) {
+        return ['error' => "Invalid date or frequency provided."];
+    }
 
-            $status = $this->getStatus($attendanceRecord);
+    $attendances = Attendance::where('employee_id', $employeeId)
+        ->whereBetween('date', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')])
+        ->get();
 
-            $dailyWorkingHours[$dateKey] = [
-                'date' => $dateKey,
-                'weekday' => $weekdayName,
-                'check_in' => $checkIn,
-                'check_out' => $checkOut,
-                'working_hours' => $this->calculateDailyHours($attendances, $dateKey, $totalSeconds),
-                'status' => $status,
-            ];
+    $dailyWorkingHours = [];
+    $totalSeconds = 0;
+    
+    $currentDate = $startDate->copy();
+    while ($currentDate->lte($endDate)) {
+        $dateKey = $currentDate->format('Y-m-d');
+        $weekdayName = $currentDate->format('l'); 
+        $attendanceRecord = $attendances->where('date', $dateKey)->first();
+        $checkIn = $attendanceRecord->check_in_time ?? null;
+        $checkOut = $attendanceRecord->check_out_time ?? null;
 
-            $currentDate->addDay();
-        }
+        $status = $this->getStatus($attendanceRecord);
 
-        $formattedTotalHours = gmdate('H:i:s', $totalSeconds);
-
-        $data = [
-            'employee_id' => $employeeId,
-            'start_date' => $startDate->format('Y-m-d'),
-            'end_date' => $endDate->format('Y-m-d'),
-            'total_working_hours' => $formattedTotalHours,
-            'daily_working_hours' => array_values($dailyWorkingHours),
+        $dailyWorkingHours[$dateKey] = [
+            'date' => $dateKey,
+            'weekday' => $weekdayName,
+            'check_in' => $checkIn,
+            'check_out' => $checkOut,
+            'working_hours' => $this->calculateDailyHours($attendances, $dateKey, $totalSeconds),
+            'status' => $status,
         ];
 
-        return Helpers::result("Working hours retrieved successfully", Response::HTTP_OK, $data);
+        $currentDate->addDay();
     }
+
+    $formattedTotalHours = gmdate('H:i:s', $totalSeconds);
+
+    $data = [
+        'employee_id' => $employeeId,
+        'employee_name' => $employeeName,  // Using the employee name corresponding to employee_id
+        'start_date' => $startDate->format('Y-m-d'),
+        'end_date' => $endDate->format('Y-m-d'),
+        'total_working_hours' => $formattedTotalHours,
+        'daily_working_hours' => array_values($dailyWorkingHours),
+    ];
+
+    return Helpers::result("Working hours retrieved successfully", Response::HTTP_OK, $data);
+}
+
 
     // ######################## Private methods #################
 
@@ -128,4 +141,50 @@ class WorkingHourService
 
         return ($attendanceRecord->check_in_time && $attendanceRecord->check_out_time) ? 'present' : 'absent';
     }
+
+    /**
+     * Get all attendance records with employee_id and employee name.
+     *
+     * @return array
+     */
+    public function getAllAttendanceRecords()
+{
+    try {
+        // Get the authenticated user
+        $employee = auth()->user();
+
+        // Get the name of the logged-in employee (or admin/HR user)
+        $employeeName = $employee->name;
+
+        // Get all attendance records
+        $attendances = Attendance::with('employee.user')->get();
+
+        // Initialize an array to store the response data
+        $attendanceData = [];
+
+        // Loop through each attendance record and add employee name to the response
+        foreach ($attendances as $attendance) {
+            $attendanceData[] = [
+                'employee_id' => $attendance->employee_id,
+                'employee_name' => $attendance->employee->user->name, // Employee's name from the 'user' table
+                'date' => $attendance->date,
+                'check_in' => $attendance->check_in_time ?? 'N/A',
+                'check_out' => $attendance->check_out_time ?? 'N/A',
+                'status' => $this->getStatus($attendance), // Assuming getStatus method exists
+            ];
+        }
+
+        // Return the response with employee name and attendance records
+        return Helpers::result("Attendance records retrieved successfully", Response::HTTP_OK, $attendanceData);
+
+    } catch (\Exception $e) {
+        return Helpers::result("There was an error fetching records: " . $e->getMessage(), Response::HTTP_BAD_REQUEST);
+    }
+}
+
+
+    /**
+     * Get the status (present/absent/onleave).
+     */
+    
 }

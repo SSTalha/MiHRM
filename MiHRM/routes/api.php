@@ -4,16 +4,14 @@ use Illuminate\Support\Facades\Route;
 use App\GlobalVariables\PermissionVariables;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Employee\SalaryController;
 use App\Http\Controllers\Admin\ProjectController;
+use App\Http\Controllers\Employee\SalaryController;
 use App\Http\Controllers\Employee\EmployeeController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Employee\AttendanceController;
 use App\Http\Controllers\Employee\WorkingHourController;
 use App\Http\Controllers\Employee\LeaveRequestController;
-
-
-
+use App\Http\Controllers\EmployeeWorkingHoursExportController;
 
 
 Route::group(['middleware' => ['api', 'log.request', 'log.activity']], function () {
@@ -53,6 +51,7 @@ Route::group(['middleware' => ['api', 'log.request', 'log.activity']], function 
             Route::get(PermissionVariables::$getAllEmployees['path'], [AdminController::class, 'getAllEmployees']);
             Route::get(PermissionVariables::$getEmployeeRoleCounts['path'], [AdminController::class, 'getEmployeeRoleCounts']); //change func
             Route::get(PermissionVariables::$getAllProjects['path'], [ProjectController::class, 'getAllProjects']);
+            Route::get(PermissionVariables::$getAllAttendance['path'],[WorkingHourController::class, 'getAllAttendanceRecords']);
 
         });
 
@@ -75,6 +74,7 @@ Route::group(['middleware' => ['api', 'log.request', 'log.activity']], function 
         Route::group(['middleware' => ['role:employee']], function () {
             Route::get(PermissionVariables::$getAssignedProjects['path'], [EmployeeController::class, 'getAssignedProjects']);
             Route::post(PermissionVariables::$updateProjectStatus['path'], [EmployeeController::class, 'updateProjectStatus']);
+
         });
     });
 });
