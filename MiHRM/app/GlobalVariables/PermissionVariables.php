@@ -137,15 +137,12 @@ class PermissionVariables
         'permission' => 'User can submit Leave Applications'
     ];
 
-    public static array $checkIn = [
-        'path' => '/attendance/check-in',
+    public static array $checkInCheckOut = [
+        'path' => '/attendance/checkin-out',
         'permission' => 'User can Check-in/Check-out'
     ];
 
-    public static array $checkOut = [
-        'path' => '/attendance/check-out',
-        'permission' => 'User can Check-in/Check-out'
-    ];
+    
 
     //admin hr employee
     public static array $getSalaryDetails = [
@@ -168,6 +165,9 @@ class PermissionVariables
     public static array $getEmployeesAttendence = [
         'path' => '/get-employees-attendence',
         'permission' => 'User can see Attendance Records'
+    ];
+    public static array $updateUser = [
+        'path' => '/user/update',
     ];
     
 }

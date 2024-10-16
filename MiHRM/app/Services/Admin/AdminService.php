@@ -275,4 +275,18 @@ class AdminService
             return Helpers::result("An error occurred while fetching employee role counts: " . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+    public function updateUser($data)
+    {
+        try {
+            $user = Auth::user();
+            $user->update([
+                'name' => $data['name'],
+                'email' => $data['email'],
+            ]);
+
+            return Helpers::result("User updated successfully.", Response::HTTP_OK, null);
+        } catch (\Exception $e) {
+            return Helpers::result("An error occurred while updating the user: " . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }
