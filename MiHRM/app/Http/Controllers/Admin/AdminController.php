@@ -6,6 +6,7 @@ use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Services\Admin\AdminService;
 use App\Http\Requests\Admin\DepartmentRequest;
+use App\Http\Requests\Admin\UpdateUserRequest;
 use App\Http\Requests\Admin\AssignProjectRequest;
 use App\Http\Requests\Admin\CreateProjectRequest;
 use App\Http\Requests\Admin\UpdateProjectRequest;
@@ -58,5 +59,9 @@ class AdminController extends Controller
     public function getEmployeeRoleCounts(): JsonResponse
     {
         return $this->adminService->getEmployeeRoleCounts();
+    }
+    public function updateUser(UpdateUserRequest $request): JsonResponse
+    {
+        return $this->adminService->updateUser($request->validated());
     }
 }

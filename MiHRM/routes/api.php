@@ -59,8 +59,7 @@ Route::group(['middleware' => ['api', 'log.request', 'log.activity']], function 
         // HR and Employee common routes
         Route::group(['middleware' => ['role:hr|employee']], function () {
             Route::post(PermissionVariables::$submitLeaveRequest['path'], [EmployeeController::class, 'submitLeaveRequest']);
-            Route::post(PermissionVariables::$checkIn['path'], [AttendanceController::class, 'checkIn']);
-            Route::post(PermissionVariables::$checkOut['path'], [AttendanceController::class, 'checkOut']);
+            Route::post(PermissionVariables::$checkInCheckOut['path'], [AttendanceController::class, 'handleCheckInOut']);
         });
 
         // Admin, HR, and Employee common routes
@@ -69,6 +68,7 @@ Route::group(['middleware' => ['api', 'log.request', 'log.activity']], function 
             Route::get(PermissionVariables::$getLeaveRequest['path'], [LeaveRequestController::class, 'getLeaveRequest']);
             Route::get(PermissionVariables::$getEmployeesAttendence['path'], [AttendanceController::class, 'getEmployeesAttendence']);
             Route::get(PermissionVariables::$getSalaryDetails['path'], [SalaryController::class, 'getSalaryDetails']);
+            Route::put(PermissionVariables::$updateUser['path'], [AdminController::class, 'updateUser']);
         });
 
         // Employee-specific routes

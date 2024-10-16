@@ -5,18 +5,41 @@ namespace App\Services\Employee;
 use Carbon\Carbon;
 use App\Helpers\Helpers;
 use App\Models\Employee;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Attendance;
 use App\DTOs\EmployeeDTOs\AttendanceDTO;
 use Symfony\Component\HttpFoundation\Response;
 
 class AttendanceService
 {
+    public function handleCheckInOut(Request $request)
+    {
+        try {
+            $employee = Auth::user()->employee;
+            $type = $request->input('type');
+
+            if (!$employee) {
+                return Helpers::result("Employee not found for the authenticated user.", Response::HTTP_NOT_FOUND);
+            }
+
+            if ($type === 'check_in') {
+                return $this->checkIn($employee); 
+            } elseif ($type === 'check_out') {
+                return $this->checkOut($employee); 
+            } else {
+                return Helpers::result("Invalid action type provided.", Response::HTTP_BAD_REQUEST);
+            }
+        } catch (\Exception $e) {
+            return Helpers::result("An error occurred: " . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
     /**
      * /check in
      * @param \App\Models\Employee $employee
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function checkIn(Employee $employee)
+    private function checkIn(Employee $employee)
     {
         try{
             $today = Carbon::today();
@@ -43,7 +66,7 @@ class AttendanceService
      * @param \App\Models\Employee $employee
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function checkOut(Employee $employee)
+    private function checkOut(Employee $employee)
     {
         try{
             $today = Carbon::today();

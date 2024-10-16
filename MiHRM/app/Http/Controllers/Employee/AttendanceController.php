@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Employee;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use App\Services\Employee\AttendanceService;
 
 class AttendanceController extends Controller
@@ -15,27 +16,15 @@ class AttendanceController extends Controller
         $this->attendanceService = $attendanceService;
     }
 
-    public function checkIn()
-    {
-        $employee = auth()->user()->employee; 
-
-        return $this->attendanceService->checkIn($employee);
-
-    }
-
-    public function checkOut()
-    {
-        $employee = auth()->user()->employee; 
-
-        return $this->attendanceService->checkOut($employee);
-
-    }
-
-        public function getEmployeesAttendence(Request $request)
+    public function getEmployeesAttendence(Request $request)
     {
         $date = $request->input('date');
         $status = $request->input('status');
         return $this->attendanceService->getEmployeesAttendance($date, $status);
 
+    }
+    public function handleCheckInOut(Request $request): JsonResponse
+    {
+        return $this->attendanceService->handleCheckInOut($request);
     }
 }
