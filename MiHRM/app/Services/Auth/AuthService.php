@@ -3,14 +3,15 @@
 namespace App\Services\Auth;
 
 use App\Jobs\SendPasswordSetupEmailJob;
+use App\Models\LoginSecurity;
 use App\Models\User;
 use App\Helpers\Helpers;
 use App\Models\Employee;
 use App\DTOs\AuthDTOs\RegisterDTO;
 use Illuminate\Support\Facades\DB;
 use App\DTOs\EmployeeDTOs\EmployeeCreateDTO;
-use Str;
 use Symfony\Component\HttpFoundation\Response;
+use Str;
 
 class AuthService
 {
@@ -41,50 +42,60 @@ public function register($request)
             'user' => $user,
             'employee' => $employee
         ]);
-    } 
-    catch (\Exception $e) 
+    } catch (\Exception $e) 
     {
         DB::rollBack();
         return Helpers::result("Registration failed: " . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 }
 
-
     /**
      * Summary of login
-     * @param array $credentials
+     * @param mixed $request
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function login(array $credentials)
+    public function login($request)
     {
         try{
-            $token = auth()->attempt($credentials);
-
-            if (!$token) {
-                return Helpers::result("Unauthorized", Response::HTTP_BAD_REQUEST, ['error' => 'Invalid credentials']);
+            $credentials = $request->only('email', 'password');
+    
+            if (!auth()->attempt($credentials)) {
+                return Helpers::result('Invalid credentials', Response::HTTP_UNAUTHORIZED);
             }
-
             $user = auth()->user();
-            $roles = $user->getRoleNames();
-            $permissions = $user->getAllPermissions()->pluck('name');
-
-            $employee = $user->employee; 
-
-            $userData = [
-                'name' => $user->name,
-                'email' => $user->email,
-                'role' => $roles->first(), 
-                'position' => $employee->position ?? null,
-                'department' => $employee->department->name ?? null, 
-                'permissions' => $permissions,
-            ];
-
-            $tokenData = Helpers::respondWithToken($token);
-            $responseData = array_merge($tokenData, $userData);
-
-            return Helpers::result("User logged in successfully", Response::HTTP_OK, $responseData);
-        }catch(\Exception $e){
-            return Helpers::result("Login failed: " . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+            $loginSecurity = $user->loginSecurity;
+            if (!$loginSecurity) {
+                $loginSecurity = new LoginSecurity();
+                $loginSecurity->user_id = $user->id;
+            }
+        
+            if ($loginSecurity->google2fa_enable) {
+                $token = auth()->tokenById($user->id);
+                return Helpers::result('Please enter your 2FA code from Google Authenticator.', Response::HTTP_OK, $token);
+            } else {
+                $google2fa = app('pragmarx.google2fa');
+                $secretKey = $google2fa->generateSecretKey();
+        
+                $loginSecurity->google2fa_secret = $secretKey;
+                $loginSecurity->qr_code_scanned = false;
+                $loginSecurity->save();
+        
+                $QRImage = $google2fa->getQRCodeInline(
+                    config('app.name'),
+                    $user->email,
+                    $secretKey
+                );
+                $token = auth()->tokenById($user->id);
+                $data = [
+                    'qr_code' => $QRImage,
+                    'secret' => $secretKey,
+                    'token' => $token
+                ];
+                return Helpers::result('Scan the QR code to set up 2FA.', Response::HTTP_OK, $data);
+            }
+        }catch (\Exception $e) {
+            DB::rollBack();
+            return Helpers::result("Registration failed: " . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 

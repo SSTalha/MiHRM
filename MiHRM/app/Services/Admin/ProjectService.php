@@ -1,13 +1,10 @@
 <?php
 
 namespace App\Services\Admin;
-
-use App\Models\User;
 use App\Models\Project;
 use App\Models\Employee;
 use App\Helpers\Helpers;
 use App\Models\ProjectAssignment;
-use Illuminate\Support\Facades\Auth;
 use App\DTOs\ProjectDTOs\ProjectCreateDTO;
 use App\DTOs\ProjectDTOs\ProjectAssignmentDTO;
 use Symfony\Component\HttpFoundation\Response;

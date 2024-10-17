@@ -64,9 +64,13 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasOne(Employee::class);
     }
     public function department()
-{
+    {
     return $this->belongsTo(Department::class, 'department_id');  // Assuming 'department_id' exists in 'users' or 'employees' table
-}
+    }
 
+    public function loginSecurity()
+    {
+        return $this->hasOne(LoginSecurity::class, 'user_id');
+    }
 
 }

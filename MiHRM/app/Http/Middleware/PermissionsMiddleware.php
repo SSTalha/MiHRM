@@ -47,7 +47,6 @@ class PermissionsMiddleware
             PermissionVariables::$assignProject,
             PermissionVariables::$getAllAssignedProjects,
             PermissionVariables::$handleLeaveRequest,
-            // PermissionVariables::$getAllSalaries,
             PermissionVariables::$getLeaveRequest,
             PermissionVariables::$getAllEmployees,
             PermissionVariables::$getEmployeeRoleCounts,
