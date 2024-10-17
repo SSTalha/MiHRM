@@ -24,7 +24,7 @@ public function getSalaryDetails($request)
             $employeeId = $request->input('employee_id');
             $month = $request->input('month') ?? Carbon::now()->format('Y-m');
         } else {
-    
+
             $employeeId = Auth::user()->employee_id ?? Auth::user()->employee->id;
             $month = $request->input('month') ?? Carbon::now()->format('Y-m');
         }
@@ -69,13 +69,14 @@ public function getSalaryDetails($request)
 
         $department = $employee->department;
 
+
         $responseData = [
             'employee_id' => $salary->employee_id,
-            'employee_name' => $employee->user->name,
+            'employee_name' => $employee->user->name, 
             'salary' => $employee->pay,
             'status' => $salary->status,
             'paid_date' => $salary->paid_date,
-            'salary_month' => $monthStart->format('F Y'),
+            'salary_month' => $monthStart->format('F Y'), 
             'employee_position' => $employee->position,
             'employee_department' => $department ? $department->name : null,
             'total_working_days' => $totalWorkingDays,
