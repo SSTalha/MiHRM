@@ -20,8 +20,4 @@ class SalaryController extends Controller
         return $this->salaryService->getSalaryDetails($request);
     }
 
-    public function getAllSalaries()
-    {
-        return $this->salaryService->getAllSalaries();
-    }
 }

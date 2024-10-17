@@ -24,6 +24,10 @@ class PermissionVariables
         'path' => '/password-reset-link',
     ];
 
+    public static array $verifyTwoFactorCode = [
+        'path' => '/verify-2fa-code',
+    ];
+
     // admin employee hr
     public static array $getEmployeeWorkingHours = [
         'path' => '/get-employee/working-hours',
@@ -105,7 +109,6 @@ class PermissionVariables
         'path' => '/get-all-attendance',
         'permission' => 'User can see Working Hours'
     ];
-    
 
     //admin hr employee
     public static array $getLeaveRequest = [
@@ -143,7 +146,6 @@ class PermissionVariables
     ];
 
     
-
     //admin hr employee
     public static array $getSalaryDetails = [
         'path' => '/salary-invoice',

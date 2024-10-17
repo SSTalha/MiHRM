@@ -11,6 +11,7 @@ use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Employee\AttendanceController;
 use App\Http\Controllers\Employee\WorkingHourController;
 use App\Http\Controllers\Employee\LeaveRequestController;
+use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\EmployeeWorkingHoursExportController;
 
 
@@ -19,7 +20,7 @@ Route::group(['middleware' => ['api', 'log.request', 'log.activity']], function 
     Route::post(PermissionVariables::$login['path'], [AuthController::class, 'login']);
     Route::post(PermissionVariables::$logout['path'], [AuthController::class, 'logout']);
     Route::post(PermissionVariables::$passwordSetup['path'], [EmployeeController::class, 'passwordSetup']);
-    Route::post(PermissionVariables::$passwordReset['path'], [PasswordResetController::class, 'passwordReset']);
+    Route::post(PermissionVariables::$passwordReset[ 'path'], [PasswordResetController::class, 'passwordReset']);
     Route::post(PermissionVariables::$passwordResetLink['path'], [PasswordResetController::class, 'sendPasswordResetLink']);
 
     // Routes with JWT authentication and permission check middleware
@@ -67,6 +68,7 @@ Route::group(['middleware' => ['api', 'log.request', 'log.activity']], function 
             Route::get(PermissionVariables::$getLeaveRequest['path'], [LeaveRequestController::class, 'getLeaveRequest']);
             Route::get(PermissionVariables::$getEmployeesAttendence['path'], [AttendanceController::class, 'getEmployeesAttendence']);
             Route::get(PermissionVariables::$getSalaryDetails['path'], [SalaryController::class, 'getSalaryDetails']);
+            Route::post(PermissionVariables::$verifyTwoFactorCode['path'], [TwoFactorController::class, 'verifyTwoFactorCode']);
             Route::put(PermissionVariables::$updateUser['path'], [AdminController::class, 'updateUser']);
         });
 

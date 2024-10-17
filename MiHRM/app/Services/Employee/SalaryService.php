@@ -20,13 +20,13 @@ class SalaryService
 public function getSalaryDetails($request)
 {
     try {
-        
         if (Auth::user()->hasRole('admin')) {
             $employeeId = $request->input('employee_id');
-            $month = $request->input('month') ?? Carbon::now()->format('Y-m'); // Use current month if not provided
+            $month = $request->input('month') ?? Carbon::now()->format('Y-m');
         } else {
+
             $employeeId = Auth::user()->employee_id ?? Auth::user()->employee->id;
-            $month = $request->input('month') ?? Carbon::now()->format('Y-m'); // Allow month input, default to current month
+            $month = $request->input('month') ?? Carbon::now()->format('Y-m');
         }
 
         if (!$month) {
@@ -61,15 +61,15 @@ public function getSalaryDetails($request)
                 $dailySecondsWorked = max(0, $checkOut->diffInSeconds($checkIn));
 
                 $totalSecondsWorked += $dailySecondsWorked;
-                $totalWorkingDays++;  
+                $totalWorkingDays++;
             }
         }
 
         $totalWorkingHours = gmdate('H:i:s', $totalSecondsWorked);
 
-        $department = $employee->department; 
+        $department = $employee->department;
 
-        // Prepare the response data
+
         $responseData = [
             'employee_id' => $salary->employee_id,
             'employee_name' => $employee->user->name, 
