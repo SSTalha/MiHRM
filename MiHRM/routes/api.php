@@ -12,19 +12,19 @@ use App\Http\Controllers\Employee\AttendanceController;
 use App\Http\Controllers\Employee\WorkingHourController;
 use App\Http\Controllers\Employee\LeaveRequestController;
 use App\Http\Controllers\Auth\TwoFactorController;
-use App\Http\Controllers\EmployeeWorkingHoursExportController;
 
 
 Route::group(['middleware' => ['api', 'log.request', 'log.activity']], function () {
-
+    
     Route::post(PermissionVariables::$login['path'], [AuthController::class, 'login']);
     Route::post(PermissionVariables::$logout['path'], [AuthController::class, 'logout']);
     Route::post(PermissionVariables::$passwordSetup['path'], [EmployeeController::class, 'passwordSetup']);
     Route::post(PermissionVariables::$passwordReset[ 'path'], [PasswordResetController::class, 'passwordReset']);
     Route::post(PermissionVariables::$passwordResetLink['path'], [PasswordResetController::class, 'sendPasswordResetLink']);
-
+    
     // Routes with JWT authentication and permission check middleware
     Route::group(['middleware' => ['jwt.auth', 'routes.permission']], function () {
+        Route::post(PermissionVariables::$verifyTwoFactorCode['path'], [TwoFactorController::class, 'verifyTwoFactorCode']);
 
         // Admin-specific routes
         Route::group(['middleware' => ['role:admin']], function () {
@@ -41,7 +41,7 @@ Route::group(['middleware' => ['api', 'log.request', 'log.activity']], function 
         Route::group(['middleware' => ['role:hr']], function () {
             Route::post(PermissionVariables::$assignProject['path'], [ProjectController::class, 'assignProject']);
         });
-
+        
         // Admin and HR common routes
         Route::group(['middleware' => ['role:admin|hr']], function () {
             Route::get(PermissionVariables::$getEmployeesByDepartment['path'], [AdminController::class, 'getEmployeesByDepartment']);
@@ -53,6 +53,9 @@ Route::group(['middleware' => ['api', 'log.request', 'log.activity']], function 
             Route::get(PermissionVariables::$getEmployeeRoleCounts['path'], [AdminController::class, 'getEmployeeRoleCounts']); //change func
             Route::get(PermissionVariables::$getAllProjects['path'], [ProjectController::class, 'getAllProjects']);
             Route::get(PermissionVariables::$getAllAttendance['path'],[WorkingHourController::class, 'getAllAttendanceRecords']);
+            
+            Route::get(PermissionVariables::$getProjectCount['path'],[ProjectController::class,'getProjectCount']);
+            Route::get(PermissionVariables::$getDailyAttendanceCount['path'],[AttendanceController::class,'getDailyAttendanceCount']);
 
         });
 
@@ -60,6 +63,7 @@ Route::group(['middleware' => ['api', 'log.request', 'log.activity']], function 
         Route::group(['middleware' => ['role:hr|employee']], function () {
             Route::post(PermissionVariables::$submitLeaveRequest['path'], [EmployeeController::class, 'submitLeaveRequest']);
             Route::post(PermissionVariables::$checkInCheckOut['path'], [AttendanceController::class, 'handleCheckInOut']);
+            Route::get(PermissionVariables::$getAttendanceCount['path'], [AttendanceController::class,'getAttendanceCount']);
         });
 
         // Admin, HR, and Employee common routes

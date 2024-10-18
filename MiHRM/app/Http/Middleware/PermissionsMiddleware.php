@@ -30,7 +30,12 @@ class PermissionsMiddleware
 
         $allPermissionVariables = [
             PermissionVariables::$getAllAttendance,
-            PermissionVariables::$updateUser,
+            PermissionVariables::$getAttendanceCount,
+            PermissionVariables::$getProjectCount,
+            PermissionVariables::$getDailyAttendanceCount,
+
+            // PermissionVariables::$verifyTwoFactorCode,
+            // PermissionVariables::$updateUser,
             PermissionVariables::$login,
             PermissionVariables::$logout,
             PermissionVariables::$passwordSetup,

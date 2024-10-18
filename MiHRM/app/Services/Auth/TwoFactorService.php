@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 class TwoFactorService
 {
-    public function verifyTwoFactorCode($request)
+        public function verifyTwoFactorCode($request)
     {
         $request->validate([
             'two_fa_code' => 'required|digits:6',
@@ -53,6 +53,5 @@ class TwoFactorService
             return Helpers::result('Invalid code please try again', Response::HTTP_UNPROCESSABLE_ENTITY, []);
         }
     }
-    
 
 }

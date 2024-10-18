@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Services\Auth\TwoFactorService;
-use Illuminate\Http\Request;
 
 class TwoFactorController extends Controller
 {
@@ -14,6 +14,7 @@ class TwoFactorController extends Controller
     }
 
     public function verifyTwoFactorCode(Request $request){
+        // dd('working');
         return $this->twoFactorService->verifyTwoFactorCode($request);
     }
 }

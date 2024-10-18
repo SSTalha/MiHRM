@@ -101,11 +101,14 @@ class AttendanceService
         }
     }
 
+     
     /**
-     * Get Employees Attendance
-     * @param mixed $date
-     * @param mixed $status
-     * @return mixed|\Illuminate\Http\JsonResponse
+     * getEmployeesAttendance
+     *
+     * @param  mixed $date
+     * @param  mixed $status
+     * @param  mixed $request
+     * @return void
      */
     public function getEmployeesAttendance($date = null, $status = null)
     {
@@ -153,4 +156,85 @@ class AttendanceService
             return Helpers::result("Error getting employee attendance: " . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+
+    
+    /**
+     * getAttendanceCount
+     *
+     * @return void
+     */
+public function getAttendanceCount()
+{
+    $userID = Auth::user()->id;
+
+    $employee = Employee::where('user_id', $userID)->first();
+
+    if (!$employee) {
+        return Helpers::result('Employee record not found', Response::HTTP_NOT_FOUND);
+    }
+
+    $employeeId = $employee->id; 
+    $employeeName = Auth::user()->name;
+
+    $startDate = Carbon::now()->startOfMonth();
+    $endDate = Carbon::today();
+    $attendance = Attendance::where('employee_id', $employeeId) 
+        ->whereBetween('date', [$startDate, $endDate])
+        ->get();
+
+    if ($attendance->isEmpty()) {
+        return Helpers::result('No attendance records found', Response::HTTP_OK);
+    }
+
+    $presentCount = $attendance->where('status', 'present')->count();
+    $absentCount = $attendance->where('status', 'absent')->count();
+    $onleaveCount = $attendance->where('status', 'onleave')->count();
+
+    return Helpers::result('Attendance counts retrieved successfully', Response::HTTP_OK, [
+        'employee_name' => $employeeName,
+        'present' => $presentCount,
+        'absent' => $absentCount,
+        'onleave' => $onleaveCount
+    ]);
+}
+    
+    /**
+     * getAttendanceByDate
+     *
+     * @param  mixed $date
+     * @return void
+     */
+    public function getAttendanceByDate($request)
+    {
+    try {
+        $targetDate = $request['date'] ? $request['date'] : Carbon::today()->toDateString();
+        $attendanceRecords = Attendance::whereDate('date', $targetDate)->get();
+        
+        $totalPresent = $attendanceRecords->where('status', 'present')->count();
+        $totalAbsent = $attendanceRecords->where('status', 'absent')->count();
+        $totalOnLeave = $attendanceRecords->where('status', 'onleave')->count();
+
+        $employeeRecord = $attendanceRecords->map(function ($record) {
+            $employee = $record->employee;
+            $user = $employee ? $employee->user : null;
+
+            return [
+                'employee_id' => $record->employee_id,
+                'name' => $user ? $user->name : null,
+                'status' => $record->status,
+            ];
+        });
+
+        return Helpers::result("Attendance records retrieved successfully", Response::HTTP_OK, [
+            'totalPresent' => $totalPresent,
+            'totalAbsent' => $totalAbsent,
+            'totalOnLeave' => $totalOnLeave,
+            'employee_record' => $employeeRecord,
+        ]);
+    } catch (\Exception $e) {
+        return Helpers::result("Error getting attendance records: " . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+}
+
 }

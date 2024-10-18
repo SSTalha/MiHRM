@@ -47,4 +47,7 @@ class ProjectController extends Controller
     {
         return $this->projectService->getAllProjects();
     }
+    public function getProjectCount(){
+        return $this->projectService->projectCount();
+    }
 }

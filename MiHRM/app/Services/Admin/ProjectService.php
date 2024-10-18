@@ -131,6 +131,28 @@ class ProjectService
         }
         return Helpers::result("All projects fetched successfully.", Response::HTTP_OK, $projects);
     }
+    
+    /**
+     * projectCount
+     *
+     * @return void
+     */
+    public function projectCount() {
+    try {
+        $pendingProject = ProjectAssignment::where('status', 'pending')->count();
+        $inProgressProject = ProjectAssignment::where('status', 'in_progress')->count();
+        $completedProject = ProjectAssignment::where('status', 'completed')->count();
 
+        $data = [
+            'pendingProject' => $pendingProject,
+            'inProgressProject' => $inProgressProject,
+            'completedProject' => $completedProject
+        ];
+        
+        return Helpers::result('Projects count', Response::HTTP_OK, $data);
+    } catch (\Exception $e) {
+        return Helpers::result('Projects count failed'.$e->getMessage(), Response::HTTP_NOT_FOUND);
+    }
+}
 
 }

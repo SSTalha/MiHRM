@@ -1,14 +1,14 @@
 <?php
 
 namespace App\Services\Auth;
-use App\DTOs\AuthDTOs\PasswordDTO;
-use App\Helpers\Helpers;
-use App\Jobs\SendPasswordResetLinkJob;
-use App\Models\User;
-use \App\Models\PasswordReset;
-use Illuminate\Http\Response;
 use Hash;
-use Str;
+use App\Models\User;
+use App\Helpers\Helpers;
+use Illuminate\Support\Str;
+use Illuminate\Http\Response;
+use \App\Models\PasswordReset;
+use App\DTOs\AuthDTOs\PasswordDTO;
+use App\Jobs\SendPasswordResetLinkJob;
 
 class PasswordResetService
 {
