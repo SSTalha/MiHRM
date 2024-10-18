@@ -150,31 +150,23 @@ class WorkingHourService
     public function getAllAttendanceRecords()
 {
     try {
-        // Get the authenticated user
+
         $employee = auth()->user();
-
-        // Get the name of the logged-in employee (or admin/HR user)
         $employeeName = $employee->name;
-
-        // Get all attendance records
         $attendances = Attendance::with('employee.user')->get();
 
-        // Initialize an array to store the response data
         $attendanceData = [];
-
-        // Loop through each attendance record and add employee name to the response
         foreach ($attendances as $attendance) {
             $attendanceData[] = [
                 'employee_id' => $attendance->employee_id,
-                'employee_name' => $attendance->employee->user->name, // Employee's name from the 'user' table
+                'employee_name' => $attendance->employee->user->name, 
                 'date' => $attendance->date,
                 'check_in' => $attendance->check_in_time ?? 'N/A',
                 'check_out' => $attendance->check_out_time ?? 'N/A',
-                'status' => $this->getStatus($attendance), // Assuming getStatus method exists
+                'status' => $this->getStatus($attendance), 
             ];
         }
 
-        // Return the response with employee name and attendance records
         return Helpers::result("Attendance records retrieved successfully", Response::HTTP_OK, $attendanceData);
 
     } catch (\Exception $e) {
@@ -182,9 +174,4 @@ class WorkingHourService
     }
 }
 
-
-    /**
-     * Get the status (present/absent/onleave).
-     */
-    
 }

@@ -71,10 +71,20 @@ public function register($request)
         
             if ($loginSecurity->google2fa_enable) {
                 $token = auth()->tokenById($user->id);
+<<<<<<< Updated upstream
                 $data = [
                     'token' => $token,
                     'qr_code_scanned' => $loginSecurity->qr_code_scanned
                 ];
+=======
+
+                $data = [
+
+                    'token' => $token,
+                    'qr_code_scanned' => $loginSecurity->qr_code_scanned,
+                ];
+
+>>>>>>> Stashed changes
                 return Helpers::result('Please enter your 2FA code from Google Authenticator.', Response::HTTP_OK, $data);
             } else {
                 $google2fa = app('pragmarx.google2fa');
@@ -94,9 +104,14 @@ public function register($request)
                     'qr_code' => $QRImage,
                     'secret' => $secretKey,
                     'token' => $token,
+<<<<<<< Updated upstream
                     'qr_code_scanned' => $loginSecurity->qr_code_scanned
+=======
+                    'qr_code_scanned' => $loginSecurity->qr_code_scanned,
+>>>>>>> Stashed changes
                 ];
                 return Helpers::result('Scan the QR code to set up 2FA.', Response::HTTP_OK, $data);
+                // return $QRImage;
             }
         }catch (\Exception $e) {
             DB::rollBack();

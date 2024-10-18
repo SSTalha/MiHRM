@@ -19,7 +19,7 @@ class PermissionVariables
     public static array $passwordReset = [
         'path' => '/password-reset',
     ];
-    
+
     public static array $passwordResetLink = [
         'path' => '/password-reset-link',
     ];
@@ -28,25 +28,39 @@ class PermissionVariables
         'path' => '/verify-2fa-code',
     ];
 
-    public static array $getAttendanceCount=[
+    public static array $getAttendanceCount = [
         'path' => '/employee-attendance-count',
-        'permission'=>'User can get his attedance record'
+        'permission' => 'User can get his attedance record'
     ];
 
-
-    public static array $getProjectCount=[
+    public static array $getProjectCount = [
         'path' => '/project-count',
-        'permission'=>'User can count projects'
+        'permission' => 'User can count projects'
     ];
-    public static array $getDailyAttendanceCount=[
+    public static array $getDailyAttendanceCount = [
         'path' => '/daily-attendance-count',
-        'permission'=>'User can get daily attendance count'
+        'permission' => 'User can get daily attendance count'
     ];
 
     // Admin, HR, and Employee common route
     public static array $updateUser = [
         'path' => '/user/update',
         'permission' => 'User can update their info'
+    ];
+
+    public static array $createAnnouncement = [
+        'path' => '/announcements-create',
+        'permission' => 'User can manage Announcement'
+    ];
+
+    public static array $updatePublishedStatus = [
+        'path' => '/announcements/{id}/update-status',
+        'permission' => 'User can manage Announcement'
+    ];
+
+    public static array $getAnnouncements = [
+        'path' => '/get-announcements',
+        'permission' => 'User can view Announcement'
     ];
 
     // admin employee hr
@@ -126,7 +140,7 @@ class PermissionVariables
         'permission' => 'User can manage leaves (accept/reject)'
     ];
 
-    public static $getAllAttendance=[
+    public static $getAllAttendance = [
         'path' => '/get-all-attendance',
         'permission' => 'User can see Working Hours'
     ];
@@ -166,7 +180,7 @@ class PermissionVariables
         'permission' => 'User can Check-in/Check-out'
     ];
 
-    
+
     //admin hr employee
     public static array $getSalaryDetails = [
         'path' => '/salary-invoice',
@@ -189,5 +203,4 @@ class PermissionVariables
         'path' => '/get-employees-attendence',
         'permission' => 'User can see Attendance Records'
     ];
-    
 }

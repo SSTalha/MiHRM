@@ -16,8 +16,9 @@ class Kernel extends ConsoleKernel
         Commands\HandleLeave::class,
         Commands\AddUnpaidSalary::class,
         Commands\PaySalaries::class,
-     ];
-     
+        Commands\PublishAnnouncements::class,
+    ];
+
     /**
      * Define the application's command schedule.
      *
@@ -25,16 +26,14 @@ class Kernel extends ConsoleKernel
      * @return void
      */
     protected function schedule(Schedule $schedule)
-{
+    {
 
-    $schedule->command( "command:attendence-record")->everyMinute();
-    $schedule->command( "command:handle-leave")->everyMinute();
-    $schedule->command( "command:add-unpaid-salary")->everyMinute();
-    $schedule->command( "command:pay-salaries")->everyTwoMinutes();
-    
-
-    
-}
+        $schedule->command("command:attendence-record")->everyMinute();
+        $schedule->command("command:handle-leave")->everyMinute();
+        $schedule->command("command:add-unpaid-salary")->everyMinute();
+        $schedule->command("command:pay-salaries")->everyTwoMinutes();
+        $schedule->command('command:publish-announcements')->everyMinute();
+    }
 
 
     /**
@@ -44,7 +43,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }

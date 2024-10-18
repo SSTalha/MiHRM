@@ -30,12 +30,19 @@ class PermissionsMiddleware
 
         $allPermissionVariables = [
             PermissionVariables::$getAllAttendance,
+<<<<<<< Updated upstream
             PermissionVariables::$getAttendanceCount,
             PermissionVariables::$getProjectCount,
             PermissionVariables::$getDailyAttendanceCount,
 
             // PermissionVariables::$verifyTwoFactorCode,
             PermissionVariables::$updateUser,
+=======
+            // PermissionVariables::$updateUser,
+            PermissionVariables::$createAnnouncement,
+            PermissionVariables::$updatePublishedStatus,
+            PermissionVariables::$getAnnouncements,
+>>>>>>> Stashed changes
             PermissionVariables::$login,
             PermissionVariables::$logout,
             PermissionVariables::$passwordSetup,

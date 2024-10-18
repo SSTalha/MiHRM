@@ -43,10 +43,15 @@ class RolesAndPermissionsSeeder extends Seeder
             'User can manage update project status',
             'User can see Attendance Records',
 
+<<<<<<< Updated upstream
             'User can get his attedance record',
             'User can count projects',
             'User can get daily attendance count',
             'User can update their info'
+=======
+            'User can manage Announcement',
+            'User can view Announcement'
+>>>>>>> Stashed changes
         ];
         
         
@@ -75,11 +80,16 @@ class RolesAndPermissionsSeeder extends Seeder
             'User can get all projects',
             'User can get salary invoice',
             'User can see Attendance Records',
+<<<<<<< Updated upstream
 
             'User can count projects',
             'User can get daily attendance count',
             'User can update their info'
 
+=======
+            'User can manage Announcement',
+            'User can view Announcement'
+>>>>>>> Stashed changes
         ]);
 
         $hrRole = Role::firstOrCreate(['name' => 'hr']);
@@ -99,12 +109,17 @@ class RolesAndPermissionsSeeder extends Seeder
             'User can Check-in/Check-out',
             'User can get salary invoice',
             'User can see Attendance Records',
+<<<<<<< Updated upstream
 
             'User can get his attedance record',
             'User can count projects',
             'User can get daily attendance count',
             'User can update their info'
             
+=======
+            'User can manage Announcement',
+            'User can view Announcement'
+>>>>>>> Stashed changes
         ]);
 
         $employeeRole = Role::firstOrCreate(['name' => 'employee']);
@@ -117,9 +132,13 @@ class RolesAndPermissionsSeeder extends Seeder
             'User can see their assigned projects',
             'User can manage update project status',
             'User can see Attendance Records',
+<<<<<<< Updated upstream
 
             'User can get his attedance record',
             'User can update their info'
+=======
+            'User can view Announcement'
+>>>>>>> Stashed changes
         ]);
     }
 }
