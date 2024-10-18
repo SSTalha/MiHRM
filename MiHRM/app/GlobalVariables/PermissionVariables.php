@@ -19,13 +19,28 @@ class PermissionVariables
     public static array $passwordReset = [
         'path' => '/password-reset',
     ];
-
+    
     public static array $passwordResetLink = [
         'path' => '/password-reset-link',
     ];
 
     public static array $verifyTwoFactorCode = [
         'path' => '/verify-2fa-code',
+    ];
+
+    public static array $getAttendanceCount=[
+        'path' => '/employee-attendance-count',
+        'permission'=>'User can get his attedance record'
+    ];
+
+
+    public static array $getProjectCount=[
+        'path' => '/project-count',
+        'permission'=>'User can count projects'
+    ];
+    public static array $getDailyAttendanceCount=[
+        'path' => '/daily-attendance-count',
+        'permission'=>'User can get daily attendance count'
     ];
 
     // admin employee hr

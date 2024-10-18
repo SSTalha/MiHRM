@@ -265,9 +265,11 @@ class AdminService
                 $query->where('name', 'employee');
             })->count();
 
+            $departmentCount=Department::all()->count(); 
             $data = [
                 'hr_count' => $hrCount,
-                'employee_count' => $employeeCount
+                'employee_count' => $employeeCount,
+                'department_count' => $departmentCount
             ];
 
             return Helpers::result("Employee role counts fetched successfully.", Response::HTTP_OK, $data);
@@ -278,7 +280,7 @@ class AdminService
     public function updateUser($data)
     {
         try {
-            $user = Auth::user();
+            $user = auth()->user();
             $user->update([
                 'name' => $data['name'],
                 'email' => $data['email'],

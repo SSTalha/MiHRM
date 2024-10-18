@@ -2,16 +2,16 @@
 
 namespace App\Services\Auth;
 
-use App\Jobs\SendPasswordSetupEmailJob;
-use App\Models\LoginSecurity;
 use App\Models\User;
 use App\Helpers\Helpers;
 use App\Models\Employee;
+use Illuminate\Support\Str;
+use App\Models\LoginSecurity;
 use App\DTOs\AuthDTOs\RegisterDTO;
 use Illuminate\Support\Facades\DB;
+use App\Jobs\SendPasswordSetupEmailJob;
 use App\DTOs\EmployeeDTOs\EmployeeCreateDTO;
 use Symfony\Component\HttpFoundation\Response;
-use Str;
 
 class AuthService
 {
@@ -71,7 +71,11 @@ public function register($request)
         
             if ($loginSecurity->google2fa_enable) {
                 $token = auth()->tokenById($user->id);
-                return Helpers::result('Please enter your 2FA code from Google Authenticator.', Response::HTTP_OK, $token);
+                $data = [
+                    'token' => $token,
+                    'qr_code_scanned' => $loginSecurity->qr_code_scanned
+                ];
+                return Helpers::result('Please enter your 2FA code from Google Authenticator.', Response::HTTP_OK, $data);
             } else {
                 $google2fa = app('pragmarx.google2fa');
                 $secretKey = $google2fa->generateSecretKey();
@@ -89,7 +93,8 @@ public function register($request)
                 $data = [
                     'qr_code' => $QRImage,
                     'secret' => $secretKey,
-                    'token' => $token
+                    'token' => $token,
+                    'qr_code_scanned' => $loginSecurity->qr_code_scanned
                 ];
                 return Helpers::result('Scan the QR code to set up 2FA.', Response::HTTP_OK, $data);
             }

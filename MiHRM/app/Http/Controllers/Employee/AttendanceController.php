@@ -27,4 +27,13 @@ class AttendanceController extends Controller
     {
         return $this->attendanceService->handleCheckInOut($request);
     }
+
+    public function getAttendanceCount(){
+        return $this->attendanceService->getAttendanceCount();
+    }
+
+    public function getDailyAttendanceCount(Request $request)
+{
+    return $this->attendanceService->getAttendanceByDate($request);
+}
 }

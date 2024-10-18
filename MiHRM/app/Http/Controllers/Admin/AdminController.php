@@ -62,6 +62,6 @@ class AdminController extends Controller
     }
     public function updateUser(UpdateUserRequest $request): JsonResponse
     {
-        return $this->adminService->updateUser($request->validated());
+        return $this->adminService->updateUser($request);
     }
 }

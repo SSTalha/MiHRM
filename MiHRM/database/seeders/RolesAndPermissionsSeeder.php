@@ -41,7 +41,11 @@ class RolesAndPermissionsSeeder extends Seeder
             'User can get salary invoice',
             'User can see their assigned projects',
             'User can manage update project status',
-            'User can see Attendance Records'
+            'User can see Attendance Records',
+
+            'User can get his attedance record',
+            'User can count projects',
+            'User can get daily attendance count'
         ];
         
         
@@ -70,6 +74,10 @@ class RolesAndPermissionsSeeder extends Seeder
             'User can get all projects',
             'User can get salary invoice',
             'User can see Attendance Records',
+
+            'User can count projects',
+            'User can get daily attendance count'
+
         ]);
 
         $hrRole = Role::firstOrCreate(['name' => 'hr']);
@@ -88,7 +96,12 @@ class RolesAndPermissionsSeeder extends Seeder
             'User can submit Leave Applications',
             'User can Check-in/Check-out',
             'User can get salary invoice',
-            'User can see Attendance Records'
+            'User can see Attendance Records',
+
+            'User can get his attedance record',
+            'User can count projects',
+            'User can get daily attendance count'
+            
         ]);
 
         $employeeRole = Role::firstOrCreate(['name' => 'employee']);
@@ -100,7 +113,9 @@ class RolesAndPermissionsSeeder extends Seeder
             'User can get salary invoice',
             'User can see their assigned projects',
             'User can manage update project status',
-            'User can see Attendance Records'
+            'User can see Attendance Records',
+
+            'User can get his attedance record',
         ]);
     }
 }
