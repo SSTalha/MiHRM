@@ -43,6 +43,12 @@ class PermissionVariables
         'permission'=>'User can get daily attendance count'
     ];
 
+    // Admin, HR, and Employee common route
+    public static array $updateUser = [
+        'path' => '/user/update',
+        'permission' => 'User can update their info'
+    ];
+
     // admin employee hr
     public static array $getEmployeeWorkingHours = [
         'path' => '/get-employee/working-hours',
@@ -182,9 +188,6 @@ class PermissionVariables
     public static array $getEmployeesAttendence = [
         'path' => '/get-employees-attendence',
         'permission' => 'User can see Attendance Records'
-    ];
-    public static array $updateUser = [
-        'path' => '/user/update',
     ];
     
 }

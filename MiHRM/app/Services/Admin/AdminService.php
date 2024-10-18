@@ -2,20 +2,17 @@
 
 namespace App\Services\Admin;
 
+use App\Helpers\ActivityLogHelper;
 use App\Jobs\AcceptLeaveRequestJob;
 use App\Jobs\RejectLeaveRequestJob;
 use App\Models\User;
-use App\Models\Project;
 use App\Helpers\Helpers;
 use App\Models\Employee;
 use App\Models\Attendance;
 use App\Models\Department;
 use App\Models\LeaveRequest;
-use App\Models\ProjectAssignment;
 use Illuminate\Support\Facades\Auth;
-use App\DTOs\ProjectDTOs\ProjectCreateDTO;
 use App\DTOs\EmployeeDTOs\EmployeeUpdateDTO;
-use App\DTOs\ProjectDTOs\ProjectAssignmentDTO;
 use Symfony\Component\HttpFoundation\Response;
 
 class AdminService
@@ -74,6 +71,7 @@ class AdminService
         }
 
         $leaveRequest->update(['status' => $status]);
+        // ActivityLogHelper::logActivity(request(), false);
 
         return $this->handleStatusActions($status, $leaveRequest, $requestingUser);
         
@@ -244,7 +242,7 @@ class AdminService
                     'date_of_joining' => $employee->date_of_joining,
                     'created_at' => $employee->created_at,
                     'updated_at' => $employee->updated_at,
-                    'role' => $employee->user->roles->first()->name ?? 'N/A', // Fetch the first role (if available)
+                    'role' => $employee->user->roles->first()->name ?? 'N/A',
                 ];
             });
 

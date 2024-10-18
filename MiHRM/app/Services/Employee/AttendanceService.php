@@ -101,7 +101,6 @@ class AttendanceService
         }
     }
 
-     
     /**
      * getEmployeesAttendance
      *

@@ -35,7 +35,7 @@ class AdminController extends Controller
     public function updateEmployee(UpdateEmployeeRequest $request, $employee_id): JsonResponse
     {
        
-        return $this->adminService->updateEmployee($request->validated(), $employee_id);
+        return $this->adminService->updateEmployee($request, $employee_id);
     }
 
     public function getAllDepartments(){
@@ -44,22 +44,23 @@ class AdminController extends Controller
 
     public function handleLeaveRequest($leaveRequestId, $status)
     {
-        
         return $this->adminService->handleLeaveRequest($leaveRequestId, $status);
     }
 
-    
     public function addDepartment(DepartmentRequest $request){
         return $this->adminService->addDepartment($request);
     }
+
     public function getAllEmployees(): JsonResponse
     {
         return $this->adminService->getAllEmployees();
     }
+
     public function getEmployeeRoleCounts(): JsonResponse
     {
         return $this->adminService->getEmployeeRoleCounts();
     }
+    
     public function updateUser(UpdateUserRequest $request): JsonResponse
     {
         return $this->adminService->updateUser($request);

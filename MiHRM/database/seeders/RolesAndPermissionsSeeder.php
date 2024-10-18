@@ -45,7 +45,8 @@ class RolesAndPermissionsSeeder extends Seeder
 
             'User can get his attedance record',
             'User can count projects',
-            'User can get daily attendance count'
+            'User can get daily attendance count',
+            'User can update their info'
         ];
         
         
@@ -76,7 +77,8 @@ class RolesAndPermissionsSeeder extends Seeder
             'User can see Attendance Records',
 
             'User can count projects',
-            'User can get daily attendance count'
+            'User can get daily attendance count',
+            'User can update their info'
 
         ]);
 
@@ -100,7 +102,8 @@ class RolesAndPermissionsSeeder extends Seeder
 
             'User can get his attedance record',
             'User can count projects',
-            'User can get daily attendance count'
+            'User can get daily attendance count',
+            'User can update their info'
             
         ]);
 
@@ -116,6 +119,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'User can see Attendance Records',
 
             'User can get his attedance record',
+            'User can update their info'
         ]);
     }
 }

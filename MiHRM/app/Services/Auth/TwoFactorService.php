@@ -53,5 +53,4 @@ class TwoFactorService
             return Helpers::result('Invalid code please try again', Response::HTTP_UNPROCESSABLE_ENTITY, []);
         }
     }
-
 }

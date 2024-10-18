@@ -35,7 +35,7 @@ class PermissionsMiddleware
             PermissionVariables::$getDailyAttendanceCount,
 
             // PermissionVariables::$verifyTwoFactorCode,
-            // PermissionVariables::$updateUser,
+            PermissionVariables::$updateUser,
             PermissionVariables::$login,
             PermissionVariables::$logout,
             PermissionVariables::$passwordSetup,

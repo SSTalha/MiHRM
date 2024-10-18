@@ -65,11 +65,12 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'jwt.auth' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class,
-        'jwt.refresh' => \Tymon\JWTAuth\Http\Middleware\RefreshToken::class,
+        'jwt' => \App\Http\Middleware\JwtMiddleware::class,
         'log.request' => \App\Http\Middleware\LogRequest::class,
         'log.activity' => \App\Http\Middleware\LogActivity::class,
         'role' => \App\Http\Middleware\RoleMiddleware::class,
         'routes.permission' => \App\Http\Middleware\PermissionsMiddleware::class,
+        // 'jwt.auth' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class,
+        // 'jwt.refresh' => \Tymon\JWTAuth\Http\Middleware\RefreshToken::class,
     ];
 }
