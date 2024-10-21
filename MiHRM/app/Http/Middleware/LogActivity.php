@@ -11,7 +11,18 @@ use Illuminate\Support\Facades\Auth;
 class LogActivity
 {
     protected $activityPaths = [
-        'App\Http\Controllers\Auth\AuthController@register',
+        'App\Http\Controllers\Employee\EmployeeController@submitLeaveRequest',
+        'App\Http\Controllers\Employee\EmployeeController@updateProjectStatus',
+        'App\Http\Controllers\Employee\AttendanceController@handleCheckInOut',
+        'App\Http\Controllers\Announcement\AnnouncementController@createAnnouncement',
+        'App\Http\Controllers\Announcement\AnnouncementController@updatePublishedStatus',
+        'App\Http\Controllers\Admin\ProjectController@createProject',
+        'App\Http\Controllers\Admin\ProjectController@updateProject',
+        'App\Http\Controllers\Admin\ProjectController@deleteProject',
+        'App\Http\Controllers\Admin\ProjectController@assignProject',
+        'App\Http\Controllers\Auth\PasswordResetController@sendPasswordResetLink',
+        'App\Http\Controllers\Auth\PasswordResetController@passwordReset',
+        'App\Http\Controllers\Auth\TwoFactorController@verifyTwoFactorCode',
     ];
 
     /**
