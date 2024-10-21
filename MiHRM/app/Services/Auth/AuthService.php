@@ -2,10 +2,10 @@
 
 namespace App\Services\Auth;
 
+use App\Constants\Messages;
 use App\Models\User;
 use App\Helpers\Helpers;
 use App\Models\Employee;
-use Illuminate\Support\Str;
 use App\Models\LoginSecurity;
 use App\DTOs\AuthDTOs\RegisterDTO;
 use Illuminate\Support\Facades\DB;
@@ -17,37 +17,33 @@ class AuthService
 {
 
     /**
- * Summary of register
- * @param mixed $request
- * @return mixed|\Illuminate\Http\JsonResponse
- */
-public function register($request)
-{
-    try {
-        $dto = new RegisterDTO($request);
-        $user = User::create($dto->toArray());
-
-        $user->assignRole($dto->role);
-
-        $employeeDto = new EmployeeCreateDTO($request, $user->id);
-        $employee = Employee::create($employeeDto->toArray());
-
-        $token = Str::random(40);
-        $user->remember_token = $token;
-        $user->save();
-
-        SendPasswordSetupEmailJob::dispatch($user, $token);
-
-        return Helpers::result("User, Employee registered successfully", Response::HTTP_OK, [
-            'user' => $user,
-            'employee' => $employee
-        ]);
-    } catch (\Exception $e) 
+     * Summary of register
+     * @param mixed $request
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function register($request)
     {
-        DB::rollBack();
-        return Helpers::result("Registration failed: " . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        try {
+            $dto = new RegisterDTO($request);
+            $user = User::create($dto->toArray());
+
+            $user->assignRole($dto->role);
+
+            $employeeDto = new EmployeeCreateDTO($request, $user->id);
+            $employee = Employee::create($employeeDto->toArray());
+
+            SendPasswordSetupEmailJob::dispatch($user, $dto->remember_token);
+
+            return Helpers::result(Messages::UserRegistered, Response::HTTP_OK, [
+                'user' => $user,
+                'employee' => $employee
+            ]);
+        } catch (\Throwable $e) 
+        {
+            DB::rollBack();
+            return Helpers::error($request, Messages::ExceptionMessage, $e , Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
-}
 
     /**
      * Summary of login
@@ -60,7 +56,7 @@ public function register($request)
             $credentials = $request->only('email', 'password');
     
             if (!auth()->attempt($credentials)) {
-                return Helpers::result('Invalid credentials', Response::HTTP_UNAUTHORIZED);
+                return Helpers::result(Messages::InvalidCredentials, Response::HTTP_UNAUTHORIZED);
             }
             $user = auth()->user();
             $loginSecurity = $user->loginSecurity;
@@ -71,20 +67,10 @@ public function register($request)
         
             if ($loginSecurity->google2fa_enable) {
                 $token = auth()->tokenById($user->id);
-<<<<<<< Updated upstream
                 $data = [
                     'token' => $token,
                     'qr_code_scanned' => $loginSecurity->qr_code_scanned
                 ];
-=======
-
-                $data = [
-
-                    'token' => $token,
-                    'qr_code_scanned' => $loginSecurity->qr_code_scanned,
-                ];
-
->>>>>>> Stashed changes
                 return Helpers::result('Please enter your 2FA code from Google Authenticator.', Response::HTTP_OK, $data);
             } else {
                 $google2fa = app('pragmarx.google2fa');
@@ -104,29 +90,25 @@ public function register($request)
                     'qr_code' => $QRImage,
                     'secret' => $secretKey,
                     'token' => $token,
-<<<<<<< Updated upstream
                     'qr_code_scanned' => $loginSecurity->qr_code_scanned
-=======
-                    'qr_code_scanned' => $loginSecurity->qr_code_scanned,
->>>>>>> Stashed changes
                 ];
                 return Helpers::result('Scan the QR code to set up 2FA.', Response::HTTP_OK, $data);
                 // return $QRImage;
             }
-        }catch (\Exception $e) {
+        }catch (\Throwable $e) {
             DB::rollBack();
-            return Helpers::result("Registration failed: " . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+            return Helpers::error($request, Messages::ExceptionMessage, $e , Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
     /**
      * Summary of logout
-     * @return string[]
+     * @return mixed|\Illuminate\Http\JsonResponse
      */
     public function logout()
     {
         auth()->logout();
-        return Helpers::result('User successfully logged out', Response::HTTP_OK);
+        return Helpers::result(Messages::UserLoggedOut, Response::HTTP_OK);
     }
 
 }

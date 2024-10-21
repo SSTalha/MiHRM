@@ -20,16 +20,15 @@ class AttendanceController extends Controller
     {
         $date = $request->input('date');
         $status = $request->input('status');
-        return $this->attendanceService->getEmployeesAttendance($date, $status);
-
+        return $this->attendanceService->getEmployeesAttendance($request,$date, $status);
     }
     public function handleCheckInOut(Request $request): JsonResponse
     {
         return $this->attendanceService->handleCheckInOut($request);
     }
 
-    public function getAttendanceCount(){
-        return $this->attendanceService->getAttendanceCount();
+    public function getAttendanceCount(Request $request){
+        return $this->attendanceService->getAttendanceCount($request);
     }
 
     public function getDailyAttendanceCount(Request $request)

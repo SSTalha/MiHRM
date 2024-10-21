@@ -11,6 +11,7 @@ use App\Http\Requests\Admin\AssignProjectRequest;
 use App\Http\Requests\Admin\CreateProjectRequest;
 use App\Http\Requests\Admin\UpdateProjectRequest;
 use App\Http\Requests\Admin\UpdateEmployeeRequest;
+use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
@@ -22,14 +23,14 @@ class AdminController extends Controller
     }
 
 
-    public function getEmployeesByDepartment($department_id): JsonResponse
+    public function getEmployeesByDepartment(Request $request,$department_id): JsonResponse
     {
-        return $this->adminService->getEmployeesByDepartment($department_id);
+        return $this->adminService->getEmployeesByDepartment($request,$department_id);
     }
 
-    public function deleteUser($user_id): JsonResponse
+    public function deleteUser(Request $request,$user_id): JsonResponse
     {
-        return $this->adminService->deleteUserAndEmployee($user_id);
+        return $this->adminService->deleteUserAndEmployee($request,$user_id);
     }
 
     public function updateEmployee(UpdateEmployeeRequest $request, $employee_id): JsonResponse
@@ -38,27 +39,27 @@ class AdminController extends Controller
         return $this->adminService->updateEmployee($request, $employee_id);
     }
 
-    public function getAllDepartments(){
-        return $this->adminService->getAllDepartments();
+    public function getAllDepartments(Request $request){
+        return $this->adminService->getAllDepartments($request);
     }
 
-    public function handleLeaveRequest($leaveRequestId, $status)
+    public function handleLeaveRequest(Request $request,$leaveRequestId, $status)
     {
-        return $this->adminService->handleLeaveRequest($leaveRequestId, $status);
+        return $this->adminService->handleLeaveRequest($request,$leaveRequestId, $status);
     }
 
     public function addDepartment(DepartmentRequest $request){
         return $this->adminService->addDepartment($request);
     }
 
-    public function getAllEmployees(): JsonResponse
+    public function getAllEmployees(Request $request): JsonResponse
     {
-        return $this->adminService->getAllEmployees();
+        return $this->adminService->getAllEmployees($request);
     }
 
-    public function getEmployeeRoleCounts(): JsonResponse
+    public function getEmployeeRoleCounts(Request $request): JsonResponse
     {
-        return $this->adminService->getEmployeeRoleCounts();
+        return $this->adminService->getEmployeeRoleCounts($request);
     }
     
     public function updateUser(UpdateUserRequest $request): JsonResponse

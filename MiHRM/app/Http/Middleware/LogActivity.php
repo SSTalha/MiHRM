@@ -10,6 +10,10 @@ use Illuminate\Support\Facades\Auth;
 
 class LogActivity
 {
+    protected $activityPaths = [
+        'App\Http\Controllers\Auth\AuthController@register',
+    ];
+
     /**
      * Handle an incoming request.
      *
@@ -23,12 +27,28 @@ class LogActivity
         $activityStatus = false;
 
         if(Auth::check()){
-            $user = Auth::user();
+            $requestLogId = $request['request_log_id'];
 
-            $activityLogDto = new ActivityLogDTO($request, $user->id, $activityStatus, $response->getStatusCode());
+            if ($this->isActivityLoggingEnabled($request)) {
+                $activityStatus = true;
+            }
+
+            $activityLogDto = new ActivityLogDTO($request, $requestLogId, $activityStatus, $response->getStatusCode());
             
             ActivityLog::create($activityLogDto->toArray());
         }
         return $response;
+    }
+
+    /**
+     * Check if activity logging is enabled for the current request.
+     * @param \Illuminate\Http\Request $request
+     * @return bool
+     */
+    protected function isActivityLoggingEnabled(Request $request): bool
+    {
+        $actionName = $request->route() ? $request->route()->getActionName() : null;
+
+        return in_array($actionName, $this->activityPaths);
     }
 }

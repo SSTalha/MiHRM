@@ -2,6 +2,7 @@
 
 namespace App\Services\Employee;
 
+use App\Constants\Messages;
 use Carbon\Carbon;
 use App\Helpers\Helpers;
 use App\Models\Employee;
@@ -20,7 +21,7 @@ class AttendanceService
             $type = $request->input('type');
 
             if (!$employee) {
-                return Helpers::result("Employee not found for the authenticated user.", Response::HTTP_NOT_FOUND);
+                return Helpers::result(Messages::UserNotFound, Response::HTTP_NOT_FOUND);
             }
 
             if ($type === 'check_in') {
@@ -28,10 +29,10 @@ class AttendanceService
             } elseif ($type === 'check_out') {
                 return $this->checkOut($employee); 
             } else {
-                return Helpers::result("Invalid action type provided.", Response::HTTP_BAD_REQUEST);
+                return Helpers::result(Messages::InvalidType, Response::HTTP_BAD_REQUEST);
             }
-        } catch (\Exception $e) {
-            return Helpers::result("An error occurred: " . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }catch (\Throwable $e) {
+            return Helpers::error($request, Messages::ExceptionMessage, $e , Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
     /**
@@ -109,7 +110,7 @@ class AttendanceService
      * @param  mixed $request
      * @return void
      */
-    public function getEmployeesAttendance($date = null, $status = null)
+    public function getEmployeesAttendance($request, $date = null, $status = null)
     {
         try{
             $user = auth()->user();
@@ -149,58 +150,60 @@ class AttendanceService
                     'status' => $record->status,
                 ];
             });
-            return Helpers::result("Attendance records retrieved successfully", Response::HTTP_OK, $response);
+            return Helpers::result(Messages::AttendanceRecordsSuccess, Response::HTTP_OK, $response);
         
-        }catch(\Exception $e){
-            return Helpers::result("Error getting employee attendance: " . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }catch (\Throwable $e) {
+            return Helpers::error($request, Messages::ExceptionMessage, $e , Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
-
-    
     /**
-     * getAttendanceCount
-     *
-     * @return void
+     * Summary of getAttendanceCount
+     * @param \Illuminate\Http\Request $request
+     * @return mixed|\Illuminate\Http\JsonResponse
      */
-public function getAttendanceCount()
-{
-    $userID = Auth::user()->id;
-
-    $employee = Employee::where('user_id', $userID)->first();
-
-    if (!$employee) {
-        return Helpers::result('Employee record not found', Response::HTTP_NOT_FOUND);
+    public function getAttendanceCount(Request $request)
+    {
+        try {
+            $userID = Auth::user()->id;
+    
+            $employee = Employee::where('user_id', $userID)->first();
+    
+            if (!$employee) {
+                return Helpers::result(Messages::UserNotFound, Response::HTTP_NOT_FOUND);
+            }
+    
+            $employeeId = $employee->id;
+            $employeeName = Auth::user()->name;
+    
+            $startDate = Carbon::now()->startOfMonth();
+            $endDate = Carbon::today();
+            $attendance = Attendance::where('employee_id', $employeeId)
+                ->whereBetween('date', [$startDate, $endDate])
+                ->get();
+    
+            if ($attendance->isEmpty()) {
+                return Helpers::result(Messages::NoAttendanceRecord, Response::HTTP_OK);
+            }
+    
+            $presentCount = $attendance->where('status', 'present')->count();
+            $absentCount = $attendance->where('status', 'absent')->count();
+            $onleaveCount = $attendance->where('status', 'onleave')->count();
+    
+            return Helpers::result(Messages::AttendanceCountSuccess, Response::HTTP_OK, [
+                'employee_name' => $employeeName,
+                'present' => $presentCount,
+                'absent' => $absentCount,
+                'onleave' => $onleaveCount
+            ]);
+    
+        } catch (\Throwable $e) {
+            return Helpers::error($request, Messages::ExceptionMessage, $e, Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
-
-    $employeeId = $employee->id; 
-    $employeeName = Auth::user()->name;
-
-    $startDate = Carbon::now()->startOfMonth();
-    $endDate = Carbon::today();
-    $attendance = Attendance::where('employee_id', $employeeId) 
-        ->whereBetween('date', [$startDate, $endDate])
-        ->get();
-
-    if ($attendance->isEmpty()) {
-        return Helpers::result('No attendance records found', Response::HTTP_OK);
-    }
-
-    $presentCount = $attendance->where('status', 'present')->count();
-    $absentCount = $attendance->where('status', 'absent')->count();
-    $onleaveCount = $attendance->where('status', 'onleave')->count();
-
-    return Helpers::result('Attendance counts retrieved successfully', Response::HTTP_OK, [
-        'employee_name' => $employeeName,
-        'present' => $presentCount,
-        'absent' => $absentCount,
-        'onleave' => $onleaveCount
-    ]);
-}
     
     /**
      * getAttendanceByDate
-     *
      * @param  mixed $date
      * @return void
      */
@@ -225,14 +228,14 @@ public function getAttendanceCount()
             ];
         });
 
-        return Helpers::result("Attendance records retrieved successfully", Response::HTTP_OK, [
+        return Helpers::result(Messages::AttendanceRecordsSuccess, Response::HTTP_OK, [
             'totalPresent' => $totalPresent,
             'totalAbsent' => $totalAbsent,
             'totalOnLeave' => $totalOnLeave,
             'employee_record' => $employeeRecord,
         ]);
-    } catch (\Exception $e) {
-        return Helpers::result("Error getting attendance records: " . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+    }catch (\Throwable $e) {
+        return Helpers::error($request, Messages::ExceptionMessage, $e , Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 }
 

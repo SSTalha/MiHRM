@@ -15,8 +15,8 @@ class LeaveRequestController extends Controller
         $this->leaveRequestService = $leaveRequestService;
     }
 
-    public function getLeaveRequest()
+    public function getLeaveRequest(Request $request)
     {
-        return $this->leaveRequestService->getLeaveRequests();
+        return $this->leaveRequestService->getLeaveRequests($request);
     }
 }

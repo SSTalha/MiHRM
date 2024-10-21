@@ -22,32 +22,32 @@ class ProjectController extends Controller
     public function createProject(CreateProjectRequest $request): JsonResponse
     {
         
-        return $this->projectService->createProject($request->validated());
+        return $this->projectService->createProject($request);
     }
     public function updateProject(UpdateProjectRequest $request,$id): JsonResponse
     {
         return $this->projectService->updateProject($request,$id);
     }
-    public function deleteProject($id): JsonResponse
+    public function deleteProject(Request $request,$id): JsonResponse
     {
-        return $this->projectService->deleteProject($id);
+        return $this->projectService->deleteProject($request,$id);
     }
 
     public function assignProject(AssignProjectRequest $request): JsonResponse
     {
-        $data = $request->all();
-        return $this->projectService->assignProject($data);
+        $request = $request->all();
+        return $this->projectService->assignProject($request);
     }
 
-    public function getAllAssignedProjects(): JsonResponse
+    public function getAllAssignedProjects(Request $request): JsonResponse
     {
-        return $this->projectService->getAllAssignedProjects();
+        return $this->projectService->getAllAssignedProjects($request);
     }
-    public function getAllProjects()
+    public function getAllProjects(Request $request)
     {
-        return $this->projectService->getAllProjects();
+        return $this->projectService->getAllProjects($request);
     }
-    public function getProjectCount(){
-        return $this->projectService->projectCount();
+    public function getProjectCount(Request $request){
+        return $this->projectService->projectCount($request);
     }
 }

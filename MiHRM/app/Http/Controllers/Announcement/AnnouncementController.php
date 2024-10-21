@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Services\Announcement\AnnouncementService;
 use App\Http\Requests\Admin\CreateAnnouncementRequest;
 use App\Http\Requests\Admin\UpdatePublishedStatusRequest;
+use Illuminate\Http\Request;
 
 class AnnouncementController extends Controller
 {
@@ -25,8 +26,8 @@ class AnnouncementController extends Controller
     {
         return $this->announcementService->updatePublishedStatus($id, $request->validated());
     }
-    public function getAnnouncements(): JsonResponse
+    public function getAnnouncements(Request $request): JsonResponse
     {
-        return $this->announcementService->getAnnouncements();
+        return $this->announcementService->getAnnouncements($request);
     }
 }

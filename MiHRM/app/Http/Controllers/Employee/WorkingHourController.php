@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use App\Services\Employee\WorkingHourService;
 use App\Http\Requests\Employee\WorkingHourRequest;
+use Illuminate\Http\Request;
 
 class WorkingHourController extends Controller
 {
@@ -28,12 +29,10 @@ class WorkingHourController extends Controller
         $date = $request->input('date');
         $frequency = $request->input('frequency');
 
-        return $this->workingHourService->calculateWorkingHours($employeeId, $date, $frequency);
-
-       
+        return $this->workingHourService->calculateWorkingHours($request, $employeeId, $date, $frequency);
     }
 
-    public function getAllAttendanceRecords(){
-        return $this->workingHourService->getAllAttendanceRecords();
+    public function getAllAttendanceRecords(Request $request){
+        return $this->workingHourService->getAllAttendanceRecords($request);
     }
 }

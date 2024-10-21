@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services\Employee;
+use App\Constants\Messages;
 use App\DTOs\AuthDTOs\PasswordDTO;
 use App\Helpers\Helpers;
 use App\Models\Employee;
@@ -26,19 +27,18 @@ class EmployeeService
             $user = User::where('email', $dto->email)->first();
 
             if (!$user || $user->remember_token !== $dto->token) {
-                return Helpers::result('Invalid token or email.',Response::HTTP_BAD_REQUEST, []);
+                return Helpers::result(Messages::InvalidCredentials,Response::HTTP_BAD_REQUEST);
             }
 
             $user->password = Hash::make($dto->password);
             $user->remember_token = null;
             $user->save();
 
-            return Helpers::result('Password setup successfull.', Response::HTTP_OK, []);
-        }catch(\Exception $e){
-            return Helpers::result('Error during password setup', Response::HTTP_INTERNAL_SERVER_ERROR, $e->getMessage());
+            return Helpers::result(Messages::PasswordSetSuccess, Response::HTTP_OK);
+        }catch (\Throwable $e) {
+            return Helpers::error($request, Messages::ExceptionMessage, $e , Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-
 
     /**
      * submitLeaveRequest
@@ -53,24 +53,25 @@ class EmployeeService
             $employee = Employee::where('user_id', $user->id)->first();
 
             if (!$employee) {
-                return Helpers::result('Employee record not found for this user.', Response::HTTP_NOT_FOUND);
+                return Helpers::result(Messages::UserNotFound, Response::HTTP_NOT_FOUND);
             }
 
             $leaveRequestDTO = new LeaveRequestDTO($request, $employee->id);
             $leaveRequest = LeaveRequest::create($leaveRequestDTO->toArray());
 
-            return Helpers::result('Leave request submitted', Response::HTTP_OK, $leaveRequest);
+            return Helpers::result(Messages::LeaveSubmitSuccess, Response::HTTP_OK, $leaveRequest);
 
-        }catch(\Exception $e){
-            return Helpers::result("Error submitting leave request: " . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }catch (\Throwable $e) {
+            return Helpers::error($request, Messages::ExceptionMessage, $e , Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
     /**
-     * getAssignedProjects
+     * Summary of getAssignedProjects
+     * @param mixed $request
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function getAssignedProjects()
+    public function getAssignedProjects($request)
     {
         try{
             $employeeId = Auth::user()->employee->id;
@@ -78,36 +79,39 @@ class EmployeeService
                                                 ->with('project')
                                                 ->get();
             if ($assignedProjects->isEmpty()) {
-                return Helpers::result("No projects assigned to this employee.", Response::HTTP_NOT_FOUND);
+                return Helpers::result(Messages::ProjectAssignmentNull, Response::HTTP_OK);
             }
-            return Helpers::result("Assigned projects fetched successfully.", Response::HTTP_OK, $assignedProjects);
+            return Helpers::result(Messages::AssignedProjectFetched, Response::HTTP_OK, $assignedProjects);
         
-        }catch(\Exception $e){
-            return Helpers::result("Error getting assigned projects: " . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }catch (\Throwable $e) {
+            return Helpers::error($request, Messages::ExceptionMessage, $e , Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
     /**
      * Summary of updateProjectStatus
-     * @param array $validatedData
+     * @param mixed $request
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function updateProjectStatus(array $validatedData)
+    public function updateProjectStatus($request)
     {
-        
-        $employeeId = Auth::user()->employee->id;
+       try{
+            $employeeId = Auth::user()->employee->id;
 
-        $projectAssignment = ProjectAssignment::where('project_id', $validatedData['project_id'])
-                            ->where('employee_id', $employeeId)
-                            ->first();
+            $projectAssignment = ProjectAssignment::where('project_id', $request['project_id'])
+                                ->where('employee_id', $employeeId)
+                                ->first();
 
-        if (!$projectAssignment) {
-            return Helpers::result("Project assignment not found.", Response::HTTP_NOT_FOUND);
+            if (!$projectAssignment) {
+                return Helpers::result(Messages::ProjectAssignmentNull, Response::HTTP_NOT_FOUND);
+            }
+
+            $projectAssignment->status = $request['status'];
+            $projectAssignment->save();
+
+            return Helpers::result(Messages::ProjectStatusSuccess, Response::HTTP_OK, $projectAssignment);
+        }catch (\Throwable $e) {
+            return Helpers::error($request, Messages::ExceptionMessage, $e , Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
-        $projectAssignment->status = $validatedData['status'];
-        $projectAssignment->save();
-
-        return Helpers::result("Project status updated successfully.", Response::HTTP_OK, $projectAssignment);
     }
 }

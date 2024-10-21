@@ -2,6 +2,7 @@
 
 namespace App\Services\Employee;
 
+use App\Constants\Messages;
 use Carbon\Carbon;
 use App\Models\Salary;
 use App\Helpers\Helpers;
@@ -84,8 +85,8 @@ public function getSalaryDetails($request)
         ];
 
         return Helpers::result('Salary details retrieved successfully', Response::HTTP_OK, $responseData);
-    } catch (\Exception $e) {
-        return Helpers::result('Failed to retrieve salary details: ' . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+    } catch (\Throwable $e) {
+        return Helpers::error($request, Messages::ExceptionMessage, $e , Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 }
 }

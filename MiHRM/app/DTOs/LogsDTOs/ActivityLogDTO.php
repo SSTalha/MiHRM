@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 class ActivityLogDTO extends BaseDTOs
 {
-    public $user_id;
+    public $request_log_id;
     public $url;
     public $method;
     public $ip_address;
@@ -19,11 +19,12 @@ class ActivityLogDTO extends BaseDTOs
     /**
      * Summary of __construct
      * @param \Illuminate\Http\Request $request
-     * @param int $userId
+     * @param int $requestLogId
+     * @param bool $activityStatus
      * @param int $statusCode
      */
-    public function __construct(Request $request, int $userId, bool $activityStatus = false, int $statusCode) {
-        $this->user_id = $userId;
+    public function __construct(Request $request, int $requestLogId, bool $activityStatus = false, int $statusCode) {
+        $this->request_log_id = $requestLogId;
         $this->url = $request->fullUrl();
         $this->method = $request->method();
         $this->ip_address = $request->ip();

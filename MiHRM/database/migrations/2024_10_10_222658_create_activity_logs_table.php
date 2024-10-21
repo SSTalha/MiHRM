@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('activity_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('request_log_id')->constrained()->onDelete('cascade');
             $table->string('url');
             $table->string('method');
             $table->ipAddress('ip_address');
