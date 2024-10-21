@@ -22,11 +22,13 @@ class AnnouncementController extends Controller
     {
         return $this->announcementService->createAnnouncement($request);
     }
-    public function updatePublishedStatus(UpdatePublishedStatusRequest $request, $id): JsonResponse
+    public function updatePublishedStatus(UpdatePublishedStatusRequest $request)
+
     {
-        return $this->announcementService->updatePublishedStatus($id, $request->validated());
+        // dd($request);
+        return $this->announcementService->updatePublishedStatus($request);
     }
-    public function getAnnouncements(Request $request): JsonResponse
+    public function getAnnouncements(Request $request)
     {
         return $this->announcementService->getAnnouncements($request);
     }

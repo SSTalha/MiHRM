@@ -14,7 +14,8 @@ class UpdatePublishedStatusRequest extends FormRequest
     public function rules()
     {
         return [
-            'is_published' => 'required|boolean', // Validate that the field is a boolean (true or false)
+            'id'=>'required',
+            'is_published' => 'required|boolean',
         ];
     }
 

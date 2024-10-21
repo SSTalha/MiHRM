@@ -29,7 +29,8 @@ class AttendanceFactory extends Factory
         $workingHoursFormatted = gmdate('H:i:s', $workingSeconds); // Format as "H:i:s" string
 
         return [
-            'employee_id' => rand(6,7),  // Randomly select between employee IDs 1 and 2
+            'employee_id' => rand(2,3),
+
             'date' => $date->format('Y-m-d'),
             'check_in_time' => $checkInTime->format('H:i:s'),
             'check_out_time' => $checkOutTime->format('H:i:s'),
