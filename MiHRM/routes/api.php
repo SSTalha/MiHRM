@@ -60,7 +60,7 @@ Route::group(['middleware' => ['api', 'log.request', 'log.activity']], function 
             Route::get(PermissionVariables::$getDailyAttendanceCount['path'], [AttendanceController::class, 'getDailyAttendanceCount']);
 
             Route::post(PermissionVariables::$createAnnouncement['path'], [AnnouncementController::class, 'createAnnouncement']);
-            Route::post(PermissionVariables::$updatePublishedStatus['path'], [AnnouncementController::class, 'updatePublishedStatus']);
+            Route::put(PermissionVariables::$updatePublishedStatus['path'], [AnnouncementController::class, 'updatePublishedStatus']);
         });
 
         // HR and Employee common routes

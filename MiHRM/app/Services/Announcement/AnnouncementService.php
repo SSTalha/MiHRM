@@ -36,9 +36,10 @@ class AnnouncementService
      * @param mixed $request
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function updatePublishedStatus($announcementId, $request)
+    public function updatePublishedStatus($request)
     {
         try {
+            $announcementId=$request['id'];
             $announcement = Announcement::findOrFail($announcementId);
 
             $announcement->update([

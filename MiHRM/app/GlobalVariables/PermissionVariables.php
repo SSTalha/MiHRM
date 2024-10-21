@@ -54,7 +54,7 @@ class PermissionVariables
     ];
 
     public static array $updatePublishedStatus = [
-        'path' => '/announcements/{id}/update-status',
+        'path' => '/announcements/update-status',
         'permission' => 'User can manage Announcement'
     ];
 
