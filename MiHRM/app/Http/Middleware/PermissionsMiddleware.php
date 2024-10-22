@@ -22,59 +22,29 @@ class PermissionsMiddleware
         $authUser = auth()->user();
 
         if (!$authUser) {
-            return Helpers::result("Unauthorized", Response::HTTP_BAD_REQUEST, []);
+            return Helpers::result("Unauthorized", Response::HTTP_BAD_REQUEST);
         }
 
         $authUserPermissions = $authUser->getAllPermissions()->pluck('name')->toArray();
         $path = str_replace('api', '', $request->path());
 
-        $allPermissionVariables = [
-            PermissionVariables::$getAllAttendance,
-            PermissionVariables::$getAttendanceCount,
-            PermissionVariables::$getProjectCount,
-            PermissionVariables::$getDailyAttendanceCount,
-
-            // PermissionVariables::$verifyTwoFactorCode,
-            PermissionVariables::$updateUser,
-            PermissionVariables::$createAnnouncement,
-            PermissionVariables::$updatePublishedStatus,
-            PermissionVariables::$getAnnouncements,
-            PermissionVariables::$login,
-            PermissionVariables::$logout,
-            PermissionVariables::$passwordSetup,
-            PermissionVariables::$passwordReset,
-            PermissionVariables::$passwordResetLink,
-            PermissionVariables::$getEmployeeWorkingHours,
-            PermissionVariables::$register,
-            PermissionVariables::$getEmployeesByDepartment,
-            PermissionVariables::$deleteUser,
-            PermissionVariables::$updateEmployee,
-            PermissionVariables::$getAllDepartments,
-            PermissionVariables::$createProject,
-            PermissionVariables::$updateProject,
-            PermissionVariables::$deleteProject,
-            PermissionVariables::$addDepartment,
-            PermissionVariables::$assignProject,
-            PermissionVariables::$getAllAssignedProjects,
-            PermissionVariables::$handleLeaveRequest,
-            PermissionVariables::$getLeaveRequest,
-            PermissionVariables::$getAllEmployees,
-            PermissionVariables::$getEmployeeRoleCounts,
-            PermissionVariables::$getAllProjects,
-            PermissionVariables::$submitLeaveRequest,
-            PermissionVariables::$checkInCheckOut,
-            PermissionVariables::$getSalaryDetails,
-            PermissionVariables::$getAssignedProjects,
-            PermissionVariables::$updateProjectStatus,
-            PermissionVariables::$getEmployeesAttendence,
-        ];
+        $allPermissionVariables = PermissionVariables::getPermissionEndpoints();
 
         // $permissions = array_column($allPermissionVariables, 'permission');
 
         foreach ($allPermissionVariables as $permissionArray) {
-            if ($permissionArray['path'] === $path) {
-                if (!in_array($permissionArray['permission'], $authUserPermissions)) {
-                    return Helpers::result('You donot have the permission to access this route', Response::HTTP_FORBIDDEN, []);
+            $prefixedPath = !empty($permissionArray['prefix'])
+            ? trim($permissionArray['prefix'], '/') . $permissionArray['path']
+            : $permissionArray['path'];
+            // if (!empty($permissionArray['prefix']) && empty(trim($permissionArray['prefix']))) {
+            //     return Helpers::result('No Prefix found on API!', Response::HTTP_FORBIDDEN);
+            // }
+
+            if ($prefixedPath === $path || $permissionArray['path'] === $path) {
+                if (!isset($permissionArray['permission'])) {
+                    return $next($request);
+                }elseif(!in_array($permissionArray['permission'], $authUserPermissions)) {
+                    return Helpers::result('You donot have the permission to access this route', Response::HTTP_FORBIDDEN);
                 }
             }
         }

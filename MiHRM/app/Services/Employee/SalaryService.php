@@ -45,7 +45,7 @@ public function getSalaryDetails($request)
                         ->first();
 
         if (!$salary) {
-            return Helpers::result('No salary record found for the specified employee and month', Response::HTTP_NOT_FOUND);
+            return Helpers::result(Messages::NoSalaryFound, Response::HTTP_NOT_FOUND);
         }
 
         $attendances = Attendance::where('employee_id', $employeeId)
@@ -84,7 +84,7 @@ public function getSalaryDetails($request)
             'total_working_hours' => $totalWorkingHours
         ];
 
-        return Helpers::result('Salary details retrieved successfully', Response::HTTP_OK, $responseData);
+        return Helpers::result(Messages::SalaryRetreived, Response::HTTP_OK, $responseData);
     } catch (\Throwable $e) {
         return Helpers::error($request, Messages::ExceptionMessage, $e , Response::HTTP_INTERNAL_SERVER_ERROR);
     }

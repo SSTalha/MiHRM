@@ -29,7 +29,7 @@ class PasswordResetService
             $token = Str::random(40);
             PasswordReset::createToken($request->email, $token);
 
-            $resetUrl =env('FRONTEND_URL').'/password-reset/' .'?token='. $token . '&email=' . urlencode($request->email);
+            $resetUrl = env('FRONTEND_URL').'/password-reset?email=' . urlencode($user->email) . '&token=' . $token;
             SendPasswordResetLinkJob::dispatch($user, $resetUrl);
 
             return Helpers::result(Messages::PasswordLinkSend, Response::HTTP_OK);

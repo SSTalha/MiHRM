@@ -220,7 +220,7 @@ class AdminService
         try {
             $employees = Employee::with(['user.roles'])->get();
             if ($employees->isEmpty()) {
-                return Helpers::result("No employees found.", Response::HTTP_NOT_FOUND);
+                return Helpers::result(Messages::UserNotFound, Response::HTTP_NOT_FOUND);
             }
 
             $data = $employees->map(function ($employee) {

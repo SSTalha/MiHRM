@@ -6,6 +6,7 @@ class PermissionVariables
 {
     public static array $login = [
         'path' => '/login',
+        'prefix' => 'auth'
     ];
 
     public static array $logout = [
@@ -203,4 +204,47 @@ class PermissionVariables
         'path' => '/get-employees-attendence',
         'permission' => 'User can see Attendance Records'
     ];
+
+
+    public static function getPermissionEndpoints():array {
+        return [
+            self::$login,
+            self::$logout,
+            self::$passwordSetup,
+            self::$passwordReset,
+            self::$passwordResetLink,
+            self::$verifyTwoFactorCode,
+            self::$getAllAttendance,
+            self::$getAttendanceCount,
+            self::$getProjectCount,
+            self::$getDailyAttendanceCount,
+            self::$updateUser,
+            self::$createAnnouncement,
+            self::$updatePublishedStatus,
+            self::$getAnnouncements,
+            self::$getEmployeeWorkingHours,
+            self::$register,
+            self::$getEmployeesByDepartment,
+            self::$deleteUser,
+            self::$updateEmployee,
+            self::$getAllDepartments,
+            self::$createProject,
+            self::$updateProject,
+            self::$deleteProject,
+            self::$addDepartment,
+            self::$assignProject,
+            self::$getAllAssignedProjects,
+            self::$handleLeaveRequest,
+            self::$getLeaveRequest,
+            self::$getAllEmployees,
+            self::$getEmployeeRoleCounts,
+            self::$getAllProjects,
+            self::$submitLeaveRequest,
+            self::$checkInCheckOut,
+            self::$getSalaryDetails,
+            self::$getAssignedProjects,
+            self::$updateProjectStatus,
+            self::$getEmployeesAttendence,
+        ];
+    }
 }
