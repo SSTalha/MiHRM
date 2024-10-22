@@ -10,7 +10,7 @@ class EmployeeCreateDTO extends BaseDTOs
     public string $position;
     public int $department_id;
     public string $date_of_joining;
-    public int $pay; // Adding pay to the DTO
+    public int $pay; 
 
     /**
      * Construct the EmployeeDTO with the input request.

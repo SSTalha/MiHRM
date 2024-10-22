@@ -85,6 +85,6 @@ class AnnouncementService
             return Helpers::result("Announcements retrieved successfully.", Response::HTTP_OK, $data);
         }catch (\Throwable $e) {
             return Helpers::error($request, Messages::ExceptionMessage, $e , Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
     }
+}
 }
