@@ -7,6 +7,7 @@ use App\Helpers\Helpers;
 use App\Models\Employee;
 use App\Models\PerksRequest;
 use App\Models\PerksAssignment;
+use App\Jobs\PerkRequestStatusJob;
 use Illuminate\Support\Facades\Auth;
 use App\DTOs\PerkDTOs\RequestPerkDTO;
 use Symfony\Component\HttpFoundation\Response;
@@ -41,7 +42,7 @@ class PerkService
             return Helpers::error($request, "An error occurred while requesting perks.", $e, Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-
+    
     public function handlePerkRequest($request)
     {
         try {
@@ -73,6 +74,7 @@ class PerkService
                     'pay' => $employee->pay + $perkRequest->total_allowance,  
                 ]);
             }
+            PerkRequestStatusJob::dispatch($perkRequest->employee->user, $status);
             return Helpers::result("Perk request {$status} successfully.", Response::HTTP_OK, $perkRequest);
         } catch (Throwable $e) {
             return Helpers::error($request, "An error occurred while handling the perk request.", $e, Response::HTTP_INTERNAL_SERVER_ERROR);
