@@ -4,29 +4,63 @@ namespace App\GlobalVariables;
 
 class PermissionVariables
 {
+    const Auth = 'auth';
     public static array $login = [
         'path' => '/login',
-        'prefix' => 'auth'
+        'prefix' => self::Auth,
     ];
 
     public static array $logout = [
         'path' => '/logout',
+        'prefix' => self::Auth,
     ];
 
     public static array $passwordSetup = [
         'path' => '/password-setup',
+        'prefix' => self::Auth,
     ];
 
     public static array $passwordReset = [
         'path' => '/password-reset',
+        'prefix' => self::Auth,
     ];
 
     public static array $passwordResetLink = [
         'path' => '/password-reset-link',
+        'prefix' => self::Auth,
     ];
 
     public static array $verifyTwoFactorCode = [
         'path' => '/verify-2fa-code',
+        'prefix' => self::Auth,
+    ];
+
+    //admin
+    public static array $createPerks = [
+        'path' => '/perks-create',
+        'permission' => 'User can create perks'
+    ];
+    //all
+    public static array $getPerks = [
+        'path' => '/get-all-perks',
+        'permission' => 'User can get all perks'
+    ];
+
+    //admin hr
+    public static array $getPerksRequests = [
+        'path' => '/get-perks/requests',
+        'permission' => 'User can get perk requests'
+    ];
+
+    //admin hr
+    public static array $handlePerkRequests = [
+        'path' => '/perks/request-handle',
+        'permission' => 'User can handle perk requests'
+    ];
+    //hr and emp
+    public static array $sendPerkRequests = [
+        'path' => '/send-perk/request',
+        'permission' => 'User Can send perk requests'
     ];
 
     public static array $getAttendanceCount = [
@@ -214,6 +248,11 @@ class PermissionVariables
             self::$passwordReset,
             self::$passwordResetLink,
             self::$verifyTwoFactorCode,
+            self::$createPerks,
+            self::$getPerks,
+            self::$getPerksRequests,
+            self:: $handlePerkRequests,
+            self::$sendPerkRequests,
             self::$getAllAttendance,
             self::$getAttendanceCount,
             self::$getProjectCount,

@@ -47,7 +47,13 @@ class RolesAndPermissionsSeeder extends Seeder
             'User can get daily attendance count',
             'User can update their info',
             'User can manage Announcement',
-            'User can view Announcement'
+            'User can view Announcement',
+
+            'User can create perks',
+            'User can get all perks',
+            'User can get perk requests',
+            'User can handle perk requests',
+            'User Can send perk requests'
         ];
 
 
@@ -80,7 +86,11 @@ class RolesAndPermissionsSeeder extends Seeder
             'User can get daily attendance count',
             'User can update their info',
             'User can manage Announcement',
-            'User can view Announcement'
+            'User can view Announcement',
+            'User can create perks',
+            'User can get all perks',
+            'User can get perk requests',
+            'User can handle perk requests',
         ]);
 
         $hrRole = Role::firstOrCreate(['name' => 'hr']);
@@ -105,7 +115,11 @@ class RolesAndPermissionsSeeder extends Seeder
             'User can get daily attendance count',
             'User can update their info',
             'User can manage Announcement',
-            'User can view Announcement'
+            'User can view Announcement',
+            'User can get all perks',
+            'User can get perk requests',
+            'User can handle perk requests',
+            'User Can send perk requests'
         ]);
 
         $employeeRole = Role::firstOrCreate(['name' => 'employee']);
@@ -120,7 +134,9 @@ class RolesAndPermissionsSeeder extends Seeder
             'User can see Attendance Records',
             'User can get his attedance record',
             'User can update their info',
-            'User can view Announcement'
+            'User can view Announcement',
+            'User can get all perks',
+            'User Can send perk requests'
         ]);
     }
 }

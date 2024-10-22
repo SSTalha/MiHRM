@@ -36,9 +36,6 @@ class PermissionsMiddleware
             $prefixedPath = !empty($permissionArray['prefix'])
             ? trim($permissionArray['prefix'], '/') . $permissionArray['path']
             : $permissionArray['path'];
-            // if (!empty($permissionArray['prefix']) && empty(trim($permissionArray['prefix']))) {
-            //     return Helpers::result('No Prefix found on API!', Response::HTTP_FORBIDDEN);
-            // }
 
             if ($prefixedPath === $path || $permissionArray['path'] === $path) {
                 if (!isset($permissionArray['permission'])) {
