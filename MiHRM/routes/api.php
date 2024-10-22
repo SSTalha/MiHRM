@@ -19,6 +19,9 @@ use App\Http\Controllers\Announcement\AnnouncementController;
 Route::group(['middleware' => ['api', 'log.request', 'log.activity']], function () {
 
     Route::post(PermissionVariables::$login['path'], [AuthController::class, 'login']);
+    // Route::group(['prefix' => trim(PermissionVariables::$login['prefix'], '/')], function () {
+    //     Route::post(PermissionVariables::$login['path'], [AuthController::class, 'login']);
+    // });
     Route::post(PermissionVariables::$logout['path'], [AuthController::class, 'logout']);
     Route::post(PermissionVariables::$passwordSetup['path'], [EmployeeController::class, 'passwordSetup']);
     Route::post(PermissionVariables::$passwordReset['path'], [PasswordResetController::class, 'passwordReset']);

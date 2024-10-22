@@ -28,7 +28,7 @@ class WorkingHourService
             }
             $employee = Employee::find($employeeId);
             if (!$employee) {
-                return Helpers::result("Employee with ID {$employeeId} not found.", Response::HTTP_NOT_FOUND);
+                return Helpers::result(Messages::UserNotFound, Response::HTTP_NOT_FOUND);
             }
 
             $employeeName = $employee->user->name;
@@ -37,7 +37,7 @@ class WorkingHourService
             $endDate = $this->getEndDate($date, $frequency);
     
             if (!$startDate || !$endDate) {
-                return Helpers::result("Invalid date or frequency provided.", Response::HTTP_BAD_REQUEST);
+                return Helpers::result(Messages::InvalidCredentials, Response::HTTP_BAD_REQUEST);
             }
     
             $attendances = Attendance::where('employee_id', $employeeId)
@@ -80,7 +80,7 @@ class WorkingHourService
                 'daily_working_hours' => array_values($dailyWorkingHours),
             ];
     
-            return Helpers::result("Working hours retrieved successfully", Response::HTTP_OK, $data);
+            return Helpers::result(Messages::WorkingHoursRetreived, Response::HTTP_OK, $data);
     
         } catch (\Throwable $e) {
             return Helpers::error($request, Messages::ExceptionMessage, $e, Response::HTTP_INTERNAL_SERVER_ERROR);

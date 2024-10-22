@@ -23,5 +23,10 @@ class Messages{
     const ProjectAssignmentNull = "No projects assigned to this employee.";
     const AssignedProjectFetched = "Assigned projects fetched successfully.";
     const ProjectStatusSuccess = "Project status updated successfully.";
+    const LeaveRequestNull = 'No leave requests found.';
+    const GetLeaveRequest = 'Leave requests retrieved successfully';
+    const NoSalaryFound = 'No salary record found for the specified employee and month';
+    const SalaryRetreived = 'Salary details retrieved successfully';
+    const WorkingHoursRetreived = "Working hours retrieved successfully";
 
 }

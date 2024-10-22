@@ -36,7 +36,6 @@ class AuthController extends Controller
      */
     public function login(LoginRequest $request)
     {
-        // dd('working');
         return $this->authService->login($request);
     }
 

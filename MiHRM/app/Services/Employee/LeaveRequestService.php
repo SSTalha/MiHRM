@@ -30,7 +30,7 @@ class LeaveRequestService
             } else {
 
                 if (!$user->employee) {
-                    return Helpers::result('No employee record found for the user.', Response::HTTP_OK);
+                    return Helpers::result(Messages::UserNotFound, Response::HTTP_OK);
                 }
     
                 $leaveRequests = LeaveRequest::where('employee_id', $user->employee->id)
@@ -39,7 +39,7 @@ class LeaveRequestService
             }
     
             if ($leaveRequests->isEmpty()) {
-                return Helpers::result('No leave requests found.', Response::HTTP_OK);
+                return Helpers::result(Messages::LeaveRequestNull, Response::HTTP_OK);
             }
 
             $leaveRequestsData = $leaveRequests->map(function ($leaveRequest) {
@@ -54,7 +54,7 @@ class LeaveRequestService
                 ];
             });
     
-            return Helpers::result('Leave requests retrieved successfully', 200, $leaveRequestsData);
+            return Helpers::result(Messages::GetLeaveRequest, Response::HTTP_OK, $leaveRequestsData);
     
         }catch (\Throwable $e) {
             return Helpers::error($request, Messages::ExceptionMessage, $e , Response::HTTP_INTERNAL_SERVER_ERROR);
