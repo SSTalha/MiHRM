@@ -1,18 +1,18 @@
 <?php
 
-use App\GlobalVariables\PermissionVariables;
 use Illuminate\Support\Facades\Route;
-
+use App\GlobalVariables\PermissionVariables;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Perks\PerkController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\ProjectController;
+use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\Employee\SalaryController;
 use App\Http\Controllers\Employee\EmployeeController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Employee\AttendanceController;
 use App\Http\Controllers\Employee\WorkingHourController;
 use App\Http\Controllers\Employee\LeaveRequestController;
-use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\Announcement\AnnouncementController;
 
 
@@ -37,6 +37,7 @@ Route::group(['middleware' => ['api', 'log.request', 'log.activity']], function 
             Route::delete(PermissionVariables::$deleteProject['path'], [ProjectController::class, 'deleteProject']);
             Route::post(PermissionVariables::$addDepartment['path'], [AdminController::class, 'addDepartment']);
             Route::put(PermissionVariables::$updateEmployee['path'], [AdminController::class, 'updateEmployee']);
+            Route::post('/perks-create', [PerkController::class, 'createPerk']);
         });
 
         // HR-specific routes
@@ -61,6 +62,8 @@ Route::group(['middleware' => ['api', 'log.request', 'log.activity']], function 
 
             Route::post(PermissionVariables::$createAnnouncement['path'], [AnnouncementController::class, 'createAnnouncement']);
             Route::put(PermissionVariables::$updatePublishedStatus['path'], [AnnouncementController::class, 'updatePublishedStatus']);
+            Route::post('/perks/request-handle', [PerkController::class, 'handlePerkRequest']);
+            Route::get('/get-perks/requests', [PerkController::class, 'getAllPerkRequests']);
         });
 
         // HR and Employee common routes
@@ -68,6 +71,7 @@ Route::group(['middleware' => ['api', 'log.request', 'log.activity']], function 
             Route::post(PermissionVariables::$submitLeaveRequest['path'], [EmployeeController::class, 'submitLeaveRequest']);
             Route::post(PermissionVariables::$checkInCheckOut['path'], [AttendanceController::class, 'handleCheckInOut']);
             Route::get(PermissionVariables::$getAttendanceCount['path'], [AttendanceController::class, 'getAttendanceCount']);
+            Route::post('/perks/request', [PerkController::class, 'requestPerks']);
         });
 
         // Admin, HR, and Employee common routes
@@ -78,6 +82,7 @@ Route::group(['middleware' => ['api', 'log.request', 'log.activity']], function 
             Route::get(PermissionVariables::$getSalaryDetails['path'], [SalaryController::class, 'getSalaryDetails']);
             Route::put(PermissionVariables::$updateUser['path'], [AdminController::class, 'updateUser']);
             Route::get(PermissionVariables::$getAnnouncements['path'], [AnnouncementController::class, 'getAnnouncements']);
+            Route::get('/get-all-perks', [PerkController::class, 'getAllPerks']);
         });
 
         // Employee-specific routes
