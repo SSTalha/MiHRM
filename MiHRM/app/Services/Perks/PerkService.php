@@ -76,7 +76,7 @@ class PerkService
                 ]);
             }
             PerkRequestStatusJob::dispatch($perkRequest->employee->user, $status);
-            return Helpers::result(Messages::PerkRequestStatus, Response::HTTP_OK, $perkRequest);
+            return Helpers::result(Messages::PerkRequestStatus.$status, Response::HTTP_OK, $perkRequest);
         } catch (Throwable $e) {
             return Helpers::error($request, Messages::ExceptionMessage, $e, Response::HTTP_INTERNAL_SERVER_ERROR);
         }

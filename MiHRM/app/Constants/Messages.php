@@ -35,7 +35,7 @@ class Messages{
     const AttendanceRecordRetrieved = "Attendance records retrieved successfully";
     const PerkRequestSubmitted = "Perk request submitted successfully.";
     const CannotApproveOwnRequest = 'You cannot approve/reject your own leave request.';
-    const PerkRequestStatus = "Perk request {$status} successfully.";
+    const PerkRequestStatus = "Perk request successfully";
     const NoPerks = "No perks available.";
     const PerksFetched = "Perks fetched successfully.";
     const AnnouncementCreated = "Announcement created successfully.";
