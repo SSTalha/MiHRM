@@ -15,6 +15,7 @@
 - **Perks & Benefits**: Manage employee perks with ease.
 - **Two-Factor Authentication (2FA)**: Secure your system with 2FA.
 - **Admin Controls**: Powerful tools for admins to manage HR workflows.
+- **Announcements**: Publish and manage company-wide announcements.
 
 ---
 
@@ -30,6 +31,7 @@
   - [Salary Management](#salary-management)
   - [Perks Management](#perks-management)
   - [Two-Factor Authentication (2FA)](#two-factor-authentication-2fa)
+  - [Announcements](#announcements)
 - [Packages](#packages)
 - [Queue](#queue)
 - [Cron Jobs](#cron-jobs)
@@ -76,7 +78,12 @@ Ready to get started? Follow these steps to set up MiHRM on your local environme
     php artisan migrate
     ```
 
-6. **Generate JWT secret key:**
+6. **Run database seeders:**
+    ```shell
+    php artisan db:seed
+    ```
+
+7. **Generate JWT secret key:**
     ```shell
     php artisan jwt:secret
     ```
@@ -92,6 +99,22 @@ MiHRM is highly customizable. Tailor it to your needs by configuring:
 - **Queue** drivers
 
 All configurations can be adjusted in the `.env` file for flexibility in various environments.
+
+### Mail Configuration
+
+Configure your mail settings in the `.env` file to enable email notifications and other mail features:
+```plaintext
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=your_username
+MAIL_PASSWORD=your_password
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=noreply@yourdomain.com
+MAIL_FROM_NAME="${APP_NAME}"
+```
+
+MiHRM supports various mail services to send notifications, alerts, and other important communications. Make sure to set up your mail service provider accordingly.
 
 ---
 
@@ -109,38 +132,42 @@ Then, open your browser and visit: `http://localhost:8000` to start managing you
 ## 💡 Core Functionalities
 
 ### 1. Employee Attendance
-Track employee attendance and working hours effortlessly. MiHRM’s attendance system allows you to monitor productivity, ensure compliance with work schedules, and maintain attendance records in a streamlined manner.
+Track employee attendance and working hours effortlessly. MiHRM’s attendance system enables you to monitor productivity, ensure compliance with work schedules, and maintain accurate attendance records. Employees can log their hours, and managers can review attendance reports to ensure all employees are adhering to their work schedules.
 
 ### 2. Leave Requests
-Employees can submit leave requests that follow a structured approval workflow, helping HR manage leave applications efficiently. This feature also keeps track of remaining leave balances, simplifying leave management for both employees and managers.
+Employees can submit leave requests that follow a structured approval workflow, helping HR manage leave applications efficiently. This feature maintains a record of leave balances, making it simple for both employees and managers to track remaining leave days. Managers can approve or reject requests and provide feedback directly through the system.
 
 ### 3. Project Management
-Easily create, update, and delete projects. This functionality ensures that all projects are properly documented and tracked throughout their lifecycle. Administrators can assign team members to projects and set deadlines to ensure proper oversight.
+Easily create, update, and delete projects. This functionality ensures that all projects are properly documented and tracked throughout their lifecycle. Administrators can assign team members to projects, set deadlines, and add necessary resources. Track project progress, manage timelines, and ensure milestones are met, all in one place.
 
 ### 4. Project Assignment
-Assign projects to employees with ease. MiHRM allows administrators to validate employee IDs and assign projects accordingly, ensuring accurate tracking of project responsibilities and a smooth workflow.
+Assign projects to employees with ease. MiHRM allows administrators to validate employee IDs and assign projects accordingly. This ensures accurate tracking of project responsibilities, and employees can view their assignments and deadlines. Seamlessly reassign projects and manage workloads to ensure balanced distribution of tasks.
 
 ### 5. Salary Management
-Manage payroll with precision. This module ensures all salary records are up to date and processed correctly. Admins can update salary details, issue payments, and track salary histories to ensure transparency and accuracy.
+Manage payroll with precision. This module ensures all salary records are up to date and processed correctly. Admins can update salary details, issue payments, and track salary histories. Generate comprehensive payroll reports, manage deductions and increments, and ensure timely salary disbursement.
 
 ### 6. Perks Management
-Reward and incentivize your employees by managing perks and benefits efficiently. The system allows you to set up various perks and track their assignment to employees, ensuring a structured approach to managing employee rewards.
+Reward and incentivize your employees by managing perks and benefits efficiently. The system allows you to set up various perks, such as bonuses, allowances, and benefits. Track the assignment of these perks to employees, and automatically calculate eligibility based on predefined criteria. Ensure your employees feel valued and motivated.
 
 ### 7. Two-Factor Authentication (2FA)
-Security is a priority! MiHRM integrates with Google Authenticator to provide 2FA, giving your employees and admins an extra layer of security when logging in. This feature ensures sensitive data is always protected.
+Security is a priority! MiHRM integrates with Google Authenticator to provide 2FA, giving your employees and admins an extra layer of security when logging in. This feature ensures that even if login credentials are compromised, unauthorized access is prevented. Protect sensitive data and maintain high security standards.
+
+### 8. Announcements
+Publish and manage company-wide announcements efficiently. This feature allows admins to create, schedule, and publish announcements visible to all employees. Use this tool to inform staff about important updates, upcoming events, policy changes, and more. Keep everyone in the loop with timely and well-documented announcements.
 
 ---
 
 ## 📦 Packages Used
 
-MiHRM leverages powerful third-party packages to extend functionality. Some of the key packages include:
-- `guzzlehttp/guzzle`
-- `laravel/tinker`
+MiHRM leverages powerful third-party packages to extend functionality. Some of the key packages include: 
+- `guzzlehttp/guzzle - laravel/tinker`
 - `spatie/laravel-permission`
 - `tymon/jwt-auth`
-- `pragmarx/google2fa-laravel`
+- `pragmarx/google2fa`
+- `laravel`
 - `simplesoftwareio/simple-qrcode`
-- And many more!
+
+And many more!
 
 ---
 
