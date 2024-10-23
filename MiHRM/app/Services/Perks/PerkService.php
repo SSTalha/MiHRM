@@ -1,6 +1,7 @@
 <?php
 namespace App\Services\Perks;
 
+use App\Constants\Messages;
 use Throwable;
 use App\Models\Perk;
 use App\Helpers\Helpers;
@@ -20,7 +21,7 @@ class PerkService
             $perk = Perk::create($request->validated());
             return Helpers::result("Perk created successfully.", Response::HTTP_CREATED, $perk);
         } catch (Throwable $e) {
-            return Helpers::error($request, "An error occurred while creating the perk.", $e, Response::HTTP_INTERNAL_SERVER_ERROR);
+            return Helpers::error($request, Messages::ExceptionMessage, $e, Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -37,9 +38,9 @@ class PerkService
             $dto = new RequestPerkDTO($requestedPerkTitles, $employee->id, $totalAllowance);
             $perkRequest = PerksRequest::create($dto->toArray());
 
-            return Helpers::result("Perk request submitted successfully.", Response::HTTP_CREATED, $perkRequest);
+            return Helpers::result(Messages::PerkRequestSubmitted, Response::HTTP_CREATED, $perkRequest);
         } catch (Throwable $e) {
-            return Helpers::error($request, "An error occurred while requesting perks.", $e, Response::HTTP_INTERNAL_SERVER_ERROR);
+            return Helpers::error($request, Messages::ExceptionMessage, $e, Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
     
@@ -53,7 +54,7 @@ class PerkService
             $perkRequest = PerksRequest::findOrFail($perkRequestId);  
 
             if ($user->hasRole('hr') && $perkRequest->employee->user->hasRole('hr')) {
-                return Helpers::result("HR cannot approve/reject requests from other HR users.", Response::HTTP_FORBIDDEN);
+                return Helpers::result(Messages::CannotApproveOwnRequest, Response::HTTP_FORBIDDEN);
             }
 
             $perkRequest->update(['status' => $status]);
@@ -75,25 +76,26 @@ class PerkService
                 ]);
             }
             PerkRequestStatusJob::dispatch($perkRequest->employee->user, $status);
-            return Helpers::result("Perk request {$status} successfully.", Response::HTTP_OK, $perkRequest);
+            return Helpers::result(Messages::PerkRequestStatus, Response::HTTP_OK, $perkRequest);
         } catch (Throwable $e) {
-            return Helpers::error($request, "An error occurred while handling the perk request.", $e, Response::HTTP_INTERNAL_SERVER_ERROR);
+            return Helpers::error($request, Messages::ExceptionMessage, $e, Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
-    public function getAllPerks()
+    public function getAllPerks($request)
     {
         try {
             $perks = Perk::all(['id', 'title', 'allowance']); 
             if ($perks->isEmpty()) {
-                return Helpers::result("No perks available.", Response::HTTP_NOT_FOUND);
+                return Helpers::result(Messages::NoPerks, Response::HTTP_NOT_FOUND);
             }
-            return Helpers::result("Perks fetched successfully.", Response::HTTP_OK, $perks);
+            return Helpers::result(Messages::PerksFetched, Response::HTTP_OK, $perks);
         } catch (Throwable $e) {
-            return Helpers::error(null, "An error occurred while fetching perks.", $e, Response::HTTP_INTERNAL_SERVER_ERROR);
+            return Helpers::error($request, Messages::ExceptionMessage, $e, Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    public function getAllPerkRequests()
+
+    public function getAllPerkRequests($request)
     {
         try {
             $user = Auth::user();  
@@ -107,7 +109,7 @@ class PerkService
                     });
                 })->with('employee.user')->get();
             } else {
-                return Helpers::result("You are not authorized to access this data.", Response::HTTP_FORBIDDEN);
+                return Helpers::result(Messages::NotAuthorized, Response::HTTP_FORBIDDEN);
             }
 
             $data = $perkRequests->map(function ($perkRequest) {
@@ -124,9 +126,9 @@ class PerkService
             if ($data->isEmpty()) {
                 return Helpers::result("No perk requests found.", Response::HTTP_NOT_FOUND);
             }
-            return Helpers::result("Perk requests fetched successfully.", Response::HTTP_OK, $data);
+            return Helpers::result(Messages::PerksFetched, Response::HTTP_OK, $data);
         } catch (Throwable $e) {
-            return Helpers::error(null, "An error occurred while fetching perk requests.", $e, Response::HTTP_INTERNAL_SERVER_ERROR);
+            return Helpers::error($request, Messages::ExceptionMessage, $e, Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }

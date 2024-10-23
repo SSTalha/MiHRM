@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Constants\Messages;
 use App\GlobalVariables\PermissionVariables;
 use App\Helpers\Helpers;
 use Closure;
@@ -22,7 +23,7 @@ class PermissionsMiddleware
         $authUser = auth()->user();
 
         if (!$authUser) {
-            return Helpers::result("Unauthorized", Response::HTTP_BAD_REQUEST);
+            return Helpers::result(Messages::NotAuthorized, Response::HTTP_BAD_REQUEST);
         }
 
         $authUserPermissions = $authUser->getAllPermissions()->pluck('name')->toArray();
@@ -41,7 +42,7 @@ class PermissionsMiddleware
                 if (!isset($permissionArray['permission'])) {
                     return $next($request);
                 }elseif(!in_array($permissionArray['permission'], $authUserPermissions)) {
-                    return Helpers::result('You donot have the permission to access this route', Response::HTTP_FORBIDDEN);
+                    return Helpers::result(Messages::NoPermission, Response::HTTP_FORBIDDEN);
                 }
             }
         }

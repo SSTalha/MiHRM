@@ -80,7 +80,7 @@ class WorkingHourService
                 'daily_working_hours' => array_values($dailyWorkingHours),
             ];
     
-            return Helpers::result(Messages::WorkingHoursRetreived, Response::HTTP_OK, $data);
+            return Helpers::result(Messages::WorkingHoursRetrieved, Response::HTTP_OK, $data);
     
         } catch (\Throwable $e) {
             return Helpers::error($request, Messages::ExceptionMessage, $e, Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -168,7 +168,8 @@ class WorkingHourService
                 ];
             }
 
-            return Helpers::result("Attendance records retrieved successfully", Response::HTTP_OK, $attendanceData);
+
+            return Helpers::result(Messages::AttendanceRecordRetrieved, Response::HTTP_OK, $attendanceData);
 
         }catch (\Throwable $e) {
             return Helpers::error($request, Messages::ExceptionMessage, $e , Response::HTTP_INTERNAL_SERVER_ERROR);

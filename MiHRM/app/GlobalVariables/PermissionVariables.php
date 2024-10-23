@@ -251,7 +251,7 @@ class PermissionVariables
             self::$createPerks,
             self::$getPerks,
             self::$getPerksRequests,
-            self:: $handlePerkRequests,
+            self::$handlePerkRequests,
             self::$sendPerkRequests,
             self::$getAllAttendance,
             self::$getAttendanceCount,

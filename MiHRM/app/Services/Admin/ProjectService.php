@@ -24,7 +24,7 @@ class ProjectService
             $dto = new ProjectCreateDTO($request);
             $project = Project::create($dto->toArray());
 
-            return Helpers::result("Project created successfully.", Response::HTTP_CREATED, $project);
+            return Helpers::result(Messages::ProjectCreated, Response::HTTP_CREATED, $project);
         }catch (\Throwable $e) {
             return Helpers::error($request, Messages::ExceptionMessage, $e , Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -40,7 +40,7 @@ class ProjectService
         try {
             $project = Project::findOrFail($id);
             $project->update($request->only(['title', 'description']));
-            return Helpers::result("Project Updated Successfully",Response::HTTP_CREATED,$project);
+            return Helpers::result(Messages::ProjectUpdated,Response::HTTP_CREATED,$project);
         
         } catch (\Throwable $e) {
             return Helpers::error($request, Messages::ExceptionMessage, $e , Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -57,7 +57,7 @@ class ProjectService
         try {
              $project=Project::findorFail($id);
              $project->delete();
-             return Helpers::result("Project deleted successfully",Response::HTTP_OK);
+             return Helpers::result(Messages::ProjectDeleted,Response::HTTP_OK);
         }catch (\Throwable $e) {
             return Helpers::error($request, Messages::ExceptionMessage, $e , Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -80,7 +80,7 @@ class ProjectService
                     continue;
                 }
                 if ($employee->user->hasRole('hr')) {
-                    return Helpers::result("Can't assign project. The user is an HR.", Response::HTTP_BAD_REQUEST);
+                    return Helpers::result(Messages::CannotAssign, Response::HTTP_BAD_REQUEST);
                 }
                 ProjectAssignment::create([
                     'employee_id' => $employee_id,
@@ -88,7 +88,7 @@ class ProjectService
                 ]);
             }
     
-            return Helpers::result("Project assigned successfully to all employees.", Response::HTTP_CREATED);
+            return Helpers::result(Messages::ProjectAssigned, Response::HTTP_CREATED);
         }catch (\Throwable $e) {
             return Helpers::error($request, Messages::ExceptionMessage, $e , Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -105,7 +105,7 @@ class ProjectService
             $assignedProjects = ProjectAssignment::with(['project', 'employee.user'])->get();
 
             if ($assignedProjects->isEmpty()) {
-                return Helpers::result("No projects assigned yet.", Response::HTTP_NOT_FOUND);
+                return Helpers::result(Messages::NoProjects, Response::HTTP_NOT_FOUND);
             }
 
             $data = $assignedProjects->map(function ($assignment) {
@@ -121,7 +121,7 @@ class ProjectService
                 ];
             });
 
-            return Helpers::result("All assigned projects fetched successfully.", Response::HTTP_OK, $data);
+            return Helpers::result(Messages::ProjectsRetrieved, Response::HTTP_OK, $data);
         }catch (\Throwable $e) {
             return Helpers::error($request, Messages::ExceptionMessage, $e , Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -138,9 +138,9 @@ class ProjectService
             $projects = Project::all();
 
             if ($projects->isEmpty()) {
-                return Helpers::result("No projects available.", Response::HTTP_NOT_FOUND);
+                return Helpers::result(Messages::NoProjects, Response::HTTP_NOT_FOUND);
             }
-            return Helpers::result("All projects fetched successfully.", Response::HTTP_OK, $projects);
+            return Helpers::result(Messages::ProjectsRetrieved, Response::HTTP_OK, $projects);
         }catch (\Throwable $e) {
             return Helpers::error($request, Messages::ExceptionMessage, $e , Response::HTTP_INTERNAL_SERVER_ERROR);
         }

@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Perks\PerksRequest;
 use App\Http\Requests\Perks\CreatePerkRequest;
 use App\Http\Requests\Perks\HandlePerksRequest;
+use Illuminate\Http\Request;
 
 class PerkController extends Controller
 {
@@ -29,17 +30,16 @@ class PerkController extends Controller
         return $this->perkService->requestPerks($request);
     }
 
-
     public function handlePerkRequest(HandlePerksRequest $request)
     {
         return $this->perkService->handlePerkRequest($request);
     }
-    public function getAllPerks(): JsonResponse
+    public function getAllPerks(Request $request): JsonResponse
     {
-        return $this->perkService->getAllPerks();
+        return $this->perkService->getAllPerks($request);
     }
-    public function getAllPerkRequests(): JsonResponse
+    public function getAllPerkRequests(Request $request): JsonResponse
     {
-        return $this->perkService->getAllPerkRequests();
+        return $this->perkService->getAllPerkRequests($request);
     }
 }

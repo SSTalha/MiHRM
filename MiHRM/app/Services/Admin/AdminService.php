@@ -73,17 +73,17 @@ class AdminService
         $requestingEmployee = $leaveRequest->employee;
 
         if (!$requestingEmployee || !$requestingEmployee->user) {
-            return Helpers::result('Employee record or associated user not found', Response::HTTP_NOT_FOUND);
+            return Helpers::result(Messages::UserNotFound, Response::HTTP_NOT_FOUND);
         }
 
         $requestingUser = $requestingEmployee->user;
 
         if ($this->isSelfApproval($authUser, $requestingUser)) {
-            return Helpers::result('You cannot approve/reject your own leave request.', Response::HTTP_FORBIDDEN);
+            return Helpers::result(Messages::CannotApproveOwnRequest, Response::HTTP_FORBIDDEN);
         }
 
         if (!$this->isAuthorizedToHandle($authUser, $requestingUser)) {
-            return Helpers::result('Unauthorized action.', Response::HTTP_FORBIDDEN);
+            return Helpers::result(Messages::NotAuthorized, Response::HTTP_FORBIDDEN);
         }
 
         $leaveRequest->update(['status' => $status]);
@@ -108,7 +108,7 @@ class AdminService
             ->get(['id', 'user_id', 'position', 'date_of_joining', 'department_id']);
 
             if ($employees->isEmpty()) {
-                return Helpers::result("No employees found for this department", Response::HTTP_NOT_FOUND);
+                return Helpers::result(Messages::UserNotFound, Response::HTTP_NOT_FOUND);
             }
 
             $formattedData = $employees->map(function ($employee) {
@@ -122,7 +122,7 @@ class AdminService
                 ];
             });
 
-            return Helpers::result("Employees fetched successfully", Response::HTTP_OK, [
+            return Helpers::result(Messages::EmployeesFetched, Response::HTTP_OK, [
                 'department_id' => $department_id,
                 'employees' => $formattedData
             ]);
@@ -144,13 +144,13 @@ class AdminService
             $user = User::find($user_id);
 
             if (!$user) {
-                return Helpers::result("User not found", Response::HTTP_NOT_FOUND);
+                return Helpers::result(Messages::UserNotFound, Response::HTTP_NOT_FOUND);
             }
 
             Employee::where('user_id', $user_id)->delete();
             $user->delete();
 
-            return Helpers::result("User and employee deleted successfully", Response::HTTP_OK);
+            return Helpers::result(Messages::UserDeleted, Response::HTTP_OK);
         }catch (\Throwable $e) {
             return Helpers::error($request, Messages::ExceptionMessage, $e , Response::HTTP_INTERNAL_SERVER_ERROR);
         }   
@@ -168,12 +168,12 @@ class AdminService
             $employee = Employee::find($employee_id);
 
             if (!$employee) {
-                return Helpers::result("Employee not found", Response::HTTP_NOT_FOUND);
+                return Helpers::result(Messages::UserNotFound, Response::HTTP_NOT_FOUND);
             }
             $dto = new EmployeeUpdateDTO($request);
             $employee->update($dto->toArray());
 
-            return Helpers::result("Employee updated successfully", Response::HTTP_OK, $employee);
+            return Helpers::result(Messages::EmployeeUpdated, Response::HTTP_OK, $employee);
         }catch (\Throwable $e) {
             return Helpers::error($request, Messages::ExceptionMessage, $e , Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -187,7 +187,7 @@ class AdminService
     {
         try {
             $departments = Department::all();
-            return Helpers::result('Departments retrieved successfully', Response::HTTP_OK, $departments);
+            return Helpers::result(Messages::DeptsRetreived, Response::HTTP_OK, $departments);
         }catch (\Throwable $e) {
             return Helpers::error($request, Messages::ExceptionMessage, $e , Response::HTTP_INTERNAL_SERVER_ERROR);
         }  
@@ -201,10 +201,10 @@ class AdminService
     public function addDepartment($request){
         try {
             $department= Department::create([
-        'name' => $request->get('name'),
-        ]);
+                'name' => $request->get('name'),
+            ]);
 
-        return Helpers::result("Department added successfully.", Response::HTTP_OK, $department);
+        return Helpers::result(Messages::DeptsAdded, Response::HTTP_OK, $department);
         }catch (\Throwable $e) {
             return Helpers::error($request, Messages::ExceptionMessage, $e , Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -239,7 +239,7 @@ class AdminService
                 ];
             });
 
-            return Helpers::result("All employees fetched successfully.", Response::HTTP_OK, $data);
+            return Helpers::result(Messages::EmployeesFetched, Response::HTTP_OK, $data);
         }catch (\Throwable $e) {
             return Helpers::error($request, Messages::ExceptionMessage, $e , Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -268,7 +268,7 @@ class AdminService
                 'department_count' => $departmentCount
             ];
 
-            return Helpers::result("Employee role counts fetched successfully.", Response::HTTP_OK, $data);
+            return Helpers::result(Messages::EmployeesCount, Response::HTTP_OK, $data);
         }catch (\Throwable $e) {
             return Helpers::error($request, Messages::ExceptionMessage, $e , Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -288,7 +288,7 @@ class AdminService
                 'email' => $request['email'],
             ]);
 
-            return Helpers::result("User updated successfully.", Response::HTTP_OK, null);
+            return Helpers::result(Messages::UserUpdated, Response::HTTP_OK, null);
         }catch (\Throwable $e) {
             return Helpers::error($request, Messages::ExceptionMessage, $e , Response::HTTP_INTERNAL_SERVER_ERROR);
         }

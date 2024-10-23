@@ -24,7 +24,7 @@ class AnnouncementService
 
             $announcement = Announcement::create($dto->toArray());
 
-            return Helpers::result("Announcement created successfully.", Response::HTTP_CREATED, $announcement);
+            return Helpers::result(Messages::AnnouncementCreated, Response::HTTP_CREATED, $announcement);
         }catch (\Throwable $e) {
             return Helpers::error($request, Messages::ExceptionMessage, $e , Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -47,7 +47,7 @@ class AnnouncementService
                 'published_at' => Carbon::now(),
             ]);
 
-            return Helpers::result("Announcement status updated successfully.", Response::HTTP_OK, $announcement);
+            return Helpers::result(Messages::AnnouncementStatusUpdated, Response::HTTP_OK, $announcement);
         }catch (\Throwable $e) {
             return Helpers::error($request, Messages::ExceptionMessage, $e , Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -68,7 +68,7 @@ class AnnouncementService
                 $announcements = Announcement::where('is_published', true)->get();
             }
             if ($announcements->isEmpty()) {
-                return Helpers::result("No announcements found.", Response::HTTP_NOT_FOUND);
+                return Helpers::result(Messages::NoAnnouncements, Response::HTTP_NOT_FOUND);
             }
             $data = $announcements->map(function ($announcement) {
                 return [
@@ -82,7 +82,7 @@ class AnnouncementService
                 ];
             });
 
-            return Helpers::result("Announcements retrieved successfully.", Response::HTTP_OK, $data);
+            return Helpers::result(Messages::AnnouncementsRetrieved, Response::HTTP_OK, $data);
         }catch (\Throwable $e) {
             return Helpers::error($request, Messages::ExceptionMessage, $e , Response::HTTP_INTERNAL_SERVER_ERROR);
     }
