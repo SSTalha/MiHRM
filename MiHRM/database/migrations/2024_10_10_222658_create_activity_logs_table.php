@@ -16,10 +16,6 @@ return new class extends Migration
         Schema::create('activity_logs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('request_log_id')->constrained()->onDelete('cascade');
-            $table->string('url');
-            $table->string('method');
-            $table->ipAddress('ip_address');
-            $table->text('user_agent');
             $table->string('activity')->nullable();
             $table->boolean('activity_status')->default(false);
             $table->integer('status_code');

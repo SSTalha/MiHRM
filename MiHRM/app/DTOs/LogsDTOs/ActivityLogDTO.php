@@ -8,10 +8,6 @@ use Illuminate\Http\Request;
 class ActivityLogDTO extends BaseDTOs
 {
     public $request_log_id;
-    public $url;
-    public $method;
-    public $ip_address;
-    public $user_agent;
     public $activity;
     public $activity_status;
     public $status_code;
@@ -25,13 +21,20 @@ class ActivityLogDTO extends BaseDTOs
      */
     public function __construct(Request $request, int $requestLogId, bool $activityStatus = false, int $statusCode) {
         $this->request_log_id = $requestLogId;
-        $this->url = $request->fullUrl();
-        $this->method = $request->method();
-        $this->ip_address = $request->ip();
-        $this->user_agent = $request->header('User-Agent');
-        $this->activity = $request->route() ? $request->route()->getActionName() : null;
+        $this->activity = $this->getActivityDescription($request);
         $this->activity_status = $activityStatus;
         $this->status_code = $statusCode;
     }
+
+    private function getActivityDescription(Request $request): ?string
+    {
+        $actionName = $request->route() ? $request->route()->getActionName() : null;
+        if ($actionName) {
+            [$controller, $method] = explode('@', $actionName);
+            return "User has done $method";
+        }
+        return null;
+    }
+
 
 }

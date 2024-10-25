@@ -2,9 +2,12 @@
 
 namespace App\Exceptions;
 
+use App\Constants\Messages;
 use App\DTOs\LogsDTOs\ErrorLogDTO;
+use App\Helpers\Helpers;
 use App\Models\ErrorLogs;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Response;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -36,14 +39,6 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
-      $requestLogId = $request['request_log_id'];
-      $errorLogDTO = (new ErrorLogDTO(
-        $requestLogId,
-        $exception,
-        __FUNCTION__,
-      ))->toArray();
-
-      ErrorLogs::create($errorLogDTO);
-      return response()->json(['error' => $exception->getMessage()], 500);
+      Helpers::error($request, Messages::ExceptionMessage, $exception, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 }
