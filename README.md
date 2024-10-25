@@ -196,7 +196,8 @@ MiHRM schedules various cron jobs to automate tasks. To ensure these tasks run a
 
 2. Add the following line to run the Laravel scheduler every minute:
     ```plaintext
-    * * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
+    cd /path-to-your-project
+     php artisan schedule:work
     ```
 
 ### Scheduled Commands
