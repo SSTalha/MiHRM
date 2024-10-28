@@ -39,8 +39,7 @@ class LoginRequest extends BaseRequest
         return [
             'email.required' => 'The email field is required.',
             'email.email' => 'The email must be a valid email address.',
-            'email.exists' => 'The provided email does not exist in our records.',
-
+            'email.exists' => 'The provided email does not exist.',
             'password.required' => 'The password field is required.',
             'password.string' => 'The password must be a valid string.',
             'password.min' => 'The password must be at least 6 characters long.',

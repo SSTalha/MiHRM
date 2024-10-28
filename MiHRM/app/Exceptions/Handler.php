@@ -3,9 +3,7 @@
 namespace App\Exceptions;
 
 use App\Constants\Messages;
-use App\DTOs\LogsDTOs\ErrorLogDTO;
 use App\Helpers\Helpers;
-use App\Models\ErrorLogs;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Response;
 use Throwable;
